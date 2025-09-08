@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui/button";
 
+import afsona_logo from "@/assets/afsona-logo.png";
+
 const Header = () => {
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -12,7 +14,7 @@ const Header = () => {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-3">
             <img 
-              src="/lovable-uploads/0cfee039-9423-4008-a9cd-6439832fb35b.png" 
+              src={afsona_logo} 
               alt="AFSONA Logo" 
               className="h-12 w-auto"
             />

@@ -1,5 +1,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Products = () => {
   const productCategories = [
@@ -12,7 +15,8 @@ const Products = () => {
         "Силиконовая краска",
         "Латексная краска"
       ],
-      eco: true
+      eco: true,
+      link: "/wall-paints"
     },
     {
       title: "Краски для потолка",
@@ -22,7 +26,8 @@ const Products = () => {
         "Супербелая краска",
         "Краска с антибактериальным покрытием"
       ],
-      eco: true
+      eco: true,
+      link: "/ceiling-paints"
     },
     {
       title: "Фасадные краски",
@@ -32,7 +37,8 @@ const Products = () => {
         "Акриловая фасадная краска",
         "Силоксановая краска премиум"
       ],
-      eco: false
+      eco: false,
+      link: "/facade-paints"
     },
     {
       title: "Грунтовки и основы",
@@ -43,7 +49,8 @@ const Products = () => {
         "Антисептическая грунтовка",
         "Адгезионная грунтовка"
       ],
-      eco: true
+      eco: true,
+      link: "/primers"
     },
     {
       title: "Декоративные покрытия",
@@ -54,7 +61,8 @@ const Products = () => {
         "Металлик покрытия",
         "Перламутровые краски"
       ],
-      eco: false
+      eco: false,
+      link: "/decorative-coatings"
     },
     {
       title: "Инструменты",
@@ -65,7 +73,8 @@ const Products = () => {
         "Малярная лента",
         "Защитная пленка"
       ],
-      eco: false
+      eco: false,
+      link: "/tools"
     }
   ];
 
@@ -107,6 +116,14 @@ const Products = () => {
                   ))}
                 </ul>
               </CardContent>
+              <div className="p-6 pt-0">
+                <Link to={category.link}>
+                  <Button className="w-full">
+                    Смотреть каталог
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </Link>
+              </div>
             </Card>
           ))}
         </div>

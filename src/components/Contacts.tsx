@@ -24,10 +24,8 @@ const Contacts = () => {
               <CardTitle className="text-primary">Наш адрес</CardTitle>
             </CardHeader>
             <CardContent className="text-center">
-              <p className="text-foreground mb-2">г. Ташкент</p>
-              <p className="text-muted-foreground">ул. Примерная, 123</p>
-              <p className="text-muted-foreground">Торговый центр "Строймир"</p>
-              <p className="text-muted-foreground">2-й этаж, павильон 45</p>
+              <p className="text-foreground mb-2">г. Худжанд</p>
+              <p className="text-muted-foreground">20-й микрорайон, 27</p>
             </CardContent>
           </Card>
 
@@ -40,16 +38,8 @@ const Contacts = () => {
             </CardHeader>
             <CardContent className="text-center space-y-2">
               <div>
-                <p className="font-semibold">+998 90 123 45 67</p>
+                <p className="font-semibold">+992 927 55 79 19</p>
                 <p className="text-sm text-muted-foreground">Основной номер</p>
-              </div>
-              <div>
-                <p className="font-semibold">+998 91 234 56 78</p>
-                <p className="text-sm text-muted-foreground">Консультации</p>
-              </div>
-              <div>
-                <p className="font-semibold">+998 93 345 67 89</p>
-                <p className="text-sm text-muted-foreground">Заказы</p>
               </div>
             </CardContent>
           </Card>
@@ -64,15 +54,15 @@ const Contacts = () => {
             <CardContent className="text-center space-y-2">
               <div>
                 <p className="font-semibold">Пн - Пт:</p>
-                <p className="text-muted-foreground">9:00 - 19:00</p>
+                <p className="text-muted-foreground">08:00 - 12:00, 13:00 - 18:00</p>
               </div>
               <div>
                 <p className="font-semibold">Суббота:</p>
-                <p className="text-muted-foreground">9:00 - 17:00</p>
+                <p className="text-muted-foreground">08:00 - 12:00, 13:00 - 18:00</p>
               </div>
               <div>
                 <p className="font-semibold">Воскресенье:</p>
-                <p className="text-muted-foreground">10:00 - 16:00</p>
+                <p className="text-muted-foreground">Выходной</p>
               </div>
             </CardContent>
           </Card>
@@ -88,7 +78,7 @@ const Contacts = () => {
                 <Button 
                   size="lg" 
                   className="w-full"
-                  onClick={() => window.open('tel:+998901234567')}
+                  onClick={() => window.open('tel:+992927557919')}
                 >
                   <Phone className="w-5 h-5 mr-2" />
                   Позвонить
