@@ -57,11 +57,26 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        brand: {
+          green: "hsl(var(--brand-green))",
+          "green-light": "hsl(var(--brand-green-light))",
+          "green-dark": "hsl(var(--brand-green-dark))",
+          cream: "hsl(var(--brand-cream))",
+          "cream-light": "hsl(var(--brand-cream-light))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      backgroundImage: {
+        'gradient-primary': 'var(--gradient-primary)',
+        'gradient-hero': 'var(--gradient-hero)',
+      },
+      boxShadow: {
+        'brand': 'var(--shadow-brand)',
+        'card': 'var(--shadow-card)',
       },
       keyframes: {
         "accordion-down": {
