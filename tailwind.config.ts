@@ -58,9 +58,9 @@ export default {
           ring: "hsl(var(--sidebar-ring))",
         },
         brand: {
-          green: "hsl(var(--brand-green))",
-          "green-light": "hsl(var(--brand-green-light))",
-          "green-dark": "hsl(var(--brand-green-dark))",
+          blue: "hsl(var(--brand-blue))",
+          "blue-light": "hsl(var(--brand-blue-light))",
+          "blue-dark": "hsl(var(--brand-blue-dark))",
           cream: "hsl(var(--brand-cream))",
           "cream-light": "hsl(var(--brand-cream-light))",
         },

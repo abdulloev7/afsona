@@ -7,36 +7,44 @@ import { Link } from "react-router-dom";
 const Tools = () => {
   const tools = [
     {
-      name: "Набор кистей Professional",
-      description: "Профессиональные кисти разных размеров",
-      price: "от 25 000 сум",
-      image: "https://images.unsplash.com/photo-1572543198743-46d1c8067e4d?w=300&h=300&fit=crop",
-      features: ["Натуральная щетина", "Эргономичные ручки", "Долговечные"],
-      eco: false
-    },
-    {
-      name: "Валики и насадки Premium",
-      description: "Качественные валики для идеального нанесения",
-      price: "от 15 000 сум",
-      image: "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=300&h=300&fit=crop",
-      features: ["Разная длина ворса", "Сменные насадки", "Равномерное покрытие"],
-      eco: false
-    },
-    {
-      name: "Малярная лента Pro",
-      description: "Профессиональная защитная лента",
-      price: "от 8 000 сум",
-      image: "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=300&h=300&fit=crop",
-      features: ["Четкие границы", "Легко снимается", "Разная ширина"],
-      eco: false
-    },
-    {
-      name: "Защитная пленка Cover",
-      description: "Надежная защита мебели и пола",
-      price: "от 12 000 сум",
+      name: "Клей P-18 супермастика",
+      description: "Профессиональный монтажный клей",
+      price: "от 450 Т",
       image: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=300&h=300&fit=crop",
-      features: ["Прочная", "Антистатическая", "Удобное крепление"],
-      eco: false
+      features: ["Высокая адгезия", "Быстрое схватывание", "Универсальное применение"],
+      eco: false,
+      brand: "Raduga",
+      sizes: ["1 кг", "3,5 кг"]
+    },
+    {
+      name: "SOUDAL FIX ALL HIGH TACK WHITE",
+      description: "Универсальный монтажный клей",
+      price: "от 350 Т",
+      image: "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=300&h=300&fit=crop",
+      features: ["Высокая начальная липкость", "Белого цвета", "Эластичный"],
+      eco: false,
+      brand: "Soudal",
+      sizes: ["290 ML"]
+    },
+    {
+      name: "Пена Genius Gun SOUDAFOAM COMFORT",
+      description: "Профессиональная монтажная пена с аппликатором",
+      price: "от 550 Т",
+      image: "https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=300&h=300&fit=crop",
+      features: ["С аппликатором Genius Gun", "Комфортное нанесение", "Высокое качество"],
+      eco: false,
+      brand: "Soudal",
+      sizes: ["750 ML"]
+    },
+    {
+      name: "Силикон прозрачный SOUDAL SILICONE U",
+      description: "Универсальный прозрачный силиконовый герметик",
+      price: "от 280 Т",
+      image: "https://images.unsplash.com/photo-1590736969955-71cc94901144?w=300&h=300&fit=crop",
+      features: ["Прозрачный", "Атмосферостойкий", "Эластичный"],
+      eco: false,
+      brand: "Soudal",
+      sizes: ["280 GR"]
     }
   ];
 
@@ -70,9 +78,9 @@ const Tools = () => {
                 <div className="flex justify-between items-start mb-2">
                   <CardTitle className="text-lg text-primary">{tool.name}</CardTitle>
                   {tool.eco && (
-                    <Badge variant="secondary" className="bg-brand-green-light text-white">
-                      ЭКО
-                    </Badge>
+                     <Badge variant="secondary" className="bg-brand-blue-light text-white">
+                       ЭКО
+                     </Badge>
                   )}
                 </div>
                 <CardDescription>{tool.description}</CardDescription>
@@ -85,7 +93,7 @@ const Tools = () => {
                   <ul className="space-y-1">
                     {tool.features.map((feature, featureIndex) => (
                       <li key={featureIndex} className="flex items-center text-sm">
-                        <span className="w-2 h-2 bg-brand-green rounded-full mr-2 flex-shrink-0"></span>
+                        <span className="w-2 h-2 bg-brand-blue rounded-full mr-2 flex-shrink-0"></span>
                         {feature}
                       </li>
                     ))}

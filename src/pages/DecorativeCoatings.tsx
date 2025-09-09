@@ -7,36 +7,44 @@ import { Link } from "react-router-dom";
 const DecorativeCoatings = () => {
   const coatings = [
     {
-      name: "Венецианская штукатурка Venezia",
-      description: "Роскошный эффект мрамора",
-      price: "от 150 000 сум",
-      image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=300&h=300&fit=crop",
-      features: ["Эффект мрамора", "Глубина цвета", "Элитность"],
-      eco: false
+      name: "Штукатурка декоративная Veneziano Радуга-37",
+      description: "Декоративная штукатурка с эффектом венецианской штукатурки",
+      price: "от 1 200 Т",
+      image: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=300&h=300&fit=crop",
+      features: ["Венецианский эффект", "Водостойкая", "Элитный внешний вид"],
+      eco: false,
+      brand: "Raduga",
+      sizes: ["5 кг"]
     },
     {
-      name: "Текстурная краска Relief",
-      description: "Создает объемные рельефные поверхности",
-      price: "от 95 000 сум",
-      image: "https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=300&h=300&fit=crop",
-      features: ["Объемная текстура", "Скрывает дефекты", "Уникальный узор"],
-      eco: false
-    },
-    {
-      name: "Металлик покрытие Shine",
-      description: "Металлический блеск и сияние",
-      price: "от 180 000 сум",
+      name: "Эмаль Gold декоративная Радуга-117",
+      description: "Перламутровая лессирующая декоративная эмаль",
+      price: "от 850 Т",
       image: "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=300&h=300&fit=crop",
-      features: ["Металлический блеск", "Золото, серебро, бронза", "Эксклюзивность"],
-      eco: false
+      features: ["Перламутровый эффект", "Золотистый оттенок", "Лессирующая"],
+      eco: false,
+      brand: "Raduga",
+      sizes: ["0,1 л"]
     },
     {
-      name: "Перламутровые краски Pearl",
-      description: "Переливающийся перламутровый эффект",
-      price: "от 120 000 сум",
-      image: "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=300&h=300&fit=crop",
-      features: ["Перламутр", "Игра света", "Изысканность"],
-      eco: false
+      name: "Шпатлевка для деревянных изделий Радуга-0023",
+      description: "Акриловая шпатлевка цвет белый",
+      price: "от 400 Т",
+      image: "https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=300&h=300&fit=crop",
+      features: ["Для дерева", "Белого цвета", "Акриловая основа"],
+      eco: true,
+      brand: "Raduga",
+      sizes: ["0,85 кг"]
+    },
+    {
+      name: "Шпатлевка на виниловой основе Vinyl Finish",
+      description: "Финишная шпатлевка на виниловой основе",
+      price: "от 950 Т",
+      image: "https://images.unsplash.com/photo-1590736969955-71cc94901144?w=300&h=300&fit=crop",
+      features: ["Виниловая основа", "Финишная", "Гладкое покрытие"],
+      eco: false,
+      brand: "Raduga",
+      sizes: ["14 кг"]
     }
   ];
 
@@ -70,9 +78,9 @@ const DecorativeCoatings = () => {
                 <div className="flex justify-between items-start mb-2">
                   <CardTitle className="text-lg text-primary">{coating.name}</CardTitle>
                   {coating.eco && (
-                    <Badge variant="secondary" className="bg-brand-green-light text-white">
-                      ЭКО
-                    </Badge>
+                     <Badge variant="secondary" className="bg-brand-blue-light text-white">
+                       ЭКО
+                     </Badge>
                   )}
                 </div>
                 <CardDescription>{coating.description}</CardDescription>
@@ -85,7 +93,7 @@ const DecorativeCoatings = () => {
                   <ul className="space-y-1">
                     {coating.features.map((feature, featureIndex) => (
                       <li key={featureIndex} className="flex items-center text-sm">
-                        <span className="w-2 h-2 bg-brand-green rounded-full mr-2 flex-shrink-0"></span>
+                        <span className="w-2 h-2 bg-brand-blue rounded-full mr-2 flex-shrink-0"></span>
                         {feature}
                       </li>
                     ))}

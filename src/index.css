@@ -17,16 +17,16 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 155 35% 25%;
 
-    --primary: 155 50% 35%;
+    --primary: 220 85% 40%;
     --primary-foreground: 45 25% 95%;
 
     --secondary: 45 40% 88%;
-    --secondary-foreground: 155 35% 25%;
+    --secondary-foreground: 220 85% 40%;
 
     --muted: 45 30% 92%;
-    --muted-foreground: 155 20% 45%;
+    --muted-foreground: 220 20% 45%;
 
-    --accent: 155 40% 45%;
+    --accent: 220 70% 50%;
     --accent-foreground: 45 25% 95%;
 
     --destructive: 0 84.2% 60.2%;
@@ -34,22 +34,22 @@ All colors MUST be HSL.
 
     --border: 45 20% 85%;
     --input: 45 20% 90%;
-    --ring: 155 50% 35%;
+    --ring: 220 85% 40%;
 
     /* Custom AFSONA Brand Colors */
-    --brand-green: 155 50% 35%;
-    --brand-green-light: 155 40% 45%;
-    --brand-green-dark: 155 60% 25%;
+    --brand-blue: 220 85% 40%;
+    --brand-blue-light: 220 70% 50%;
+    --brand-blue-dark: 220 95% 30%;
     --brand-cream: 45 40% 88%;
     --brand-cream-light: 45 50% 92%;
     
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--brand-green)), hsl(var(--brand-green-light)));
-    --gradient-hero: linear-gradient(135deg, hsl(var(--brand-green)) 0%, hsl(var(--brand-green-dark)) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(var(--brand-blue)), hsl(var(--brand-blue-light)));
+    --gradient-hero: linear-gradient(135deg, hsl(var(--brand-blue)) 0%, hsl(var(--brand-blue-dark)) 100%);
     
     /* Shadows */
-    --shadow-brand: 0 10px 30px -10px hsl(var(--brand-green) / 0.3);
-    --shadow-card: 0 4px 20px -4px hsl(var(--brand-green) / 0.15);
+    --shadow-brand: 0 10px 30px -10px hsl(var(--brand-blue) / 0.3);
+    --shadow-card: 0 4px 20px -4px hsl(var(--brand-blue) / 0.15);
 
     --radius: 0.5rem;
 

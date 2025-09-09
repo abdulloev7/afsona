@@ -7,36 +7,44 @@ import { Link } from "react-router-dom";
 const Primers = () => {
   const primers = [
     {
-      name: "Универсальная грунтовка Multi-Base",
-      description: "Подходит для всех типов поверхностей",
-      price: "от 35 000 сум",
-      image: "https://images.unsplash.com/photo-1572543198743-46d1c8067e4d?w=300&h=300&fit=crop",
-      features: ["Высокая адгезия", "Быстросохнущая", "Экономичная"],
-      eco: true
+      name: "Alantex Primer 10л",
+      description: "Универсальная укрепляющая акриловая грунтовка для внутренних работ",
+      price: "1 995 Т",
+      image: "/lovable-uploads/c88946de-deb3-4226-930f-77d2f016ef99.png",
+      features: ["Образует эластичное покрытие", "Проникает глубоко в поверхность", "Уменьшает расход краски", "Время высыхания: 1 час"],
+      eco: true,
+      brand: "Alantex",
+      sizes: ["5 л", "10 л"]
     },
     {
-      name: "Глубокопроникающая грунтовка Deep",
-      description: "Укрепляет рыхлые и старые поверхности",
-      price: "от 45 000 сум",
-      image: "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=300&h=300&fit=crop",
-      features: ["Проникновение до 10мм", "Укрепляющая", "Пылесвязывающая"],
-      eco: true
-    },
-    {
-      name: "Антисептическая грунтовка Bio-Protect",
-      description: "Защита от плесени и грибка",
-      price: "от 55 000 сум",
-      image: "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=300&h=300&fit=crop",
-      features: ["Биозащита", "Длительная защита", "Безопасная"],
-      eco: true
-    },
-    {
-      name: "Адгезионная грунтовка Contact",
-      description: "Для сложных гладких поверхностей",
-      price: "от 60 000 сум",
+      name: "PRIMER грунтовка концентрат Радуга-019",
+      description: "Акриловая грунтовка концентрат",
+      price: "от 450 Т",
       image: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=300&h=300&fit=crop",
-      features: ["Сверхсильное сцепление", "Для кафеля", "Для металла"],
-      eco: true
+      features: ["Концентрированная формула", "Экономичный расход", "Глубокое проникновение"],
+      eco: true,
+      brand: "Raduga",
+      sizes: ["1 л"]
+    },
+    {
+      name: "Грунтовка укрепляющая Радуга-26",
+      description: "Акриловая укрепляющая грунтовка",
+      price: "от 650 Т",
+      image: "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=300&h=300&fit=crop",
+      features: ["Укрепляет основание", "Улучшает адгезию", "Быстросохнущая"],
+      eco: true,
+      brand: "Raduga",
+      sizes: ["5 л", "10 л"]
+    },
+    {
+      name: "Кварц Грунт Бетон Контакт Радуга-30",
+      description: "Акриловый грунт с кварцевым наполнителем",
+      price: "от 900 Т",
+      image: "https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=300&h=300&fit=crop",
+      features: ["С кварцевым песком", "Для гладких поверхностей", "Отличная адгезия"],
+      eco: false,
+      brand: "Raduga",
+      sizes: ["3,5 кг", "7 кг", "15 кг"]
     }
   ];
 
@@ -70,9 +78,9 @@ const Primers = () => {
                 <div className="flex justify-between items-start mb-2">
                   <CardTitle className="text-lg text-primary">{primer.name}</CardTitle>
                   {primer.eco && (
-                    <Badge variant="secondary" className="bg-brand-green-light text-white">
-                      ЭКО
-                    </Badge>
+                     <Badge variant="secondary" className="bg-brand-blue-light text-white">
+                       ЭКО
+                     </Badge>
                   )}
                 </div>
                 <CardDescription>{primer.description}</CardDescription>
@@ -85,7 +93,7 @@ const Primers = () => {
                   <ul className="space-y-1">
                     {primer.features.map((feature, featureIndex) => (
                       <li key={featureIndex} className="flex items-center text-sm">
-                        <span className="w-2 h-2 bg-brand-green rounded-full mr-2 flex-shrink-0"></span>
+                        <span className="w-2 h-2 bg-brand-blue rounded-full mr-2 flex-shrink-0"></span>
                         {feature}
                       </li>
                     ))}

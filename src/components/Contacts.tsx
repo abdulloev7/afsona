@@ -18,7 +18,7 @@ const Contacts = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
           <Card className="shadow-card">
             <CardHeader className="text-center">
-              <div className="w-16 h-16 bg-brand-green-light rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-brand-blue-light rounded-full flex items-center justify-center mx-auto mb-4">
                 <MapPin className="w-8 h-8 text-white" />
               </div>
               <CardTitle className="text-primary">Наш адрес</CardTitle>
@@ -46,7 +46,7 @@ const Contacts = () => {
 
           <Card className="shadow-card">
             <CardHeader className="text-center">
-              <div className="w-16 h-16 bg-brand-green rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-brand-blue rounded-full flex items-center justify-center mx-auto mb-4">
                 <Clock className="w-8 h-8 text-white" />
               </div>
               <CardTitle className="text-primary">Режим работы</CardTitle>

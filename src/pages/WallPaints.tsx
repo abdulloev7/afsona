@@ -7,52 +7,44 @@ import { Link } from "react-router-dom";
 const WallPaints = () => {
   const wallPaints = [
     {
-      name: "Водоэмульсионная краска Premium",
-      description: "Идеальна для жилых помещений, экологически чистая",
-      price: "от 45 000 сум",
-      image: "https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=300&h=300&fit=crop",
-      features: ["Без запаха", "Быстросохнущая", "Моющаяся"],
-      eco: true
+      name: "Alantex Interior Washing 14кг",
+      description: "Акриловая снежнобелая эмульсия для стен и потолков",
+      price: "895 Т",
+      image: "/lovable-uploads/71f2c8f2-9a50-40f6-a04a-ed72628711e1.png",
+      features: ["Высокая белизна", "Высокая укрывистость", "Без запаха", "Не токсична", "Пожаровзрывобезопасна"],
+      eco: true,
+      brand: "Alantex",
+      sizes: ["1,3 кг", "3,5 кг", "7 кг", "14 кг", "24 кг"]
     },
     {
-      name: "Акриловая краска Luxe",
-      description: "Премиум качество для особых интерьеров",
-      price: "от 65 000 сум",
-      image: "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=300&h=300&fit=crop",
-      features: ["Устойчива к мытью", "Богатая палитра", "Долговечная"],
-      eco: true
-    },
-    {
-      name: "Силиконовая краска Pro",
-      description: "Профессиональное решение для влажных помещений",
-      price: "от 85 000 сум",
+      name: "Краска моющаяся Радуга-210 база С",
+      description: "Акриловая моющаяся краска для внутренних работ",
+      price: "от 850 Т",
       image: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=300&h=300&fit=crop",
-      features: ["Влагостойкая", "Паропроницаемая", "Антигрибковая"],
-      eco: true
+      features: ["Моющаяся", "Высокая укрывистость", "Долговечная"],
+      eco: true,
+      brand: "Raduga",
+      sizes: ["1 кг", "5 кг", "10 кг", "14 кг", "24 кг"]
     },
     {
-      name: "Латексная краска Classic",
-      description: "Универсальное решение для любых стен",
-      price: "от 55 000 сум",
-      image: "https://images.unsplash.com/photo-1572543198743-46d1c8067e4d?w=300&h=300&fit=crop",
-      features: ["Эластичная", "Укрывистая", "Экономичная"],
-      eco: true
+      name: "Краска Комфорт",
+      description: "Универсальная краска для стен и потолков",
+      price: "от 600 Т",
+      image: "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=300&h=300&fit=crop",
+      features: ["Экономичная", "Легко наносится", "Быстро сохнет"],
+      eco: true,
+      brand: "Raduga",
+      sizes: ["1,3 кг", "3,5 кг", "7 кг", "10 кг", "14 кг", "24 кг"]
     },
     {
-      name: "Краска для детских комнат",
-      description: "Специально для детских и спален",
-      price: "от 70 000 сум",
-      image: "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=300&h=300&fit=crop",
-      features: ["100% безопасна", "Гипоаллергенная", "Яркие цвета"],
-      eco: true
-    },
-    {
-      name: "Моющаяся краска для кухни",
-      description: "Выдерживает частое мытье и пар",
-      price: "от 60 000 сум",
-      image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=300&h=300&fit=crop",
-      features: ["Жиростойкая", "Легко моется", "Термостойкая"],
-      eco: true
+      name: "Краска P-25",
+      description: "Профессиональная краска для внутренних работ",
+      price: "от 750 Т",
+      image: "https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=300&h=300&fit=crop",
+      features: ["Профессиональное качество", "Отличная укрывистость", "Долговечная"],
+      eco: false,
+      brand: "Raduga",
+      sizes: ["7 кг", "14 кг", "24 кг"]
     }
   ];
 
@@ -86,9 +78,9 @@ const WallPaints = () => {
                 <div className="flex justify-between items-start mb-2">
                   <CardTitle className="text-lg text-primary">{paint.name}</CardTitle>
                   {paint.eco && (
-                    <Badge variant="secondary" className="bg-brand-green-light text-white">
-                      ЭКО
-                    </Badge>
+                     <Badge variant="secondary" className="bg-brand-blue-light text-white">
+                       ЭКО
+                     </Badge>
                   )}
                 </div>
                 <CardDescription>{paint.description}</CardDescription>
@@ -101,7 +93,7 @@ const WallPaints = () => {
                   <ul className="space-y-1">
                     {paint.features.map((feature, featureIndex) => (
                       <li key={featureIndex} className="flex items-center text-sm">
-                        <span className="w-2 h-2 bg-brand-green rounded-full mr-2 flex-shrink-0"></span>
+                        <span className="w-2 h-2 bg-brand-blue rounded-full mr-2 flex-shrink-0"></span>
                         {feature}
                       </li>
                     ))}
