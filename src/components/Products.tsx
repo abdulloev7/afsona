@@ -96,11 +96,11 @@ const Products = () => {
               <CardHeader>
                 <div className="flex justify-between items-start mb-2">
                   <CardTitle className="text-xl text-primary">{category.title}</CardTitle>
-                  {category.eco && (
-                    <Badge variant="secondary" className="bg-brand-blue-light text-white">
-                      ЭКО
-                    </Badge>
-                  )}
+                   {category.eco && (
+                     <Badge variant="secondary" className="bg-brand-green-light text-white">
+                       ЭКО
+                     </Badge>
+                   )}
                 </div>
                 <CardDescription className="text-base">
                   {category.description}

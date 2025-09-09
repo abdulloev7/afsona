@@ -78,7 +78,7 @@ const Primers = () => {
                 <div className="flex justify-between items-start mb-2">
                   <CardTitle className="text-lg text-primary">{primer.name}</CardTitle>
                   {primer.eco && (
-                     <Badge variant="secondary" className="bg-brand-blue-light text-white">
+                     <Badge variant="secondary" className="bg-brand-green-light text-white">
                        ЭКО
                      </Badge>
                   )}
@@ -93,7 +93,7 @@ const Primers = () => {
                   <ul className="space-y-1">
                     {primer.features.map((feature, featureIndex) => (
                       <li key={featureIndex} className="flex items-center text-sm">
-                        <span className="w-2 h-2 bg-brand-blue rounded-full mr-2 flex-shrink-0"></span>
+                        <span className="w-2 h-2 bg-brand-green rounded-full mr-2 flex-shrink-0"></span>
                         {feature}
                       </li>
                     ))}
