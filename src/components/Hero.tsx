@@ -8,12 +8,9 @@ const Hero = () => {
   };
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-hero"></div>
-      
+    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background">
       {/* Content */}
-      <div className="relative container mx-auto px-4 text-center text-primary-foreground">
+      <div className="relative container mx-auto px-4 text-center text-foreground">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
             AFSONA
@@ -39,7 +36,7 @@ const Hero = () => {
               size="lg" 
               variant="outline"
               onClick={() => document.getElementById('contacts')?.scrollIntoView({ behavior: 'smooth' })}
-              className="text-lg px-8 py-6 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10"
+              className="text-lg px-8 py-6"
             >
               Связаться с нами
             </Button>
@@ -49,7 +46,7 @@ const Hero = () => {
 
       {/* Scroll indicator */}
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-        <ArrowDown className="w-6 h-6 text-primary-foreground/70" />
+        <ArrowDown className="w-6 h-6 text-muted-foreground" />
       </div>
     </section>
   );
