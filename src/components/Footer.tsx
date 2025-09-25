@@ -1,3 +1,5 @@
+import afsona_logo from "@/assets/afsona-logo.png";
+
 const Footer = () => {
   return (
     <footer className="bg-background text-foreground border-t border-border py-12">
@@ -6,7 +8,7 @@ const Footer = () => {
           <div>
             <div className="flex items-center space-x-3 mb-4">
               <img 
-                src="/lovable-uploads/0cfee039-9423-4008-a9cd-6439832fb35b.png" 
+                src={afsona_logo} 
                 alt="AFSONA Logo" 
                 className="h-10 w-auto"
               />
