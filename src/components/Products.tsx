@@ -92,12 +92,12 @@ const Products = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {productCategories.map((category, index) => (
-            <Card key={index} className="shadow-card hover:shadow-brand transition-all duration-300 hover:-translate-y-1">
+            <Card key={index} className="shadow-card transition-all duration-300 hover:-translate-y-1">
               <CardHeader>
                 <div className="flex justify-between items-start mb-2">
                   <CardTitle className="text-xl text-primary">{category.title}</CardTitle>
                    {category.eco && (
-                     <Badge variant="secondary" className="bg-brand-green-light text-white">
+                     <Badge variant="secondary">
                        ЭКО
                      </Badge>
                    )}
@@ -110,7 +110,7 @@ const Products = () => {
                 <ul className="space-y-2">
                   {category.products.map((product, productIndex) => (
                     <li key={productIndex} className="flex items-center text-sm">
-                      <span className="w-2 h-2 bg-accent rounded-full mr-3 flex-shrink-0"></span>
+                      <span className="w-2 h-2 bg-muted-foreground rounded-full mr-3 flex-shrink-0"></span>
                       {product}
                     </li>
                   ))}

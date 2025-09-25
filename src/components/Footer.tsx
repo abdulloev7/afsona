@@ -1,6 +1,6 @@
 const Footer = () => {
   return (
-    <footer className="bg-primary text-primary-foreground py-12">
+    <footer className="bg-background text-foreground border-t border-border py-12">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
@@ -8,7 +8,7 @@ const Footer = () => {
               <img 
                 src="/lovable-uploads/0cfee039-9423-4008-a9cd-6439832fb35b.png" 
                 alt="AFSONA Logo" 
-                className="h-10 w-auto filter brightness-0 invert"
+                className="h-10 w-auto"
               />
               <div>
                 <h3 className="text-xl font-bold">AFSONA</h3>
@@ -43,7 +43,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="border-t border-primary-foreground/20 mt-8 pt-8 text-center">
+        <div className="border-t border-border mt-8 pt-8 text-center">
           <p className="text-sm opacity-75">
             © 2024 AFSONA. Все права защищены. Эко материалы для ремонта.
           </p>

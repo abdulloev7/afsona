@@ -1,6 +1,6 @@
 const About = () => {
   return (
-    <section id="about" className="py-20 bg-brand-cream-light">
+    <section id="about" className="py-20 bg-background">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
@@ -44,7 +44,7 @@ const About = () => {
               </div>
             </div>
 
-            <div className="bg-gradient-primary rounded-lg p-8 text-primary-foreground">
+            <div className="bg-card border rounded-lg p-8 text-foreground shadow-card">
               <h3 className="text-2xl font-bold mb-6">Наши преимущества</h3>
               
               <div className="space-y-6">
