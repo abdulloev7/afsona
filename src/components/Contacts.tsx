@@ -92,7 +92,7 @@ const Contacts = () => {
               <div className="text-center">
                 <div className="flex items-center justify-center space-x-2 text-muted-foreground">
                   <Mail className="w-4 h-4" />
-                  <span>info@afsona.uz</span>
+                  <span>info@afsona.com.tj</span>
                 </div>
               </div>
               
