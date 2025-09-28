@@ -53,12 +53,10 @@ const Contacts = () => {
             </CardHeader>
             <CardContent className="text-center space-y-2">
               <div>
-                <p className="font-semibold">Пн - Пт:</p>
+                <p className="font-semibold">Пн - Сб:</p>
                 <p className="text-muted-foreground">08:00 - 12:00, 13:00 - 18:00</p>
               </div>
-              <div>
-                <p className="font-semibold">Суббота:</p>
-                <p className="text-muted-foreground">08:00 - 12:00, 13:00 - 18:00</p>
+            
               </div>
               <div>
                 <p className="font-semibold">Воскресенье:</p>
