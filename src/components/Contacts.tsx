@@ -56,8 +56,6 @@ const Contacts = () => {
                 <p className="font-semibold">Пн - Сб:</p>
                 <p className="text-muted-foreground">08:00 - 12:00, 13:00 - 18:00</p>
               </div>
-            
-              </div>
               <div>
                 <p className="font-semibold">Воскресенье:</p>
                 <p className="text-muted-foreground">Выходной</p>
