@@ -39,9 +39,8 @@ const Footer = () => {
             <div className="space-y-2 text-sm opacity-90">
               <p>📍 г. Худжанд, 20-й микрорайон, 27</p>
               <p>📞 +992 927 55 79 19</p>
-              <p>✉️ info@afsona.uz</p>
-              <p>🕒 Пн-Пт: 08:00-12:00, 13:00-18:00</p>
-              <p>🕒 Суббота: 08:00-12:00, 13:00-18:00</p>
+              <p>✉️ info@afsona.com.tj</p>
+              <p>🕒 Пн-Сб: 08:00-12:00, 13:00-18:00</p>
               <p>🕒 Воскресенье: Выходной</p>
             </div>
           </div>
@@ -49,7 +48,7 @@ const Footer = () => {
 
         <div className="border-t border-border mt-8 pt-8 text-center">
           <p className="text-sm opacity-75">
-            © 2024 AFSONA. Все права защищены. Эко материалы для ремонта.
+            © 2025 AFSONA. Все права защищены. Эко материалы для ремонта.
           </p>
         </div>
       </div>
