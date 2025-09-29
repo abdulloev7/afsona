@@ -1,132 +1,204 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, ShoppingCart, Info } from "lucide-react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { ArrowLeft, ShoppingCart, Leaf } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useCart } from '@/contexts/CartContext';
+import { useAuth } from '@/contexts/AuthContext';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+import { useToast } from '@/hooks/use-toast';
+
+interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  image?: string;
+  features: string[];
+  eco: boolean;
+  brand: string;
+  sizes: string[];
+  in_stock: boolean;
+}
 
 const WallPaints = () => {
-  const wallPaints = [
-    {
-      name: "Alantex Interior Washing 14кг",
-      description: "Акриловая снежнобелая эмульсия для стен и потолков",
-      price: "895 Т",
-      image: "/lovable-uploads/71f2c8f2-9a50-40f6-a04a-ed72628711e1.png",
-      features: ["Высокая белизна", "Высокая укрывистость", "Без запаха", "Не токсична", "Пожаровзрывобезопасна"],
-      eco: true,
-      brand: "Alantex",
-      sizes: ["1,3 кг", "3,5 кг", "7 кг", "14 кг", "24 кг"]
-    },
-    {
-      name: "Краска моющаяся Радуга-210 база С",
-      description: "Акриловая моющаяся краска для внутренних работ",
-      price: "от 850 Т",
-      image: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=300&h=300&fit=crop",
-      features: ["Моющаяся", "Высокая укрывистость", "Долговечная"],
-      eco: true,
-      brand: "Raduga",
-      sizes: ["1 кг", "5 кг", "10 кг", "14 кг", "24 кг"]
-    },
-    {
-      name: "Краска Комфорт",
-      description: "Универсальная краска для стен и потолков",
-      price: "от 600 Т",
-      image: "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=300&h=300&fit=crop",
-      features: ["Экономичная", "Легко наносится", "Быстро сохнет"],
-      eco: true,
-      brand: "Raduga",
-      sizes: ["1,3 кг", "3,5 кг", "7 кг", "10 кг", "14 кг", "24 кг"]
-    },
-    {
-      name: "Краска P-25",
-      description: "Профессиональная краска для внутренних работ",
-      price: "от 750 Т",
-      image: "https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=300&h=300&fit=crop",
-      features: ["Профессиональное качество", "Отличная укрывистость", "Долговечная"],
-      eco: false,
-      brand: "Raduga",
-      sizes: ["7 кг", "14 кг", "24 кг"]
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const { addToCart } = useCart();
+  const { user } = useAuth();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    fetchWallPaints();
+  }, []);
+
+  const fetchWallPaints = async () => {
+    try {
+      // First get the wall-paints category ID
+      const { data: category, error: categoryError } = await supabase
+        .from('categories')
+        .select('id')
+        .eq('slug', 'wall-paints')
+        .single();
+
+      if (categoryError) throw categoryError;
+
+      // Then fetch products for this category
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('category_id', category.id)
+        .eq('in_stock', true);
+
+      if (error) throw error;
+      setProducts(data || []);
+    } catch (error) {
+      console.error('Error fetching wall paints:', error);
+      toast({
+        title: "Ошибка",
+        description: "Не удалось загрузить товары",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  const handleAddToCart = async (productId: string) => {
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+    await addToCart(productId, 1);
+  };
+
+  const handleOrderCall = () => {
+    window.open('tel:+992927557919', '_self');
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="flex-1 py-16">
+          <div className="container mx-auto px-4 text-center">
+            <div className="py-16">Загружаем товары...</div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center mb-8">
-          <Link to="/">
-            <Button variant="outline" size="sm" className="mr-4">
-              <ArrowLeft className="w-4 h-4 mr-2" />
+      <Header />
+      <main className="flex-1 py-16">
+        <div className="container mx-auto px-4">
+          <div className="mb-8">
+            <Button 
+              variant="outline" 
+              onClick={() => navigate('/')}
+              className="mb-6"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
               Назад к ассортименту
             </Button>
-          </Link>
-          <div>
-            <h1 className="text-3xl md:text-4xl font-bold text-primary">Краски для стен</h1>
-            <p className="text-muted-foreground mt-2">Высококачественные экологичные краски для внутренних работ</p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {wallPaints.map((paint, index) => (
-            <Card key={index} className="shadow-card hover:shadow-brand transition-all duration-300 hover:-translate-y-1">
-              <div className="aspect-square overflow-hidden rounded-t-lg">
-                <img 
-                  src={paint.image} 
-                  alt={paint.name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <CardHeader>
-                <div className="flex justify-between items-start mb-2">
-                  <CardTitle className="text-lg text-primary">{paint.name}</CardTitle>
-                  {paint.eco && (
-                     <Badge variant="secondary" className="bg-brand-green-light text-white">
-                       ЭКО
-                     </Badge>
-                  )}
-                </div>
-                <CardDescription>{paint.description}</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="text-2xl font-bold text-accent">{paint.price}</div>
-                
-                <div className="space-y-2">
-                  <h4 className="font-medium text-sm">Особенности:</h4>
-                  <ul className="space-y-1">
-                    {paint.features.map((feature, featureIndex) => (
-                      <li key={featureIndex} className="flex items-center text-sm">
-                        <span className="w-2 h-2 bg-brand-green rounded-full mr-2 flex-shrink-0"></span>
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2 pt-4">
-                  <Button size="sm" className="w-full">
-                    <ShoppingCart className="w-4 h-4 mr-1" />
-                    Заказать
-                  </Button>
-                  <Button size="sm" variant="outline" className="w-full">
-                    <Info className="w-4 h-4 mr-1" />
-                    Подробнее
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        <div className="mt-16 text-center">
-          <div className="bg-brand-cream rounded-lg p-8 max-w-2xl mx-auto">
-            <h3 className="text-2xl font-bold mb-4 text-primary">Нужна консультация?</h3>
-            <p className="text-muted-foreground mb-6">
-              Наши специалисты помогут подобрать идеальную краску для ваших стен
+            
+            <h1 className="text-4xl font-bold mb-4">Краски для стен</h1>
+            <p className="text-muted-foreground text-lg">
+              Качественные краски для внутренних стен с различными финишами и свойствами
             </p>
-            <Button size="lg" onClick={() => window.open('tel:+992927557919')}>
-              Получить консультацию
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+            {products.map((product) => (
+              <Card key={product.id} className="flex flex-col">
+                <CardHeader>
+                  {product.image && (
+                    <img 
+                      src={product.image} 
+                      alt={product.name}
+                      className="w-full h-48 object-cover rounded-lg mb-4"
+                    />
+                  )}
+                  <div className="flex items-start justify-between">
+                    <CardTitle className="text-lg">{product.name}</CardTitle>
+                    {product.eco && (
+                      <Badge variant="secondary" className="ml-2">
+                        <Leaf className="h-3 w-3 mr-1" />
+                        ЭКО
+                      </Badge>
+                    )}
+                  </div>
+                </CardHeader>
+                <CardContent className="flex-1 flex flex-col">
+                  <p className="text-muted-foreground mb-4">{product.description}</p>
+                  
+                  <div className="text-2xl font-bold mb-4 text-primary">
+                    {product.price.toLocaleString('ru-RU')} сом.
+                  </div>
+                  
+                  <div className="mb-4">
+                    <h4 className="font-semibold mb-2">Особенности:</h4>
+                    <ul className="space-y-1">
+                      {product.features.map((feature, index) => (
+                        <li key={index} className="flex items-center text-sm">
+                          <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="mb-4">
+                    <h4 className="font-semibold mb-2">Доступные объемы:</h4>
+                    <div className="flex flex-wrap gap-1">
+                      {product.sizes.map((size, index) => (
+                        <Badge key={index} variant="outline" className="text-xs">
+                          {size}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="mt-auto pt-4 space-y-2">
+                    <Button 
+                      className="w-full" 
+                      onClick={() => handleAddToCart(product.id)}
+                    >
+                      <ShoppingCart className="h-4 w-4 mr-2" />
+                      В корзину
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      className="w-full"
+                      onClick={handleOrderCall}
+                    >
+                      Заказать по телефону
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="text-center bg-muted/50 rounded-lg p-8">
+            <h2 className="text-2xl font-bold mb-4">Нужна консультация?</h2>
+            <p className="text-muted-foreground mb-6">
+              Наши специалисты помогут выбрать подходящую краску для ваших задач
+            </p>
+            <Button onClick={handleOrderCall} size="lg">
+              Связаться: +992 927 55 79 19
             </Button>
           </div>
         </div>
-      </div>
+      </main>
+      <Footer />
     </div>
   );
 };
