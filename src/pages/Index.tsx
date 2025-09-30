@@ -1,5 +1,3 @@
-// src/pages/Index.tsx
-import { useEffect } from "react";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import Products from "@/components/Products";
@@ -9,10 +7,6 @@ import Footer from "@/components/Footer";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 
 const Index = () => {
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
   return (
     <AuroraBackground className="min-h-screen" showRadialGradient={false}>
       <div className="relative z-10 w-full">
