@@ -4,24 +4,19 @@ import Products from "@/components/Products";
 import About from "@/components/About";
 import Contacts from "@/components/Contacts";
 import Footer from "@/components/Footer";
-import { AuroraBackground } from "@/components/ui/aurora-background";
 
 const Index = () => {
   return (
-    <AuroraBackground className="min-h-screen" showRadialGradient={false}>
-      <div className="relative z-10 w-full">
-        <Header />
-        <main>
-          <Hero />
-          <div className="bg-background/95 backdrop-blur-sm">
-            <Products />
-            <About />
-            <Contacts />
-          </div>
-        </main>
-        <Footer />
-      </div>
-    </AuroraBackground>
+    <div className="min-h-screen">
+      <Header />
+      <main>
+        <Hero />
+        <Products />
+        <About />
+        <Contacts />
+      </main>
+      <Footer />
+    </div>
   );
 };
 
