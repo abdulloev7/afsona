@@ -3,80 +3,90 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+
+interface Category {
+  id: string;
+  name: string;
+  description: string | null;
+  slug: string;
+  productCount?: number;
+}
 
 const Products = () => {
-  const productCategories = [
-    {
-      title: "Краски для стен",
-      description: "Высококачественные экологичные краски для внутренних работ",
-      products: [
-        "Водоэмульсионная краска",
-        "Акриловая краска премиум класса", 
-        "Силиконовая краска",
-        "Латексная краска"
-      ],
-      eco: true,
-      link: "/wall-paints"
-    },
-    {
-      title: "Краски для потолка",
-      description: "Специальные составы для идеального потолка",
-      products: [
-        "Матовая краска для потолка",
-        "Супербелая краска",
-        "Краска с антибактериальным покрытием"
-      ],
-      eco: true,
-      link: "/ceiling-paints"
-    },
-    {
-      title: "Фасадные краски",
-      description: "Атмосферостойкие краски для наружных работ",
-      products: [
-        "Силикатная краска",
-        "Акриловая фасадная краска",
-        "Силоксановая краска премиум"
-      ],
-      eco: false,
-      link: "/facade-paints"
-    },
-    {
-      title: "Грунтовки и основы",
-      description: "Подготовительные материалы для качественной покраски",
-      products: [
-        "Универсальная грунтовка",
-        "Глубокопроникающая грунтовка",
-        "Антисептическая грунтовка",
-        "Адгезионная грунтовка"
-      ],
-      eco: true,
-      link: "/primers"
-    },
-    {
-      title: "Декоративные покрытия",
-      description: "Эксклюзивные материалы для создания уникальных поверхностей",
-      products: [
-        "Венецианская штукатурка",
-        "Текстурная краска",
-        "Металлик покрытия",
-        "Перламутровые краски"
-      ],
-      eco: false,
-      link: "/decorative-coatings"
-    },
-    {
-      title: "Инструменты",
-      description: "Профессиональные инструменты для идеального результата",
-      products: [
-        "Кисти различных размеров",
-        "Валики и насадки",
-        "Малярная лента",
-        "Защитная пленка"
-      ],
-      eco: false,
-      link: "/tools"
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const { data: categoriesData, error: categoriesError } = await supabase
+        .from('categories')
+        .select('*')
+        .order('name');
+
+      if (categoriesError) throw categoriesError;
+
+      // Fetch product count for each category
+      const categoriesWithCount = await Promise.all(
+        (categoriesData || []).map(async (category) => {
+          const { count } = await supabase
+            .from('products')
+            .select('*', { count: 'exact', head: true })
+            .eq('category_id', category.id);
+          
+          return {
+            ...category,
+            productCount: count || 0
+          };
+        })
+      );
+
+      setCategories(categoriesWithCount);
+    } catch (error: any) {
+      console.error('Error fetching categories:', error);
+      toast({
+        title: "Ошибка",
+        description: "Не удалось загрузить категории",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  const getCategoryLink = (slug: string) => {
+    // Map slugs to routes
+    const routeMap: Record<string, string> = {
+      'paints-coatings': '/wall-paints',
+      'adhesives-sealants': '/tools',
+      'primers-preparatory': '/primers',
+      'putties-leveling': '/tools',
+      'decorative-coatings': '/decorative-coatings',
+      'tints-thinners': '/tools',
+      'waterproofing': '/facade-paints',
+      'brushes-tools': '/tools',
+      'rollers': '/tools',
+      'spatulas-accessories': '/tools'
+    };
+    return routeMap[slug] || '/wall-paints';
+  };
+
+  if (loading) {
+    return (
+      <section id="products" className="py-20 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="text-center">Загрузка...</div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="products" className="py-20 bg-background">
@@ -91,33 +101,23 @@ const Products = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {productCategories.map((category, index) => (
-            <Card key={index} className="shadow-card transition-all duration-300 hover:-translate-y-1">
+          {categories.map((category) => (
+            <Card key={category.id} className="shadow-card transition-all duration-300 hover:-translate-y-1">
               <CardHeader>
                 <div className="flex justify-between items-start mb-2">
-                  <CardTitle className="text-xl text-primary">{category.title}</CardTitle>
-                   {category.eco && (
-                     <Badge variant="secondary">
-                       ЭКО
-                     </Badge>
-                   )}
+                  <CardTitle className="text-xl text-primary">{category.name}</CardTitle>
                 </div>
                 <CardDescription className="text-base">
-                  {category.description}
+                  {category.description || "Качественные материалы для профессионального использования"}
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2">
-                  {category.products.map((product, productIndex) => (
-                    <li key={productIndex} className="flex items-center text-sm">
-                      <span className="w-2 h-2 bg-muted-foreground rounded-full mr-3 flex-shrink-0"></span>
-                      {product}
-                    </li>
-                  ))}
-                </ul>
+                <div className="text-sm text-muted-foreground">
+                  {category.productCount} {category.productCount === 1 ? 'товар' : category.productCount && category.productCount < 5 ? 'товара' : 'товаров'} в категории
+                </div>
               </CardContent>
               <div className="p-6 pt-0">
-                <Link to={category.link}>
+                <Link to={getCategoryLink(category.slug)}>
                   <Button className="w-full">
                     Смотреть каталог
                     <ArrowRight className="w-4 h-4 ml-2" />
