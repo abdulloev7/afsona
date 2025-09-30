@@ -1,12 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, ShoppingCart, Leaf } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { useCart } from '@/contexts/CartContext';
-import { useAuth } from '@/contexts/AuthContext';
+import { ProductCard } from '@/components/ProductCard';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useToast } from '@/hooks/use-toast';
@@ -28,8 +25,6 @@ const WallPaints = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const { addToCart } = useCart();
-  const { user } = useAuth();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -66,14 +61,6 @@ const WallPaints = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleAddToCart = async (productId: string) => {
-    if (!user) {
-      navigate('/auth');
-      return;
-    }
-    await addToCart(productId, 1);
   };
 
   const handleOrderCall = () => {
@@ -117,73 +104,7 @@ const WallPaints = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
             {products.map((product) => (
-              <Card key={product.id} className="flex flex-col">
-                <CardHeader>
-                  {product.image && (
-                    <img 
-                      src={product.image} 
-                      alt={product.name}
-                      className="w-full h-48 object-cover rounded-lg mb-4"
-                    />
-                  )}
-                  <div className="flex items-start justify-between">
-                    <CardTitle className="text-lg">{product.name}</CardTitle>
-                    {product.eco && (
-                      <Badge variant="secondary" className="ml-2">
-                        <Leaf className="h-3 w-3 mr-1" />
-                        ЭКО
-                      </Badge>
-                    )}
-                  </div>
-                </CardHeader>
-                <CardContent className="flex-1 flex flex-col">
-                  <p className="text-muted-foreground mb-4">{product.description}</p>
-                  
-                  <div className="text-2xl font-bold mb-4 text-primary">
-                    {product.price.toLocaleString('ru-RU')} сом.
-                  </div>
-                  
-                  <div className="mb-4">
-                    <h4 className="font-semibold mb-2">Особенности:</h4>
-                    <ul className="space-y-1">
-                      {product.features.map((feature, index) => (
-                        <li key={index} className="flex items-center text-sm">
-                          <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div className="mb-4">
-                    <h4 className="font-semibold mb-2">Доступные объемы:</h4>
-                    <div className="flex flex-wrap gap-1">
-                      {product.sizes.map((size, index) => (
-                        <Badge key={index} variant="outline" className="text-xs">
-                          {size}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div className="mt-auto pt-4 space-y-2">
-                    <Button 
-                      className="w-full" 
-                      onClick={() => handleAddToCart(product.id)}
-                    >
-                      <ShoppingCart className="h-4 w-4 mr-2" />
-                      В корзину
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      className="w-full"
-                      onClick={handleOrderCall}
-                    >
-                      Заказать по телефону
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+              <ProductCard key={product.id} product={product} />
             ))}
           </div>
 
