@@ -54,7 +54,7 @@ const Hero = () => {
           </div>
         </div>
 
-        {/* Scroll indicator — перемещён внутрь motion.div */}
+        {/* Scroll indicator */}
         <div className="mt-12 animate-bounce">
           <ArrowDown className="w-6 h-6 text-muted-foreground mx-auto" />
         </div>
