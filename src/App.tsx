@@ -13,6 +13,14 @@ import FacadePaints from "./pages/FacadePaints";
 import Primers from "./pages/Primers";
 import DecorativeCoatings from "./pages/DecorativeCoatings";
 import Tools from "./pages/Tools";
+import Rollers from "./pages/Rollers";
+import BrushesTools from "./pages/BrushesTools";
+import SpatulasAccessories from "./pages/SpatulasAccessories";
+import AdhesivesSealants from "./pages/AdhesivesSealants";
+import PuttiesLeveling from "./pages/PuttiesLeveling";
+import TintsThinners from "./pages/TintsThinners";
+import PaintsCoatings from "./pages/PaintsCoatings";
+import Waterproofing from "./pages/Waterproofing";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
 import Cart from "./pages/Cart";
@@ -32,11 +40,19 @@ const App = () => (
               <Route path="/auth" element={<Auth />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/cart" element={<Cart />} />
+              <Route path="/paints-coatings" element={<PaintsCoatings />} />
               <Route path="/wall-paints" element={<WallPaints />} />
               <Route path="/ceiling-paints" element={<CeilingPaints />} />
               <Route path="/facade-paints" element={<FacadePaints />} />
               <Route path="/primers" element={<Primers />} />
               <Route path="/decorative-coatings" element={<DecorativeCoatings />} />
+              <Route path="/waterproofing" element={<Waterproofing />} />
+              <Route path="/adhesives-sealants" element={<AdhesivesSealants />} />
+              <Route path="/putties-leveling" element={<PuttiesLeveling />} />
+              <Route path="/tints-thinners" element={<TintsThinners />} />
+              <Route path="/brushes-tools" element={<BrushesTools />} />
+              <Route path="/rollers" element={<Rollers />} />
+              <Route path="/spatulas-accessories" element={<SpatulasAccessories />} />
               <Route path="/tools" element={<Tools />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />

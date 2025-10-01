@@ -64,18 +64,18 @@ const Products = () => {
   const getCategoryLink = (slug: string) => {
     // Map slugs to routes
     const routeMap: Record<string, string> = {
-      'paints-coatings': '/wall-paints',
-      'adhesives-sealants': '/tools',
+      'paints-and-coatings': '/paints-coatings',
+      'adhesives-sealants': '/adhesives-sealants',
       'primers-preparatory': '/primers',
-      'putties-leveling': '/tools',
+      'putties-leveling': '/putties-leveling',
       'decorative-coatings': '/decorative-coatings',
-      'tints-thinners': '/tools',
-      'waterproofing': '/facade-paints',
-      'brushes-tools': '/tools',
-      'rollers': '/tools',
-      'spatulas-accessories': '/tools'
+      'tints-thinners': '/tints-thinners',
+      'waterproofing': '/waterproofing',
+      'brushes-tools': '/brushes-tools',
+      'rollers': '/rollers',
+      'spatulas-accessories': '/spatulas-accessories'
     };
-    return routeMap[slug] || '/wall-paints';
+    return routeMap[slug] || '/paints-coatings';
   };
 
   if (loading) {
