@@ -28,10 +28,23 @@ const Products = () => {
     try {
       const { data: categoriesData, error: categoriesError } = await supabase
         .from('categories')
-        .select('*')
-        .order('name');
+        .select('*');
 
       if (categoriesError) throw categoriesError;
+
+      // Define category priority order
+      const priorityOrder: Record<string, number> = {
+        'paints-and-coatings': 1,
+        'decorative-coatings': 2,
+        'tints-thinners': 3,
+        'primers-preparatory': 4,
+        'putties-leveling': 5,
+        'adhesives-sealants': 6,
+        'waterproofing': 7,
+        'brushes-tools': 8,
+        'rollers': 9,
+        'spatulas-accessories': 10
+      };
 
       // Fetch product count for each category
       const categoriesWithCount = await Promise.all(
@@ -48,7 +61,14 @@ const Products = () => {
         })
       );
 
-      setCategories(categoriesWithCount);
+      // Sort by priority
+      const sortedCategories = categoriesWithCount.sort((a, b) => {
+        const priorityA = priorityOrder[a.slug] || 999;
+        const priorityB = priorityOrder[b.slug] || 999;
+        return priorityA - priorityB;
+      });
+
+      setCategories(sortedCategories);
     } catch (error: any) {
       console.error('Error fetching categories:', error);
       toast({

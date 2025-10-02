@@ -111,6 +111,31 @@ const Cart = () => {
 
       if (itemsError) throw itemsError;
 
+      // Send order notification email
+      try {
+        const orderItemsForEmail = items.map(item => ({
+          product_name: item.product.name,
+          quantity: item.quantity,
+          price: item.product.price,
+        }));
+
+        await supabase.functions.invoke('send-order-notification', {
+          body: {
+            orderId: order.id,
+            customerName: orderForm.customerName,
+            customerPhone: orderForm.customerPhone,
+            customerEmail: orderForm.customerEmail || undefined,
+            deliveryAddress: orderForm.deliveryAddress,
+            notes: orderForm.notes || undefined,
+            totalAmount: total,
+            items: orderItemsForEmail,
+          },
+        });
+      } catch (emailError) {
+        console.error('Error sending notification email:', emailError);
+        // Don't fail the order if email fails
+      }
+
       // Clear cart
       await clearCart();
 
