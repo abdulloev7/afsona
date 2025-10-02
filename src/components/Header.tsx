@@ -1,14 +1,16 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link, useLocation } from "react-router-dom";
-import { ShoppingCart, User, LogIn } from "lucide-react";
+import { ShoppingCart, User, LogIn, Shield } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
+import { useUserRole } from "@/hooks/useUserRole";
 import afsona_logo from "@/assets/afsona-logo.png";
 
 const Header = () => {
   const { user } = useAuth();
   const { getCartCount } = useCart();
+  const { isAdmin } = useUserRole();
   const location = useLocation();
   
   const scrollToSection = (sectionId: string) => {
@@ -68,6 +70,14 @@ const Header = () => {
           <div className="flex items-center space-x-2">
             {user ? (
               <>
+                {isAdmin && (
+                  <Link to="/admin">
+                    <Button variant="ghost" size="sm">
+                      <Shield className="h-4 w-4 mr-1" />
+                      <span className="hidden md:inline">Админ</span>
+                    </Button>
+                  </Link>
+                )}
                 <Link to="/cart" className="relative">
                   <Button variant="ghost" size="sm">
                     <ShoppingCart className="h-4 w-4" />

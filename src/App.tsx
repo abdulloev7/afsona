@@ -24,6 +24,7 @@ import Waterproofing from "./pages/Waterproofing";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
 import Cart from "./pages/Cart";
+import Admin from "./pages/Admin";
 
 const queryClient = new QueryClient();
 
@@ -40,6 +41,7 @@ const App = () => (
               <Route path="/auth" element={<Auth />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/cart" element={<Cart />} />
+              <Route path="/admin" element={<Admin />} />
               <Route path="/paints-coatings" element={<PaintsCoatings />} />
               <Route path="/wall-paints" element={<WallPaints />} />
               <Route path="/ceiling-paints" element={<CeilingPaints />} />
