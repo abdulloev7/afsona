@@ -5,9 +5,13 @@ import { AuroraBackground } from "@/components/ui/aurora-background";
 import { motion } from "framer-motion";
 
 const Hero = () => {
-  const scrollToProducts = () => {
-    const element = document.getElementById('products');
-    element?.scrollIntoView({ behavior: 'smooth' });
+  const goToSection = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      window.location.href = `/#${id}`;
+    }
   };
 
   return (
@@ -38,7 +42,7 @@ const Hero = () => {
             <Button 
               size="lg" 
               variant="secondary"
-              onClick={scrollToProducts}
+              onClick={() => goToSection('products')}
               className="text-lg px-8 py-6"
             >
               Посмотреть ассортимент
@@ -46,7 +50,7 @@ const Hero = () => {
             <Button 
               size="lg" 
               variant="outline"
-              onClick={() => document.getElementById('contacts')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => goToSection('contacts')}
               className="text-lg px-8 py-6"
             >
               Связаться с нами

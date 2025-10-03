@@ -136,7 +136,7 @@ const Header = () => {
                     )}
                   </Button>
                 </Link>
-                <Link to="/orders" className="relative">
+                <Link to="/profile?tab=orders" className="relative">
                   <Button variant="ghost" size="sm">
                     <User className="h-4 w-4 mr-1" />
                     Профиль

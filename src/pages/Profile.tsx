@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -42,7 +42,15 @@ const Profile = () => {
   const [loadingOrders, setLoadingOrders] = useState(false);
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
+
+  const [tab, setTab] = useState<'profile' | 'orders'>('profile');
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const t = params.get('tab');
+    if (t === 'orders') setTab('orders');
+  }, [location.search]);
 
   useEffect(() => {
     if (!user) {
@@ -178,7 +186,7 @@ const Profile = () => {
             </Button>
           </div>
 
-          <Tabs defaultValue="profile" className="w-full">
+          <Tabs value={tab} onValueChange={(v) => setTab(v as 'profile' | 'orders')} className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="profile">Профиль</TabsTrigger>
               <TabsTrigger value="orders">Мои заказы</TabsTrigger>
