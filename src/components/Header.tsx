@@ -6,23 +6,68 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 import { useUserRole } from "@/hooks/useUserRole";
 import afsona_logo from "@/assets/afsona-logo.png";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 const Header = () => {
   const { user } = useAuth();
   const { getCartCount } = useCart();
   const { isAdmin } = useUserRole();
   const location = useLocation();
+  const [completedOrdersCount, setCompletedOrdersCount] = useState(0);
   
   const scrollToSection = (sectionId: string) => {
     if (location.pathname !== '/') {
       window.location.href = `/#${sectionId}`;
-      return;
+    } else {
+      const element = document.getElementById(sectionId);
+      element?.scrollIntoView({ behavior: 'smooth' });
     }
-    const element = document.getElementById(sectionId);
-    element?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const cartCount = getCartCount();
+
+  // Проверка завершенных заказов
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchCompletedOrders = async () => {
+      const { data, error } = await supabase
+        .from('orders')
+        .select('id, status')
+        .eq('user_id', user.id)
+        .eq('status', 'completed');
+
+      if (!error && data) {
+        setCompletedOrdersCount(data.length);
+      }
+    };
+
+    fetchCompletedOrders();
+
+    // Real-time подписка на изменения статуса
+    const channel = supabase
+      .channel('order-status-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'orders',
+          filter: `user_id=eq.${user.id}`,
+        },
+        (payload) => {
+          if (payload.new.status === 'completed') {
+            fetchCompletedOrders();
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user]);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
@@ -91,10 +136,18 @@ const Header = () => {
                     )}
                   </Button>
                 </Link>
-                <Link to="/profile">
+                <Link to="/orders" className="relative">
                   <Button variant="ghost" size="sm">
                     <User className="h-4 w-4 mr-1" />
                     Профиль
+                    {completedOrdersCount > 0 && (
+                      <Badge 
+                        variant="destructive" 
+                        className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
+                      >
+                        {completedOrdersCount}
+                      </Badge>
+                    )}
                   </Button>
                 </Link>
               </>
