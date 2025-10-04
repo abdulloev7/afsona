@@ -123,10 +123,13 @@ const handler = async (req: Request): Promise<Response> => {
       </html>
     `;
 
+    // Get business email from environment or use default
+    const businessEmail = Deno.env.get("BUSINESS_EMAIL") || "your-email@example.com";
+    
     // Send email to your business email
     const emailResponse = await resend.emails.send({
       from: "AFSONA Orders <onboarding@resend.dev>",
-      to: ["your-email@example.com"], // Replace with your actual email
+      to: [businessEmail],
       subject: `Новый заказ #${orderId.slice(0, 8)} от ${customerName}`,
       html: emailHtml,
     });

@@ -81,6 +81,17 @@ const Admin = () => {
 
       if (error) throw error;
       setOrders(data || []);
+
+      // Log admin viewing orders
+      if (user) {
+        await supabase
+          .from('admin_audit_log')
+          .insert({
+            admin_user_id: user.id,
+            action_type: 'VIEW_ORDERS',
+            details: { orders_count: data?.length || 0 }
+          });
+      }
     } catch (error) {
       console.error('Error fetching orders:', error);
       toast({
@@ -148,6 +159,18 @@ const Admin = () => {
         .eq('id', orderId);
 
       if (error) throw error;
+
+      // Log admin action
+      if (user) {
+        await supabase
+          .from('admin_audit_log')
+          .insert({
+            admin_user_id: user.id,
+            action_type: 'UPDATE_ORDER_STATUS',
+            order_id: orderId,
+            details: { new_status: newStatus }
+          });
+      }
 
       toast({
         title: "Статус обновлен",
