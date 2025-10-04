@@ -46,11 +46,19 @@ const Profile = () => {
   const { toast } = useToast();
 
   const [tab, setTab] = useState<'profile' | 'orders'>('profile');
+  
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const t = params.get('tab');
     if (t === 'orders') setTab('orders');
   }, [location.search]);
+
+  // Сохраняем время просмотра заказов
+  useEffect(() => {
+    if (tab === 'orders') {
+      localStorage.setItem('lastOrdersView', new Date().toISOString());
+    }
+  }, [tab]);
 
   useEffect(() => {
     if (!user) {

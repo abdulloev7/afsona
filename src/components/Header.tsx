@@ -32,14 +32,21 @@ const Header = () => {
     if (!user) return;
 
     const fetchCompletedOrders = async () => {
+      const lastView = localStorage.getItem('lastOrdersView');
+      
       const { data, error } = await supabase
         .from('orders')
-        .select('id, status')
+        .select('id, status, updated_at')
         .eq('user_id', user.id)
         .eq('status', 'completed');
 
       if (!error && data) {
-        setCompletedOrdersCount(data.length);
+        // Показываем только заказы, завершенные после последнего просмотра
+        const newCompletedOrders = lastView 
+          ? data.filter(order => new Date(order.updated_at) > new Date(lastView))
+          : data;
+        
+        setCompletedOrdersCount(newCompletedOrders.length);
       }
     };
 
