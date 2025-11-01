@@ -39,6 +39,7 @@ export function ProductManagement() {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -263,10 +264,34 @@ export function ProductManagement() {
     return <div className="text-center py-8">Загрузка товаров...</div>;
   }
 
+  const filteredProducts = selectedCategory === 'all' 
+    ? products 
+    : products.filter(p => p.category_id === selectedCategory);
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Управление товарами</h2>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <Label htmlFor="category-filter">Категория:</Label>
+            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <SelectTrigger id="category-filter" className="w-[200px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Все категории ({products.length})</SelectItem>
+                {categories.map((cat) => {
+                  const count = products.filter(p => p.category_id === cat.id).length;
+                  return (
+                    <SelectItem key={cat.id} value={cat.id}>
+                      {cat.name} ({count})
+                    </SelectItem>
+                  );
+                })}
+              </SelectContent>
+            </Select>
+          </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
             <Button onClick={() => openEditDialog()}>
@@ -403,9 +428,11 @@ export function ProductManagement() {
             </form>
           </DialogContent>
         </Dialog>
+        </div>
       </div>
 
-      {products.length === 0 ? (
+      {filteredProducts.length === 0 ? (
+        selectedCategory === 'all' ? (
         <div className="text-center py-16">
           <Package className="h-16 w-16 mx-auto mb-4 opacity-50" />
           <h3 className="text-xl font-bold mb-2">Товаров пока нет</h3>
@@ -417,9 +444,18 @@ export function ProductManagement() {
             Добавить товар
           </Button>
         </div>
+        ) : (
+          <div className="text-center py-16">
+            <Package className="h-16 w-16 mx-auto mb-4 opacity-50" />
+            <h3 className="text-xl font-bold mb-2">Нет товаров в этой категории</h3>
+            <p className="text-muted-foreground mb-4">
+              Попробуйте выбрать другую категорию
+            </p>
+          </div>
+        )
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {products.map((product) => (
+          {filteredProducts.map((product) => (
             <Card key={product.id}>
               <CardHeader>
                 <CardTitle className="text-lg">{product.name}</CardTitle>
