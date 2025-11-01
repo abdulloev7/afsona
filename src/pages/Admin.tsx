@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Select,
   SelectContent,
@@ -15,6 +16,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useUserRole } from '@/hooks/useUserRole';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { ProductManagement } from '@/components/admin/ProductManagement';
 import { useToast } from '@/hooks/use-toast';
 import { Package, Clock, CheckCircle, XCircle, Bell, ArrowLeft } from 'lucide-react';
 
@@ -249,7 +251,7 @@ const Admin = () => {
               </Button>
               <div>
                 <h1 className="text-3xl font-bold">Админ-панель</h1>
-                <p className="text-muted-foreground">Управление заказами</p>
+                <p className="text-muted-foreground">Управление магазином</p>
               </div>
             </div>
             
@@ -268,91 +270,104 @@ const Admin = () => {
             )}
           </div>
 
-          {loading ? (
-            <div className="text-center py-8">Загрузка заказов...</div>
-          ) : orders.length === 0 ? (
-            <div className="text-center py-16">
-              <Package className="h-16 w-16 mx-auto mb-4 opacity-50" />
-              <h2 className="text-2xl font-bold mb-4">Заказов пока нет</h2>
-              <p className="text-muted-foreground">
-                Когда клиенты начнут делать заказы, они появятся здесь
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {orders.map((order) => (
-                <Card key={order.id}>
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <CardTitle className="flex items-center gap-2">
-                          Заказ #{order.id.slice(0, 8)}
-                          {getStatusBadge(order.status)}
-                        </CardTitle>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {new Date(order.created_at).toLocaleString('ru-RU')}
-                        </p>
-                      </div>
-                      <Select
-                        value={order.status}
-                        onValueChange={(value) => updateOrderStatus(order.id, value)}
-                      >
-                        <SelectTrigger className="w-[180px]">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="pending">Ожидает</SelectItem>
-                          <SelectItem value="processing">В обработке</SelectItem>
-                          <SelectItem value="completed">Завершен</SelectItem>
-                          <SelectItem value="cancelled">Отменен</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {/* Информация о клиенте */}
-                      <div>
-                        <h3 className="font-semibold mb-2">Информация о клиенте</h3>
-                        <div className="space-y-1 text-sm">
-                          <p><strong>Имя:</strong> {order.customer_name}</p>
-                          <p><strong>Телефон:</strong> {order.customer_phone}</p>
-                          {order.customer_email && (
-                            <p><strong>Email:</strong> {order.customer_email}</p>
-                          )}
-                          <p><strong>Адрес:</strong> {order.delivery_address}</p>
-                          {order.notes && (
-                            <p><strong>Комментарий:</strong> {order.notes}</p>
-                          )}
-                        </div>
-                      </div>
+          <Tabs defaultValue="orders" className="w-full">
+            <TabsList className="grid w-full max-w-md grid-cols-2 mb-8">
+              <TabsTrigger value="orders">Заказы</TabsTrigger>
+              <TabsTrigger value="products">Товары</TabsTrigger>
+            </TabsList>
 
-                      {/* Товары */}
-                      <div>
-                        <h3 className="font-semibold mb-2">Состав заказа</h3>
-                        <div className="space-y-2">
-                          {order.order_items?.map((item, index) => (
-                            <div key={index} className="flex justify-between text-sm">
-                              <span>
-                                {item.product.name} x {item.quantity}
-                              </span>
-                              <span className="font-medium">
-                                {(item.price * item.quantity).toLocaleString('ru-RU')} сом.
-                              </span>
+            <TabsContent value="orders">
+              {loading ? (
+                <div className="text-center py-8">Загрузка заказов...</div>
+              ) : orders.length === 0 ? (
+                <div className="text-center py-16">
+                  <Package className="h-16 w-16 mx-auto mb-4 opacity-50" />
+                  <h2 className="text-2xl font-bold mb-4">Заказов пока нет</h2>
+                  <p className="text-muted-foreground">
+                    Когда клиенты начнут делать заказы, они появятся здесь
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {orders.map((order) => (
+                    <Card key={order.id}>
+                      <CardHeader>
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <CardTitle className="flex items-center gap-2">
+                              Заказ #{order.id.slice(0, 8)}
+                              {getStatusBadge(order.status)}
+                            </CardTitle>
+                            <p className="text-sm text-muted-foreground mt-1">
+                              {new Date(order.created_at).toLocaleString('ru-RU')}
+                            </p>
+                          </div>
+                          <Select
+                            value={order.status}
+                            onValueChange={(value) => updateOrderStatus(order.id, value)}
+                          >
+                            <SelectTrigger className="w-[180px]">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="pending">Ожидает</SelectItem>
+                              <SelectItem value="processing">В обработке</SelectItem>
+                              <SelectItem value="completed">Завершен</SelectItem>
+                              <SelectItem value="cancelled">Отменен</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          {/* Информация о клиенте */}
+                          <div>
+                            <h3 className="font-semibold mb-2">Информация о клиенте</h3>
+                            <div className="space-y-1 text-sm">
+                              <p><strong>Имя:</strong> {order.customer_name}</p>
+                              <p><strong>Телефон:</strong> {order.customer_phone}</p>
+                              {order.customer_email && (
+                                <p><strong>Email:</strong> {order.customer_email}</p>
+                              )}
+                              <p><strong>Адрес:</strong> {order.delivery_address}</p>
+                              {order.notes && (
+                                <p><strong>Комментарий:</strong> {order.notes}</p>
+                              )}
                             </div>
-                          ))}
-                          <div className="border-t pt-2 flex justify-between font-bold">
-                            <span>Итого:</span>
-                            <span>{order.total_amount.toLocaleString('ru-RU')} сом.</span>
+                          </div>
+
+                          {/* Товары */}
+                          <div>
+                            <h3 className="font-semibold mb-2">Состав заказа</h3>
+                            <div className="space-y-2">
+                              {order.order_items?.map((item, index) => (
+                                <div key={index} className="flex justify-between text-sm">
+                                  <span>
+                                    {item.product.name} x {item.quantity}
+                                  </span>
+                                  <span className="font-medium">
+                                    {(item.price * item.quantity).toLocaleString('ru-RU')} сом.
+                                  </span>
+                                </div>
+                              ))}
+                              <div className="border-t pt-2 flex justify-between font-bold">
+                                <span>Итого:</span>
+                                <span>{order.total_amount.toLocaleString('ru-RU')} сом.</span>
+                              </div>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </TabsContent>
+
+            <TabsContent value="products">
+              <ProductManagement />
+            </TabsContent>
+          </Tabs>
         </div>
       </main>
 
