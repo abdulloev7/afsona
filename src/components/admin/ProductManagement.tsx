@@ -22,6 +22,7 @@ interface Product {
   in_stock: boolean;
   sizes: string[] | null;
   features: string[] | null;
+  image_fit?: 'cover' | 'contain';
   category?: {
     name: string;
   };
@@ -174,6 +175,7 @@ export function ProductManagement() {
         eco: formData.get('eco') === 'true',
         in_stock: formData.get('in_stock') === 'true',
         image: editingProduct.image,
+        image_fit: (formData.get('image_fit') as 'cover' | 'contain') || 'cover',
       };
 
       if (editingProduct.id) {
@@ -256,6 +258,7 @@ export function ProductManagement() {
       in_stock: true,
       sizes: null,
       features: null,
+      image_fit: 'cover',
     });
     setDialogOpen(true);
   };
@@ -400,12 +403,42 @@ export function ProductManagement() {
               <div>
                 <Label>Изображение</Label>
                 {editingProduct?.image && (
-                  <div className="mt-2 mb-2">
-                    <img
-                      src={editingProduct.image}
-                      alt="Product"
-                      className="h-32 w-32 object-cover rounded"
-                    />
+                  <div className="mt-2 mb-2 space-y-2">
+                    <div className="bg-muted rounded p-4">
+                      <img
+                        src={editingProduct.image}
+                        alt="Product"
+                        className={`w-full h-48 rounded ${
+                          editingProduct.image_fit === 'contain' 
+                            ? 'object-contain' 
+                            : 'object-cover'
+                        }`}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="image_fit">Масштаб изображения</Label>
+                      <Select 
+                        name="image_fit" 
+                        value={editingProduct.image_fit || 'cover'}
+                        onValueChange={(value: 'cover' | 'contain') => {
+                          setEditingProduct({ ...editingProduct, image_fit: value });
+                        }}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="cover">Заполнить (обрезать края)</SelectItem>
+                          <SelectItem value="contain">Вместить (показать всё)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {editingProduct.image_fit === 'contain' 
+                          ? 'Изображение полностью помещается в рамку, могут быть отступы'
+                          : 'Изображение заполняет всю рамку, края могут обрезаться'
+                        }
+                      </p>
+                    </div>
                   </div>
                 )}
                 <Input
@@ -463,11 +496,17 @@ export function ProductManagement() {
               <CardContent>
                 {product.image ? (
                   <div className="relative mb-4">
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="w-full h-48 object-cover rounded"
-                    />
+                    <div className="bg-muted rounded p-2">
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        className={`w-full h-48 rounded ${
+                          product.image_fit === 'contain' 
+                            ? 'object-contain' 
+                            : 'object-cover'
+                        }`}
+                      />
+                    </div>
                     <Button
                       size="icon"
                       variant="secondary"

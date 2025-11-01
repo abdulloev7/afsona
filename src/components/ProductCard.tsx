@@ -20,6 +20,7 @@ interface ProductCardProps {
     brand?: string | null;
     sizes?: string[] | null;
     in_stock: boolean;
+    image_fit?: 'cover' | 'contain';
   };
 }
 
@@ -60,11 +61,17 @@ export const ProductCard = ({ product }: ProductCardProps) => {
     <Card className="flex flex-col shadow-card hover:shadow-brand transition-all duration-300 hover:-translate-y-1">
       <CardHeader>
         {product.image ? (
-          <img 
-            src={product.image} 
-            alt={product.name}
-            className="w-full h-48 object-cover rounded-lg mb-4"
-          />
+          <div className="bg-muted rounded-lg p-2 mb-4">
+            <img 
+              src={product.image} 
+              alt={product.name}
+              className={`w-full h-48 rounded-lg ${
+                product.image_fit === 'contain' 
+                  ? 'object-contain' 
+                  : 'object-cover'
+              }`}
+            />
+          </div>
         ) : (
           <div className="w-full h-48 bg-muted rounded-lg mb-4 flex items-center justify-center">
             <span className="text-muted-foreground">Фото скоро появится</span>
