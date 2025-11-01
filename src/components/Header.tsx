@@ -22,7 +22,7 @@ const Header = () => {
   const { getCartCount } = useCart();
   const { isAdmin } = useUserRole();
   const location = useLocation();
-  const { language, setLanguage } = useLanguage();
+  const { language } = useLanguage();
   const t = (key: any) => getTranslation(language, key);
   const [completedOrdersCount, setCompletedOrdersCount] = useState(0);
   
@@ -130,6 +130,7 @@ const Header = () => {
           </nav>
 
           <div className="flex items-center space-x-2">
+            {/* Language switcher - temporarily hidden
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm">
@@ -148,6 +149,7 @@ const Header = () => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+            */}
             
             {user ? (
               <>
