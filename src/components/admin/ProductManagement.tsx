@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Package, Pencil, Upload, Trash2, Plus } from 'lucide-react';
+import { Package, Pencil, Upload, Trash2, Plus, X } from 'lucide-react';
 
 interface Product {
   id: string;
@@ -41,6 +41,7 @@ export function ProductManagement() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [newSize, setNewSize] = useState('');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -59,7 +60,10 @@ export function ProductManagement() {
         .order('name');
 
       if (error) throw error;
-      setProducts(data || []);
+      setProducts((data || []).map(p => ({
+        ...p,
+        image_fit: (p.image_fit as 'cover' | 'contain') || 'cover'
+      })));
     } catch (error) {
       console.error('Error fetching products:', error);
       toast({
@@ -160,6 +164,34 @@ export function ProductManagement() {
     }
   };
 
+  const handleAddSize = () => {
+    if (!newSize.trim() || !editingProduct) return;
+    
+    const currentSizes = editingProduct.sizes || [];
+    if (currentSizes.includes(newSize.trim())) {
+      toast({
+        title: "Внимание",
+        description: "Такой объем уже добавлен",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setEditingProduct({
+      ...editingProduct,
+      sizes: [...currentSizes, newSize.trim()],
+    });
+    setNewSize('');
+  };
+
+  const handleRemoveSize = (sizeToRemove: string) => {
+    if (!editingProduct) return;
+    setEditingProduct({
+      ...editingProduct,
+      sizes: (editingProduct.sizes || []).filter(size => size !== sizeToRemove),
+    });
+  };
+
   const handleSaveProduct = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!editingProduct) return;
@@ -176,6 +208,7 @@ export function ProductManagement() {
         in_stock: formData.get('in_stock') === 'true',
         image: editingProduct.image,
         image_fit: (formData.get('image_fit') as 'cover' | 'contain') || 'cover',
+        sizes: editingProduct.sizes,
       };
 
       if (editingProduct.id) {
@@ -401,6 +434,50 @@ export function ProductManagement() {
               </div>
 
               <div>
+                <Label>Доступные объемы</Label>
+                <div className="flex gap-2 mt-2">
+                  <Input
+                    placeholder="Например: 1л, 5л, 10кг"
+                    value={newSize}
+                    onChange={(e) => setNewSize(e.target.value)}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleAddSize();
+                      }
+                    }}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleAddSize}
+                    disabled={!newSize.trim()}
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
+                {editingProduct?.sizes && editingProduct.sizes.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-3">
+                    {editingProduct.sizes.map((size, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center gap-1 bg-primary/10 text-primary px-3 py-1 rounded-full text-sm"
+                      >
+                        <span>{size}</span>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveSize(size)}
+                          className="hover:bg-primary/20 rounded-full p-0.5"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div>
                 <Label>Изображение</Label>
                 {editingProduct?.image && (
                   <div className="mt-2 mb-2 space-y-2">
@@ -553,6 +630,18 @@ export function ProductManagement() {
                   <p><strong>Категория:</strong> {product.category?.name}</p>
                   <p><strong>Цена:</strong> {product.price.toLocaleString('ru-RU')} сом.</p>
                   {product.brand && <p><strong>Бренд:</strong> {product.brand}</p>}
+                  {product.sizes && product.sizes.length > 0 && (
+                    <div>
+                      <p className="font-semibold mb-1">Объемы:</p>
+                      <div className="flex flex-wrap gap-1">
+                        {product.sizes.map((size, index) => (
+                          <span key={index} className="bg-muted px-2 py-0.5 rounded text-xs">
+                            {size}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                   <div className="flex gap-2 flex-wrap">
                     {product.eco && (
                       <span className="bg-green-500/10 text-green-500 px-2 py-1 rounded text-xs">
