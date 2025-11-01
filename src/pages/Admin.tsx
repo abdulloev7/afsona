@@ -19,6 +19,8 @@ import Footer from '@/components/Footer';
 import { ProductManagement } from '@/components/admin/ProductManagement';
 import { useToast } from '@/hooks/use-toast';
 import { Package, Clock, CheckCircle, XCircle, Bell, ArrowLeft } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { getTranslation } from '@/locales/translations';
 
 interface Order {
   id: string;
@@ -41,6 +43,9 @@ interface Order {
 }
 
 const Admin = () => {
+  const { language } = useLanguage();
+  const t = (key: any) => getTranslation(language, key);
+  
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [newOrdersCount, setNewOrdersCount] = useState(0);
@@ -55,8 +60,8 @@ const Admin = () => {
   useEffect(() => {
     if (!roleLoading && !isAdmin) {
       toast({
-        title: "Доступ запрещен",
-        description: "У вас нет прав администратора",
+        title: t('accessDenied'),
+        description: t('noAdminRights'),
         variant: "destructive",
       });
       navigate('/');
@@ -97,8 +102,8 @@ const Admin = () => {
     } catch (error) {
       console.error('Error fetching orders:', error);
       toast({
-        title: "Ошибка",
-        description: "Не удалось загрузить заказы",
+        title: t('error'),
+        description: t('loadingOrdersError'),
         variant: "destructive",
       });
     } finally {
@@ -138,8 +143,8 @@ const Admin = () => {
 
           // Показ уведомления
           toast({
-            title: "🎉 Новый заказ!",
-            description: `Заказ от ${payload.new.customer_name}`,
+            title: `🎉 ${t('newOrderNotification')}`,
+            description: `${t('orderFrom')} ${payload.new.customer_name}`,
           });
 
           // Обновление списка заказов
@@ -175,16 +180,16 @@ const Admin = () => {
       }
 
       toast({
-        title: "Статус обновлен",
-        description: `Статус заказа изменен на "${getStatusLabel(newStatus)}"`,
+        title: t('statusUpdated'),
+        description: `${t('statusChangedTo')} "${getStatusLabel(newStatus)}"`,
       });
 
       fetchOrders();
     } catch (error) {
       console.error('Error updating order status:', error);
       toast({
-        title: "Ошибка",
-        description: "Не удалось обновить статус заказа",
+        title: t('error'),
+        description: t('statusUpdateError'),
         variant: "destructive",
       });
     }
@@ -211,10 +216,10 @@ const Admin = () => {
 
   const getStatusLabel = (status: string) => {
     const labels: Record<string, string> = {
-      pending: 'Ожидает',
-      processing: 'В обработке',
-      completed: 'Завершен',
-      cancelled: 'Отменен',
+      pending: t('statusWaiting'),
+      processing: t('statusInProgress'),
+      completed: t('statusCompleted'),
+      cancelled: t('statusCancelled'),
     };
     return labels[status] || status;
   };
@@ -228,7 +233,7 @@ const Admin = () => {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p>Загрузка...</p>
+          <p>{t('loading')}</p>
         </div>
       </div>
     );
@@ -247,11 +252,11 @@ const Admin = () => {
             <div className="flex items-center gap-4">
               <Button variant="ghost" onClick={() => navigate('/')}>
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                На главную
+                {t('backToMain')}
               </Button>
               <div>
-                <h1 className="text-3xl font-bold">Админ-панель</h1>
-                <p className="text-muted-foreground">Управление магазином</p>
+                <h1 className="text-3xl font-bold">{t('adminPanel')}</h1>
+                <p className="text-muted-foreground">{t('shopManagement')}</p>
               </div>
             </div>
             
@@ -262,7 +267,7 @@ const Admin = () => {
                 className="relative"
               >
                 <Bell className="h-4 w-4 mr-2" />
-                Новых заказов: {newOrdersCount}
+                {t('newOrders')}: {newOrdersCount}
                 <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 rounded-full flex items-center justify-center text-xs text-white animate-pulse">
                   {newOrdersCount}
                 </span>
@@ -272,19 +277,19 @@ const Admin = () => {
 
           <Tabs defaultValue="orders" className="w-full">
             <TabsList className="grid w-full max-w-md grid-cols-2 mb-8">
-              <TabsTrigger value="orders">Заказы</TabsTrigger>
-              <TabsTrigger value="products">Товары</TabsTrigger>
+              <TabsTrigger value="orders">{t('ordersTab')}</TabsTrigger>
+              <TabsTrigger value="products">{t('productsTab')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="orders">
               {loading ? (
-                <div className="text-center py-8">Загрузка заказов...</div>
+                <div className="text-center py-8">{t('loadingOrdersAdmin')}</div>
               ) : orders.length === 0 ? (
                 <div className="text-center py-16">
                   <Package className="h-16 w-16 mx-auto mb-4 opacity-50" />
-                  <h2 className="text-2xl font-bold mb-4">Заказов пока нет</h2>
+                  <h2 className="text-2xl font-bold mb-4">{t('noOrdersYet')}</h2>
                   <p className="text-muted-foreground">
-                    Когда клиенты начнут делать заказы, они появятся здесь
+                    {t('noOrdersText')}
                   </p>
                 </div>
               ) : (
@@ -295,7 +300,7 @@ const Admin = () => {
                         <div className="flex items-start justify-between">
                           <div>
                             <CardTitle className="flex items-center gap-2">
-                              Заказ #{order.id.slice(0, 8)}
+                              {t('order')} #{order.id.slice(0, 8)}
                               {getStatusBadge(order.status)}
                             </CardTitle>
                             <p className="text-sm text-muted-foreground mt-1">
@@ -310,10 +315,10 @@ const Admin = () => {
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="pending">Ожидает</SelectItem>
-                              <SelectItem value="processing">В обработке</SelectItem>
-                              <SelectItem value="completed">Завершен</SelectItem>
-                              <SelectItem value="cancelled">Отменен</SelectItem>
+                              <SelectItem value="pending">{t('statusWaiting')}</SelectItem>
+                              <SelectItem value="processing">{t('statusInProgress')}</SelectItem>
+                              <SelectItem value="completed">{t('statusCompleted')}</SelectItem>
+                              <SelectItem value="cancelled">{t('statusCancelled')}</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
@@ -322,23 +327,23 @@ const Admin = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           {/* Информация о клиенте */}
                           <div>
-                            <h3 className="font-semibold mb-2">Информация о клиенте</h3>
+                            <h3 className="font-semibold mb-2">{t('customerInfo')}</h3>
                             <div className="space-y-1 text-sm">
-                              <p><strong>Имя:</strong> {order.customer_name}</p>
-                              <p><strong>Телефон:</strong> {order.customer_phone}</p>
+                              <p><strong>{t('name')}:</strong> {order.customer_name}</p>
+                              <p><strong>{t('phone')}:</strong> {order.customer_phone}</p>
                               {order.customer_email && (
-                                <p><strong>Email:</strong> {order.customer_email}</p>
+                                <p><strong>{t('email')}:</strong> {order.customer_email}</p>
                               )}
-                              <p><strong>Адрес:</strong> {order.delivery_address}</p>
+                              <p><strong>{t('address')}:</strong> {order.delivery_address}</p>
                               {order.notes && (
-                                <p><strong>Комментарий:</strong> {order.notes}</p>
+                                <p><strong>{t('comment')}:</strong> {order.notes}</p>
                               )}
                             </div>
                           </div>
 
                           {/* Товары */}
                           <div>
-                            <h3 className="font-semibold mb-2">Состав заказа</h3>
+                            <h3 className="font-semibold mb-2">{t('orderComposition')}</h3>
                             <div className="space-y-2">
                               {order.order_items?.map((item, index) => (
                                 <div key={index} className="flex justify-between text-sm">
@@ -351,7 +356,7 @@ const Admin = () => {
                                 </div>
                               ))}
                               <div className="border-t pt-2 flex justify-between font-bold">
-                                <span>Итого:</span>
+                                <span>{t('total')}:</span>
                                 <span>{order.total_amount.toLocaleString('ru-RU')} сом.</span>
                               </div>
                             </div>

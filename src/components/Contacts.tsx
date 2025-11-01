@@ -62,8 +62,8 @@ const Contacts = () => {
                 <p className="text-muted-foreground">{t('workHoursText').split(':').slice(1).join(':')}</p>
               </div>
               <div>
-                <p className="font-semibold">Воскресенье:</p>
-                <p className="text-muted-foreground">Выходной</p>
+                <p className="font-semibold">{t('sunday')}:</p>
+                <p className="text-muted-foreground">{t('dayOff')}</p>
               </div>
             </CardContent>
           </Card>
@@ -103,8 +103,7 @@ const Contacts = () => {
               
               <div className="bg-brand-cream-light rounded-lg p-4 text-center">
                 <p className="text-sm text-foreground">
-                  <strong>Бесплатная консультация:</strong> Наши специалисты помогут подобрать 
-                  идеальные материалы для вашего проекта
+                  {t('freeConsultation')}
                 </p>
               </div>
             </CardContent>

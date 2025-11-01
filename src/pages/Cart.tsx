@@ -13,16 +13,15 @@ import Footer from '@/components/Footer';
 import { useToast } from '@/hooks/use-toast';
 import { ShoppingCart, Plus, Minus, Trash2, ArrowLeft } from 'lucide-react';
 import { z } from 'zod';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { getTranslation } from '@/locales/translations';
 
-const orderSchema = z.object({
-  customerName: z.string().trim().min(1, { message: "Имя обязательно" }),
-  customerPhone: z.string().trim().min(1, { message: "Телефон обязателен" }),
-  customerEmail: z.string().trim().email({ message: "Некорректный email" }).optional(),
-  deliveryAddress: z.string().trim().min(1, { message: "Адрес доставки обязателен" }),
-  notes: z.string().optional(),
-});
+// Schema will be created dynamically in component
 
 const Cart = () => {
+  const { language } = useLanguage();
+  const t = (key: any) => getTranslation(language, key);
+  
   const [orderForm, setOrderForm] = useState({
     customerName: '',
     customerPhone: '',
@@ -40,6 +39,13 @@ const Cart = () => {
 
   const validateForm = () => {
     try {
+      const orderSchema = z.object({
+        customerName: z.string().trim().min(1, { message: t('nameRequired') }),
+        customerPhone: z.string().trim().min(1, { message: t('phoneRequired') }),
+        customerEmail: z.string().trim().email({ message: t('invalidEmail') }).optional(),
+        deliveryAddress: z.string().trim().min(1, { message: t('addressRequired') }),
+        notes: z.string().optional(),
+      });
       orderSchema.parse(orderForm);
       setErrors({});
       return true;
@@ -67,8 +73,8 @@ const Cart = () => {
 
     if (items.length === 0) {
       toast({
-        title: "Корзина пуста",
-        description: "Добавьте товары в корзину для оформления заказа",
+        title: t('cartEmpty'),
+        description: t('addProductsToOrder'),
         variant: "destructive",
       });
       return;
@@ -146,16 +152,16 @@ const Cart = () => {
       await clearCart();
 
       toast({
-        title: "Заказ оформлен!",
-        description: `Заказ #${order.id.slice(0, 8)} успешно создан. Мы свяжемся с вами в ближайшее время.`,
+        title: t('orderPlaced'),
+        description: `${t('order')} #${order.id.slice(0, 8)} ${t('orderCreated')}`,
       });
 
       navigate('/profile');
     } catch (error) {
       console.error('Error creating order:', error);
       toast({
-        title: "Ошибка",
-        description: "Не удалось оформить заказ. Попробуйте еще раз.",
+        title: t('error'),
+        description: t('orderError'),
         variant: "destructive",
       });
     } finally {
@@ -170,12 +176,12 @@ const Cart = () => {
         <main className="flex-1 py-16">
           <div className="container mx-auto px-4 max-w-2xl text-center">
             <ShoppingCart className="h-16 w-16 mx-auto mb-4 opacity-50" />
-            <h1 className="text-2xl font-bold mb-4">Войдите для просмотра корзины</h1>
+            <h1 className="text-2xl font-bold mb-4">{t('loginToViewCart')}</h1>
             <p className="text-muted-foreground mb-8">
-              Для добавления товаров в корзину и оформления заказов необходимо войти в систему
+              {t('loginRequired')}
             </p>
             <Button onClick={() => navigate('/auth')}>
-              Войти в систему
+              {t('loginButton')}
             </Button>
           </div>
         </main>
@@ -192,25 +198,25 @@ const Cart = () => {
           <div className="flex items-center gap-4 mb-8">
             <Button variant="ghost" onClick={() => navigate('/')}>
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Назад к покупкам
+              {t('backToShopping')}
             </Button>
             <h1 className="text-3xl font-bold flex items-center gap-2">
               <ShoppingCart className="h-8 w-8" />
-              Корзина ({items.length})
+              {t('cartTitle')} ({items.length})
             </h1>
           </div>
 
           {cartLoading ? (
-            <div className="text-center py-8">Загружаем корзину...</div>
+            <div className="text-center py-8">{t('loading')}</div>
           ) : items.length === 0 ? (
             <div className="text-center py-16">
               <ShoppingCart className="h-16 w-16 mx-auto mb-4 opacity-50" />
-              <h2 className="text-2xl font-bold mb-4">Корзина пуста</h2>
+              <h2 className="text-2xl font-bold mb-4">{t('emptyCart')}</h2>
               <p className="text-muted-foreground mb-8">
-                Добавьте товары в корзину, чтобы продолжить покупки
+                {t('emptyCartText')}
               </p>
               <Button onClick={() => navigate('/')}>
-                Перейти к покупкам
+                {t('goToProducts')}
               </Button>
             </div>
           ) : (
@@ -268,7 +274,7 @@ const Cart = () => {
               <div className="space-y-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Итого</CardTitle>
+                    <CardTitle>{t('total')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">
@@ -279,12 +285,12 @@ const Cart = () => {
 
                 <Card>
                   <CardHeader>
-                    <CardTitle>Оформление заказа</CardTitle>
+                    <CardTitle>{t('orderForm')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <form onSubmit={handleSubmitOrder} className="space-y-4">
                       <div className="space-y-2">
-                        <Label htmlFor="customerName">Имя *</Label>
+                        <Label htmlFor="customerName">{t('customerName')} {t('requiredField')}</Label>
                         <Input
                           id="customerName"
                           value={orderForm.customerName}
@@ -297,7 +303,7 @@ const Cart = () => {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="customerPhone">Телефон *</Label>
+                        <Label htmlFor="customerPhone">{t('customerPhone')} {t('requiredField')}</Label>
                         <Input
                           id="customerPhone"
                           value={orderForm.customerPhone}
@@ -311,7 +317,7 @@ const Cart = () => {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="customerEmail">Email</Label>
+                        <Label htmlFor="customerEmail">{t('customerEmail')}</Label>
                         <Input
                           id="customerEmail"
                           type="email"
@@ -325,7 +331,7 @@ const Cart = () => {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="deliveryAddress">Адрес доставки *</Label>
+                        <Label htmlFor="deliveryAddress">{t('deliveryAddress')} {t('requiredField')}</Label>
                         <Textarea
                           id="deliveryAddress"
                           value={orderForm.deliveryAddress}
@@ -339,17 +345,17 @@ const Cart = () => {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="notes">Комментарий к заказу</Label>
+                        <Label htmlFor="notes">{t('orderNotes')}</Label>
                         <Textarea
                           id="notes"
                           value={orderForm.notes}
                           onChange={(e) => setOrderForm({ ...orderForm, notes: e.target.value })}
-                          placeholder="Дополнительные пожелания..."
+                          placeholder={t('additionalWishes')}
                         />
                       </div>
 
                       <Button type="submit" className="w-full" disabled={loading}>
-                        {loading ? 'Оформляем заказ...' : 'Оформить заказ'}
+                        {loading ? t('placingOrder') : t('placeOrder')}
                       </Button>
                     </form>
                   </CardContent>
