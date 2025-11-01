@@ -481,7 +481,7 @@ export function ProductManagement() {
                 <Label>Изображение</Label>
                 {editingProduct?.image && (
                   <div className="mt-2 mb-2 space-y-2">
-                    <div className="bg-muted rounded p-4">
+                    <div className="bg-white rounded p-4">
                       <img
                         src={editingProduct.image}
                         alt="Product"
@@ -573,7 +573,7 @@ export function ProductManagement() {
               <CardContent>
                 {product.image ? (
                   <div className="relative mb-4">
-                    <div className="bg-muted rounded p-2">
+                    <div className="bg-white rounded p-2">
                       <img
                         src={product.image}
                         alt={product.name}
@@ -603,7 +603,7 @@ export function ProductManagement() {
                   </div>
                 ) : (
                   <div className="mb-4">
-                    <div className="w-full h-48 bg-muted rounded flex items-center justify-center">
+                    <div className="w-full h-48 bg-white rounded flex items-center justify-center">
                       <Package className="h-16 w-16 opacity-30" />
                     </div>
                     <Button
