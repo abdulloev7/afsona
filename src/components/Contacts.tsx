@@ -1,22 +1,17 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MapPin, Phone, Clock, Mail } from "lucide-react";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { getTranslation } from "@/locales/translations";
 
 const Contacts = () => {
-  const { language } = useLanguage();
-  const t = (key: any) => getTranslation(language, key);
-  
   return (
     <section id="contacts" className="py-20 bg-background">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-primary">
-            {t('contactsTitle')}
+            Контакты
           </h2>
           <p className="text-lg text-muted-foreground">
-            {t('contactsSubtitle')}
+            Свяжитесь с нами для консультации и заказа материалов
           </p>
         </div>
 
@@ -26,11 +21,11 @@ const Contacts = () => {
               <div className="w-16 h-16 bg-brand-blue-light rounded-full flex items-center justify-center mx-auto mb-4">
                 <MapPin className="w-8 h-8 text-white" />
               </div>
-              <CardTitle className="text-primary">{t('address')}</CardTitle>
+              <CardTitle className="text-primary">Наш адрес</CardTitle>
             </CardHeader>
             <CardContent className="text-center">
-              <p className="text-foreground mb-2">{t('addressText').split(',')[0]}</p>
-              <p className="text-muted-foreground">{t('addressText').split(',').slice(1).join(',')}</p>
+              <p className="text-foreground mb-2">г. Худжанд</p>
+              <p className="text-muted-foreground">20-й микрорайон, 27</p>
             </CardContent>
           </Card>
 
@@ -39,7 +34,7 @@ const Contacts = () => {
               <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-4">
                 <Phone className="w-8 h-8 text-white" />
               </div>
-              <CardTitle className="text-primary">{t('phone')}</CardTitle>
+              <CardTitle className="text-primary">Телефоны</CardTitle>
             </CardHeader>
             <CardContent className="text-center space-y-2">
               <div>
@@ -54,16 +49,16 @@ const Contacts = () => {
               <div className="w-16 h-16 bg-brand-blue rounded-full flex items-center justify-center mx-auto mb-4">
                 <Clock className="w-8 h-8 text-white" />
               </div>
-              <CardTitle className="text-primary">{t('workHours')}</CardTitle>
+              <CardTitle className="text-primary">Режим работы</CardTitle>
             </CardHeader>
             <CardContent className="text-center space-y-2">
               <div>
-                <p className="font-semibold">{t('workHoursText').split(':')[0]}:</p>
-                <p className="text-muted-foreground">{t('workHoursText').split(':').slice(1).join(':')}</p>
+                <p className="font-semibold">Пн - Сб:</p>
+                <p className="text-muted-foreground">08:00 - 12:00, 13:00 - 18:00</p>
               </div>
               <div>
-                <p className="font-semibold">{t('sunday')}:</p>
-                <p className="text-muted-foreground">{t('dayOff')}</p>
+                <p className="font-semibold">Воскресенье:</p>
+                <p className="text-muted-foreground">Выходной</p>
               </div>
             </CardContent>
           </Card>
@@ -72,7 +67,7 @@ const Contacts = () => {
         <div className="max-w-2xl mx-auto">
           <Card className="shadow-brand">
             <CardHeader className="text-center">
-              <CardTitle className="text-2xl text-primary">{t('quickContact')}</CardTitle>
+              <CardTitle className="text-2xl text-primary">Быстрая связь</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -82,7 +77,7 @@ const Contacts = () => {
                   onClick={() => window.open('tel:+992927557919')}
                 >
                   <Phone className="w-5 h-5 mr-2" />
-                  {t('call')}
+                  Позвонить
                 </Button>
                 <Button 
                   size="lg" 
@@ -90,20 +85,21 @@ const Contacts = () => {
                   className="w-full"
                   onClick={() => window.open('https://t.me/afsona_paints')}
                 >
-                  {t('writeInTelegram')}
+                  Написать в Telegram
                 </Button>
               </div>
               
               <div className="text-center">
                 <div className="flex items-center justify-center space-x-2 text-muted-foreground">
                   <Mail className="w-4 h-4" />
-                  <span>{t('email')}: info@afsona.com.tj</span>
+                  <span>info@afsona.com.tj</span>
                 </div>
               </div>
               
               <div className="bg-brand-cream-light rounded-lg p-4 text-center">
                 <p className="text-sm text-foreground">
-                  {t('freeConsultation')}
+                  <strong>Бесплатная консультация:</strong> Наши специалисты помогут подобрать 
+                  идеальные материалы для вашего проекта
                 </p>
               </div>
             </CardContent>

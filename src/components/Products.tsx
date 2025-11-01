@@ -6,8 +6,6 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { getTranslation } from "@/locales/translations";
 
 interface Category {
   id: string;
@@ -21,8 +19,6 @@ const Products = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
-  const { language } = useLanguage();
-  const t = (key: any) => getTranslation(language, key);
 
   useEffect(() => {
     fetchCategories();
@@ -104,11 +100,11 @@ const Products = () => {
 
   if (loading) {
     return (
-    <section id="products" className="py-20 bg-background">
-      <div className="container mx-auto px-4">
-        <div className="text-center">{t('loading')}</div>
-      </div>
-    </section>
+      <section id="products" className="py-20 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="text-center">Загрузка...</div>
+        </div>
+      </section>
     );
   }
 
@@ -117,10 +113,10 @@ const Products = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-primary">
-            {t('productsTitle')}
+            Наш ассортимент
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            {t('productsSubtitle')}
+            Широкий выбор качественных материалов для любых задач ремонта и отделки
           </p>
         </div>
 
@@ -137,13 +133,13 @@ const Products = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-sm text-muted-foreground">
-                  {category.productCount} {t('productsInCategory')}
+                  {category.productCount} {category.productCount === 1 ? 'товар' : category.productCount && category.productCount < 5 ? 'товара' : 'товаров'} в категории
                 </div>
               </CardContent>
               <div className="p-6 pt-0">
                 <Link to={getCategoryLink(category.slug)}>
                   <Button className="w-full">
-                    {t('viewCatalog')}
+                    Смотреть каталог
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </Link>
@@ -154,19 +150,19 @@ const Products = () => {
 
         <div className="mt-16 text-center">
           <div className="bg-brand-cream rounded-lg p-8 max-w-3xl mx-auto">
-            <h3 className="text-2xl font-bold mb-4 text-primary">{t('whyChoose')}</h3>
+            <h3 className="text-2xl font-bold mb-4 text-primary">Почему выбирают AFSONA?</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
               <div>
-                <div className="text-3xl font-bold text-accent mb-2">{t('ecoFriendly')}</div>
-                <div className="text-sm">{t('ecoDescription')}</div>
+                <div className="text-3xl font-bold text-accent mb-2">100%</div>
+                <div className="text-sm">Качество гарантировано</div>
               </div>
               <div>
-                <div className="text-3xl font-bold text-accent mb-2">{t('quality')}</div>
-                <div className="text-sm">{t('qualityDescription')}</div>
+                <div className="text-3xl font-bold text-accent mb-2">ECO</div>
+                <div className="text-sm">Экологичные материалы</div>
               </div>
               <div>
-                <div className="text-3xl font-bold text-accent mb-2">{t('consulting')}</div>
-                <div className="text-sm">{t('consultingDescription')}</div>
+                <div className="text-3xl font-bold text-accent mb-2">24/7</div>
+                <div className="text-sm">Консультации специалистов</div>
               </div>
             </div>
           </div>

@@ -7,8 +7,6 @@ import { ShoppingCart, Leaf, ShoppingBag } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { getTranslation } from '@/locales/translations';
 
 interface ProductCardProps {
   product: {
@@ -32,8 +30,6 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   const { addToCart } = useCart();
   const { user } = useAuth();
   const { toast } = useToast();
-  const { language } = useLanguage();
-  const t = (key: any) => getTranslation(language, key);
 
   const handleAddToCart = async () => {
     if (!user) {
@@ -45,13 +41,13 @@ export const ProductCard = ({ product }: ProductCardProps) => {
       await addToCart(product.id, 1);
       setIsInCart(true);
       toast({
-        title: t('addedToCart').split(' ')[0] + '!',
-        description: t('addedToCart'),
+        title: "Успешно!",
+        description: "Товар добавлен в корзину",
       });
     } catch (error) {
       toast({
-        title: t('errorAddingToCart').split(' ')[0],
-        description: t('errorAddingToCart'),
+        title: "Ошибка",
+        description: "Не удалось добавить товар в корзину",
         variant: "destructive",
       });
     }
@@ -86,7 +82,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           {product.eco && (
             <Badge variant="secondary" className="ml-2">
               <Leaf className="h-3 w-3 mr-1" />
-              {t('ecoFriendlyProduct').split(' ')[0]}
+              ЭКО
             </Badge>
           )}
         </div>
@@ -97,12 +93,12 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         )}
         
         <div className="text-2xl font-bold mb-4 text-primary">
-          {product.price.toLocaleString('ru-RU')} {t('som')}
+          {product.price.toLocaleString('ru-RU')} сом.
         </div>
         
         {product.features && product.features.length > 0 && (
           <div className="mb-4">
-            <h4 className="font-semibold mb-2">{t('features')}:</h4>
+            <h4 className="font-semibold mb-2">Особенности:</h4>
             <ul className="space-y-1">
               {product.features.map((feature, index) => (
                 <li key={index} className="flex items-center text-sm">
@@ -116,7 +112,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
 
         {product.sizes && product.sizes.length > 0 && (
           <div className="mb-4">
-            <h4 className="font-semibold mb-2">{t('availableSizes')}:</h4>
+            <h4 className="font-semibold mb-2">Доступные объемы:</h4>
             <div className="flex flex-wrap gap-1">
               {product.sizes.map((size, index) => (
                 <Badge key={index} variant="outline" className="text-xs">
@@ -135,7 +131,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
               disabled={!product.in_stock}
             >
               <ShoppingCart className="h-4 w-4 mr-2" />
-              {product.in_stock ? t('addToCart') : t('outOfStock')}
+              {product.in_stock ? 'Добавить в корзину' : 'Нет в наличии'}
             </Button>
           ) : (
             <Button 
@@ -144,7 +140,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
               variant="secondary"
             >
               <ShoppingBag className="h-4 w-4 mr-2" />
-              {t('order')}
+              Заказать
             </Button>
           )}
         </div>

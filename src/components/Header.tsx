@@ -1,29 +1,19 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link, useLocation } from "react-router-dom";
-import { ShoppingCart, User, LogIn, Shield, Languages } from "lucide-react";
+import { ShoppingCart, User, LogIn, Shield } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 import { useUserRole } from "@/hooks/useUserRole";
 import afsona_logo from "@/assets/afsona-logo.png";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { getTranslation } from "@/locales/translations";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 const Header = () => {
   const { user } = useAuth();
   const { getCartCount } = useCart();
   const { isAdmin } = useUserRole();
   const location = useLocation();
-  const { language } = useLanguage();
-  const t = (key: any) => getTranslation(language, key);
   const [completedOrdersCount, setCompletedOrdersCount] = useState(0);
   
   const scrollToSection = (sectionId: string) => {
@@ -98,7 +88,7 @@ const Header = () => {
             />
             <div>
               <h1 className="text-xl font-bold text-primary">AFSONA</h1>
-              <p className="text-xs text-muted-foreground">{t('heroSubtitle')}</p>
+              <p className="text-xs text-muted-foreground">Эко материалы для ремонта</p>
             </div>
           </Link>
           
@@ -107,57 +97,36 @@ const Header = () => {
               onClick={() => scrollToSection('home')}
               className="text-foreground hover:text-primary transition-colors"
             >
-              {t('home')}
+              Главная
             </button>
             <button 
               onClick={() => scrollToSection('products')}
               className="text-foreground hover:text-primary transition-colors"
             >
-              {t('assortment')}
+              Ассортимент
             </button>
             <button 
               onClick={() => scrollToSection('about')}
               className="text-foreground hover:text-primary transition-colors"
             >
-              {t('about')}
+              О нас
             </button>
             <button 
               onClick={() => scrollToSection('contacts')}
               className="text-foreground hover:text-primary transition-colors"
             >
-              {t('contacts')}
+              Контакты
             </button>
           </nav>
 
           <div className="flex items-center space-x-2">
-            {/* Language switcher - temporarily hidden
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm">
-                  <Languages className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setLanguage('ru')}>
-                  Русский {language === 'ru' && '✓'}
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setLanguage('en')}>
-                  English {language === 'en' && '✓'}
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setLanguage('tj')}>
-                  Тоҷикӣ {language === 'tj' && '✓'}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            */}
-            
             {user ? (
               <>
                 {isAdmin && (
                   <Link to="/admin">
                     <Button variant="ghost" size="sm">
                       <Shield className="h-4 w-4 mr-1" />
-                      <span className="hidden md:inline">{t('admin')}</span>
+                      <span className="hidden md:inline">Админ</span>
                     </Button>
                   </Link>
                 )}
@@ -177,7 +146,7 @@ const Header = () => {
                 <Link to="/profile?tab=orders" className="relative">
                   <Button variant="ghost" size="sm">
                     <User className="h-4 w-4 mr-1" />
-                    {t('profile')}
+                    Профиль
                     {completedOrdersCount > 0 && (
                       <Badge 
                         variant="destructive" 
@@ -193,7 +162,7 @@ const Header = () => {
               <Link to="/auth">
                 <Button variant="default" size="sm">
                   <LogIn className="h-4 w-4 mr-1" />
-                  {t('login')}
+                  Войти
                 </Button>
               </Link>
             )}

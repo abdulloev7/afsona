@@ -3,13 +3,8 @@ import { Button } from "@/components/ui/button";
 import { ArrowDown } from "lucide-react";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 import { motion } from "framer-motion";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { getTranslation } from "@/locales/translations";
 
 const Hero = () => {
-  const { language } = useLanguage();
-  const t = (key: any) => getTranslation(language, key);
-  
   const goToSection = (id: string) => {
     const el = document.getElementById(id);
     if (el) {
@@ -33,13 +28,14 @@ const Hero = () => {
       >
         <div className="max-w-4xl mx-auto">
           <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight text-foreground">
-            {t('heroTitle')}
+            AFSONA
           </h1>
           <p className="text-xl md:text-2xl mb-4 opacity-90 text-foreground">
-            {t('heroSubtitle')}
+            Эко материалы для ремонта
           </p>
           <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto opacity-80 text-foreground">
-            {t('heroDescription')}
+            Качественные краски и материалы для профессионального и домашнего ремонта. 
+            Экологично, надежно, красиво.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -49,7 +45,7 @@ const Hero = () => {
               onClick={() => goToSection('products')}
               className="text-lg px-8 py-6"
             >
-              {t('viewCatalog')}
+              Посмотреть ассортимент
             </Button>
             <Button 
               size="lg" 
@@ -57,7 +53,7 @@ const Hero = () => {
               onClick={() => goToSection('contacts')}
               className="text-lg px-8 py-6"
             >
-              {t('contactUs')}
+              Связаться с нами
             </Button>
           </div>
         </div>

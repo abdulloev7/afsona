@@ -1,31 +1,27 @@
-import { useLanguage } from "@/contexts/LanguageContext";
-import { getTranslation } from "@/locales/translations";
-
 const About = () => {
-  const { language } = useLanguage();
-  const t = (key: any) => getTranslation(language, key);
-  
   return (
     <section id="about" className="py-20 bg-background">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-6 text-primary">
-              {t('aboutTitle')}
+              О компании AFSONA
             </h2>
             <p className="text-lg text-muted-foreground">
-              {t('aboutSubtitle')}
+              Ваш надежный партнер в мире красок и материалов для ремонта
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h3 className="text-2xl font-bold mb-6 text-primary">{t('ourMission')}</h3>
+              <h3 className="text-2xl font-bold mb-6 text-primary">Наша миссия</h3>
               <p className="text-base mb-6 text-foreground leading-relaxed">
-                {t('missionText')}
+                AFSONA — это больше чем магазин красок. Мы стремимся предоставить нашим клиентам 
+                только самые качественные и экологичные материалы для создания уютного и красивого дома.
               </p>
               <p className="text-base mb-6 text-foreground leading-relaxed">
-                {t('valuesText')}
+                Наша команда экспертов поможет вам выбрать идеальные материалы для любого проекта — 
+                от небольшого ремонта до масштабной реновации.
               </p>
               
               <div className="space-y-4">
@@ -49,34 +45,34 @@ const About = () => {
             </div>
 
             <div className="bg-card border rounded-lg p-8 text-foreground shadow-card">
-              <h3 className="text-2xl font-bold mb-6">{t('advantages')}</h3>
+              <h3 className="text-2xl font-bold mb-6">Наши преимущества</h3>
               
               <div className="space-y-6">
                 <div>
-                  <h4 className="font-semibold mb-2">🌱 {t('ecoFriendly')}</h4>
+                  <h4 className="font-semibold mb-2">🌱 Экологичность</h4>
                   <p className="text-sm opacity-90">
-                    {t('ecoDescription')}
+                    Приоритет экологически чистым материалам, безопасным для здоровья
                   </p>
                 </div>
                 
                 <div>
-                  <h4 className="font-semibold mb-2">🎨 {t('wideRange')}</h4>
+                  <h4 className="font-semibold mb-2">🎨 Широкий выбор</h4>
                   <p className="text-sm opacity-90">
-                    {t('wideRangeDesc')}
+                    Огромная палитра цветов и текстур для воплощения любых идей
                   </p>
                 </div>
                 
                 <div>
-                  <h4 className="font-semibold mb-2">💎 {t('quality')}</h4>
+                  <h4 className="font-semibold mb-2">💎 Премиум качество</h4>
                   <p className="text-sm opacity-90">
-                    {t('qualityDescription')}
+                    Работаем только с проверенными брендами высшего качества
                   </p>
                 </div>
                 
                 <div>
-                  <h4 className="font-semibold mb-2">👨‍🎨 {t('expertAdvice')}</h4>
+                  <h4 className="font-semibold mb-2">👨‍🎨 Экспертная поддержка</h4>
                   <p className="text-sm opacity-90">
-                    {t('expertAdviceDesc')}
+                    Профессиональные консультации на каждом этапе вашего проекта
                   </p>
                 </div>
               </div>

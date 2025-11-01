@@ -11,8 +11,6 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useToast } from '@/hooks/use-toast';
 import { Package, User, ShoppingBag } from 'lucide-react';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { getTranslation } from '@/locales/translations';
 
 interface Profile {
   display_name?: string;
@@ -38,9 +36,6 @@ interface Order {
 }
 
 const Profile = () => {
-  const { language } = useLanguage();
-  const t = (key: any) => getTranslation(language, key);
-  
   const [profile, setProfile] = useState<Profile>({});
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(false);
@@ -119,8 +114,8 @@ const Profile = () => {
     } catch (error) {
       console.error('Error fetching orders:', error);
       toast({
-        title: t('error'),
-        description: t('loadingOrdersError'),
+        title: "Ошибка",
+        description: "Не удалось загрузить заказы",
         variant: "destructive",
       });
     } finally {
@@ -144,14 +139,14 @@ const Profile = () => {
       if (error) throw error;
 
       toast({
-        title: t('profileUpdated'),
-        description: t('dataSaved'),
+        title: "Профиль обновлен",
+        description: "Ваши данные успешно сохранены",
       });
     } catch (error) {
       console.error('Error updating profile:', error);
       toast({
-        title: t('error'),
-        description: t('profileUpdateError'),
+        title: "Ошибка",
+        description: "Не удалось обновить профиль",
         variant: "destructive",
       });
     } finally {
@@ -161,11 +156,11 @@ const Profile = () => {
 
   const getStatusLabel = (status: string) => {
     const statusMap: { [key: string]: string } = {
-      pending: t('statusPending'),
-      processing: t('statusProcessing'),
-      shipped: t('statusShipped'),
-      delivered: t('statusDelivered'),
-      cancelled: t('statusCancelled')
+      pending: 'В обработке',
+      processing: 'Обрабатывается',
+      shipped: 'Отправлен',
+      delivered: 'Доставлен',
+      cancelled: 'Отменен'
     };
     return statusMap[status] || status;
   };
