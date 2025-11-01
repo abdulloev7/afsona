@@ -202,6 +202,7 @@ export type Database = {
           features: string[] | null
           id: string
           image: string | null
+          image_fit: string | null
           in_stock: boolean | null
           name: string
           price: number
@@ -217,6 +218,7 @@ export type Database = {
           features?: string[] | null
           id?: string
           image?: string | null
+          image_fit?: string | null
           in_stock?: boolean | null
           name: string
           price: number
@@ -232,6 +234,7 @@ export type Database = {
           features?: string[] | null
           id?: string
           image?: string | null
+          image_fit?: string | null
           in_stock?: boolean | null
           name?: string
           price?: number
