@@ -61,7 +61,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
     <Card className="flex flex-col shadow-card hover:shadow-brand transition-all duration-300 hover:-translate-y-1">
       <CardHeader>
         {product.image ? (
-          <div className="bg-muted rounded-lg p-2 mb-4">
+          <div className="bg-white rounded-lg p-2 mb-4">
             <img 
               src={product.image} 
               alt={product.name}
@@ -73,7 +73,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             />
           </div>
         ) : (
-          <div className="w-full h-48 bg-muted rounded-lg mb-4 flex items-center justify-center">
+          <div className="w-full h-48 bg-white rounded-lg mb-4 flex items-center justify-center">
             <span className="text-muted-foreground">Фото скоро появится</span>
           </div>
         )}
