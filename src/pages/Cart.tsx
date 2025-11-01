@@ -119,7 +119,7 @@ const Cart = () => {
           price: item.product.price,
         }));
 
-        await supabase.functions.invoke('send-order-notification', {
+        const { data: emailData, error: emailInvokeError } = await supabase.functions.invoke('send-order-notification', {
           body: {
             orderId: order.id,
             customerName: orderForm.customerName,
@@ -131,6 +131,12 @@ const Cart = () => {
             items: orderItemsForEmail,
           },
         });
+
+        if (emailInvokeError) {
+          throw emailInvokeError;
+        }
+
+        console.log('Order notification sent:', emailData);
       } catch (emailError) {
         console.error('Error sending notification email:', emailError);
         // Don't fail the order if email fails

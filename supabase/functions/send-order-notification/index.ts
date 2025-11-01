@@ -130,6 +130,7 @@ const handler = async (req: Request): Promise<Response> => {
     const emailResponse = await resend.emails.send({
       from: "AFSONA Orders <onboarding@resend.dev>",
       to: [businessEmail],
+      reply_to: customerEmail ? customerEmail : undefined,
       subject: `Новый заказ #${orderId.slice(0, 8)} от ${customerName}`,
       html: emailHtml,
     });
