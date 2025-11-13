@@ -57,20 +57,21 @@ export function ProductManagement() {
 
   const fetchProducts = async () => {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase
         .from('products')
         .select(`
           *,
           category:categories(name)
-        `)
+        `) as any)
         .eq('archived', showArchived)
         .order('name');
 
       if (error) throw error;
-      setProducts((data || []).map(p => ({
+      setProducts(((data || []) as any[]).map(p => ({
         ...p,
+        archived: p.archived ?? false,
         image_fit: (p.image_fit as 'cover' | 'contain') || 'cover'
-      })));
+      })) as Product[]);
     } catch (error) {
       console.error('Error fetching products:', error);
       toast({
@@ -289,7 +290,7 @@ export function ProductManagement() {
     try {
       const { error } = await supabase
         .from('products')
-        .update({ archived: !currentStatus })
+        .update({ archived: !currentStatus } as any)
         .eq('id', productId);
 
       if (error) throw error;

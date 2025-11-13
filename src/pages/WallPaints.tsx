@@ -43,10 +43,10 @@ const WallPaints = () => {
       if (categoryError) throw categoryError;
 
       // Then fetch products for this category
-      const { data, error } = await supabase
+      const { data, error } = await (supabase
         .from('products')
         .select('*')
-        .eq('category_id', category.id)
+        .eq('category_id', category.id) as any)
         .eq('archived', false)
         .eq('in_stock', true);
 

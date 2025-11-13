@@ -49,10 +49,10 @@ const Products = () => {
       // Fetch product count for each category
       const categoriesWithCount = await Promise.all(
         (categoriesData || []).map(async (category) => {
-          const { count } = await supabase
+          const { count } = await (supabase
             .from('products')
             .select('*', { count: 'exact', head: true })
-            .eq('category_id', category.id)
+            .eq('category_id', category.id) as any)
             .eq('archived', false);
           
           return {

@@ -1,6 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MapPin, Phone, Clock, Mail } from "lucide-react";
+import { MapPin, Phone, Clock, Mail, ExternalLink } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Contacts = () => {
   return (
@@ -24,8 +30,33 @@ const Contacts = () => {
               <CardTitle className="text-primary">Наш адрес</CardTitle>
             </CardHeader>
             <CardContent className="text-center">
-              <p className="text-foreground mb-2">г. Худжанд</p>
-              <p className="text-muted-foreground">20-й микрорайон, 27</p>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="cursor-pointer hover:opacity-80 transition-opacity">
+                    <p className="text-foreground mb-2">г. Худжанд</p>
+                    <p className="text-muted-foreground flex items-center justify-center gap-1">
+                      20-й микрорайон, 27
+                      <ExternalLink className="w-3 h-3" />
+                    </p>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="bg-background">
+                  <DropdownMenuItem 
+                    onClick={() => window.open('https://yandex.tj/maps/-/CLCdFG~t', '_blank')}
+                    className="cursor-pointer"
+                  >
+                    <MapPin className="w-4 h-4 mr-2" />
+                    Открыть в Яндекс.Картах
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => window.open('https://maps.app.goo.gl/pZvFZUXGvQv3P9zkF', '_blank')}
+                    className="cursor-pointer"
+                  >
+                    <MapPin className="w-4 h-4 mr-2" />
+                    Открыть в Google Maps
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </CardContent>
           </Card>
 
