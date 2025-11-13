@@ -1,4 +1,11 @@
 import afsona_logo from "@/assets/afsona-logo.png";
+import { MapPin, ExternalLink } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Footer = () => {
   return (
@@ -37,7 +44,32 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold mb-4">Контактная информация</h4>
             <div className="space-y-2 text-sm opacity-90">
-              <p>📍 г. Худжанд, 20-й микрорайон, 27</p>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="cursor-pointer hover:opacity-80 transition-opacity text-left">
+                    <p className="flex items-center gap-1">
+                      📍 г. Худжанд, 20-й микрорайон, 27
+                      <ExternalLink className="w-3 h-3" />
+                    </p>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="bg-background">
+                  <DropdownMenuItem 
+                    onClick={() => window.open('https://yandex.tj/maps/-/CLCdFG~t', '_blank')}
+                    className="cursor-pointer"
+                  >
+                    <MapPin className="w-4 h-4 mr-2" />
+                    Открыть в Яндекс.Картах
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => window.open('https://maps.app.goo.gl/pZvFZUXGvQv3P9zkF', '_blank')}
+                    className="cursor-pointer"
+                  >
+                    <MapPin className="w-4 h-4 mr-2" />
+                    Открыть в Google Maps
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
               <p>📞 +992 927 55 79 19</p>
               <p>✉️ info@afsona.com.tj</p>
               <p>🕒 Пн-Сб: 08:00-12:00, 13:00-18:00</p>
