@@ -17,7 +17,8 @@ interface Product {
   price: number;
   image: string | null;
   category_id: string;
-  brand: string | null;
+  brand_id: string | null;
+  brand: string | null; // Keep for backwards compatibility with old data
   eco: boolean;
   in_stock: boolean;
   archived: boolean;
@@ -34,14 +35,21 @@ interface Category {
   name: string;
 }
 
+interface Brand {
+  id: string;
+  name: string;
+}
+
 export function ProductManagement() {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [brands, setBrands] = useState<Brand[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedBrand, setSelectedBrand] = useState<string>('all');
   const [showArchived, setShowArchived] = useState(false);
   const [newSize, setNewSize] = useState('');
   const { toast } = useToast();
@@ -49,6 +57,7 @@ export function ProductManagement() {
   useEffect(() => {
     fetchProducts();
     fetchCategories();
+    fetchBrands();
   }, []);
 
   useEffect(() => {
@@ -95,6 +104,20 @@ export function ProductManagement() {
       setCategories(data || []);
     } catch (error) {
       console.error('Error fetching categories:', error);
+    }
+  };
+
+  const fetchBrands = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('brands')
+        .select('id, name')
+        .order('name');
+
+      if (error) throw error;
+      setBrands(data || []);
+    } catch (error) {
+      console.error('Error fetching brands:', error);
     }
   };
 
@@ -211,7 +234,7 @@ export function ProductManagement() {
         description: formData.get('description') as string,
         price: parseFloat(formData.get('price') as string),
         category_id: formData.get('category_id') as string,
-        brand: formData.get('brand') as string,
+        brand_id: formData.get('brand_id') as string || null,
         eco: formData.get('eco') === 'true',
         in_stock: formData.get('in_stock') === 'true',
         image: editingProduct.image,
@@ -319,6 +342,7 @@ export function ProductManagement() {
       price: 0,
       image: null,
       category_id: categories[0]?.id || '',
+      brand_id: null,
       brand: '',
       eco: false,
       in_stock: true,
@@ -352,6 +376,22 @@ export function ProductManagement() {
               <SelectContent>
                 <SelectItem value="active">Активные товары</SelectItem>
                 <SelectItem value="archived">Архивные товары</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex items-center gap-2">
+            <Label htmlFor="brand-filter">Бренд:</Label>
+            <Select value={selectedBrand} onValueChange={setSelectedBrand}>
+              <SelectTrigger id="brand-filter" className="w-[200px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Все бренды</SelectItem>
+                {brands.map((brand) => (
+                  <SelectItem key={brand.id} value={brand.id}>
+                    {brand.name}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -443,12 +483,20 @@ export function ProductManagement() {
               </div>
 
               <div>
-                <Label htmlFor="brand">Бренд</Label>
-                <Input
-                  id="brand"
-                  name="brand"
-                  defaultValue={editingProduct?.brand || ''}
-                />
+                <Label htmlFor="brand_id">Бренд</Label>
+                <Select name="brand_id" defaultValue={editingProduct?.brand_id || ''}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Выберите бренд" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">Без бренда</SelectItem>
+                    {brands.map((brand) => (
+                      <SelectItem key={brand.id} value={brand.id}>
+                        {brand.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="grid grid-cols-2 gap-4">

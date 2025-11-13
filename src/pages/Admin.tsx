@@ -17,6 +17,7 @@ import { useUserRole } from '@/hooks/useUserRole';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { ProductManagement } from '@/components/admin/ProductManagement';
+import BrandManagement from '@/components/admin/BrandManagement';
 import { useToast } from '@/hooks/use-toast';
 import { Package, Clock, CheckCircle, XCircle, Bell, ArrowLeft } from 'lucide-react';
 
@@ -271,8 +272,9 @@ const Admin = () => {
           </div>
 
           <Tabs defaultValue="orders" className="w-full">
-            <TabsList className="grid w-full max-w-md grid-cols-2 mb-8">
+            <TabsList className="grid w-full max-w-3xl grid-cols-3 mb-8">
               <TabsTrigger value="orders">Заказы</TabsTrigger>
+              <TabsTrigger value="brands">Бренды</TabsTrigger>
               <TabsTrigger value="products">Товары</TabsTrigger>
             </TabsList>
 
@@ -362,6 +364,10 @@ const Admin = () => {
                   ))}
                 </div>
               )}
+            </TabsContent>
+
+            <TabsContent value="brands">
+              <BrandManagement />
             </TabsContent>
 
             <TabsContent value="products">

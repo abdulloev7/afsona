@@ -7,6 +7,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { CartProvider } from "@/contexts/CartContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import BrandPage from "./pages/BrandPage";
 import WallPaints from "./pages/WallPaints";
 import CeilingPaints from "./pages/CeilingPaints";
 import FacadePaints from "./pages/FacadePaints";
@@ -44,6 +45,7 @@ const App = () => (
               <Route path="/cart" element={<Cart />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/orders" element={<Orders />} />
+              <Route path="/brands/:slug" element={<BrandPage />} />
               <Route path="/paints-coatings" element={<PaintsCoatings />} />
               <Route path="/wall-paints" element={<WallPaints />} />
               <Route path="/ceiling-paints" element={<CeilingPaints />} />

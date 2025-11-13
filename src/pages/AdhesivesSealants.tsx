@@ -44,11 +44,11 @@ const AdhesivesSealants = () => {
         .from('products')
         .select('*')
         .eq('category_id', category.id)
-        .eq('archived', false)
-        .eq('in_stock', true);
+        .eq('in_stock', true) as any;
 
       if (error) throw error;
-      setProducts(data || []);
+      // Filter out archived products
+      setProducts((data || []).filter((p: any) => !p.archived));
     } catch (error) {
       console.error('Error fetching products:', error);
       toast({
