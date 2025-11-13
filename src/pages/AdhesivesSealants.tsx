@@ -44,6 +44,7 @@ const AdhesivesSealants = () => {
         .from('products')
         .select('*')
         .eq('category_id', category.id)
+        .eq('archived', false)
         .eq('in_stock', true);
 
       if (error) throw error;

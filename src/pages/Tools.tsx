@@ -46,6 +46,7 @@ const Tools = () => {
         .from('products')
         .select('*')
         .in('category_id', categoryIds)
+        .eq('archived', false)
         .eq('in_stock', true);
 
       if (error) throw error;
