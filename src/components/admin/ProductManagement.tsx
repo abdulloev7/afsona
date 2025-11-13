@@ -66,14 +66,17 @@ export function ProductManagement() {
 
   const fetchProducts = async () => {
     try {
-      const { data, error } = await (supabase
-        .from('products')
+      const query = supabase
+        .from('products' as any)
         .select(`
           *,
-          category:categories(name)
-        `) as any)
+          category:categories(name),
+          brand:brands(id, name)
+        `)
         .eq('archived', showArchived)
         .order('name');
+      
+      const { data, error } = await query as any;
 
       if (error) throw error;
       setProducts(((data || []) as any[]).map(p => ({
@@ -110,9 +113,9 @@ export function ProductManagement() {
   const fetchBrands = async () => {
     try {
       const { data, error } = await supabase
-        .from('brands')
+        .from('brands' as any)
         .select('id, name')
-        .order('name');
+        .order('name') as any;
 
       if (error) throw error;
       setBrands(data || []);
@@ -358,9 +361,11 @@ export function ProductManagement() {
     return <div className="text-center py-8">Загрузка товаров...</div>;
   }
 
-  const filteredProducts = selectedCategory === 'all' 
-    ? products 
-    : products.filter(p => p.category_id === selectedCategory);
+  const filteredProducts = products.filter(p => {
+    const categoryMatch = selectedCategory === 'all' || p.category_id === selectedCategory;
+    const brandMatch = selectedBrand === 'all' || p.brand_id === selectedBrand;
+    return categoryMatch && brandMatch;
+  });
 
   return (
     <div className="space-y-4">
@@ -723,7 +728,7 @@ export function ProductManagement() {
                 <div className="space-y-2 text-sm">
                   <p><strong>Категория:</strong> {product.category?.name}</p>
                   <p><strong>Цена:</strong> {product.price.toLocaleString('ru-RU')} сом.</p>
-                  {product.brand && <p><strong>Бренд:</strong> {product.brand}</p>}
+                  {(product as any).brand?.name && <p><strong>Бренд:</strong> {(product as any).brand.name}</p>}
                   {product.sizes && product.sizes.length > 0 && (
                     <div>
                       <p className="font-semibold mb-1">Объемы:</p>

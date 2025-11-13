@@ -44,10 +44,11 @@ const PaintsCoatings = () => {
         .from('products')
         .select('*')
         .eq('category_id', category.id)
-        .eq('archived', false)
-        .eq('in_stock', true);
+        .eq('in_stock', true) as any;
 
       if (error) throw error;
+      // Filter out archived products
+      setProducts((data || []).filter((p: any) => !p.archived));
       setProducts(data || []);
     } catch (error) {
       console.error('Error fetching products:', error);

@@ -30,9 +30,9 @@ const Brands = () => {
   const fetchBrands = async () => {
     try {
       const { data, error } = await supabase
-        .from('brands')
+        .from('brands' as any)
         .select('*')
-        .order('display_order', { ascending: true });
+        .order('display_order', { ascending: true }) as any;
 
       if (error) throw error;
       setBrands(data || []);

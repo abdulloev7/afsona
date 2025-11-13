@@ -51,10 +51,10 @@ export const populateBrands = async () => {
     for (const brand of brands) {
       // Проверяем, существует ли бренд
       const { data: existing } = await supabase
-        .from('brands')
+        .from('brands' as any)
         .select('id')
         .eq('slug', brand.slug)
-        .maybeSingle();
+        .maybeSingle() as any;
 
       if (existing) {
         console.log(`Бренд ${brand.name} уже существует, пропускаем...`);
@@ -63,8 +63,8 @@ export const populateBrands = async () => {
 
       // Добавляем бренд
       const { error } = await supabase
-        .from('brands')
-        .insert([brand]);
+        .from('brands' as any)
+        .insert([brand]) as any;
 
       if (error) {
         console.error(`Ошибка при добавлении бренда ${brand.name}:`, error);
