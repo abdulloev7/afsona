@@ -46,9 +46,9 @@ const BrandManagement = () => {
   const fetchBrands = async () => {
     try {
       const { data, error } = await supabase
-        .from('brands')
+        .from('brands' as any)
         .select('*')
-        .order('display_order', { ascending: true });
+        .order('display_order', { ascending: true }) as any;
 
       if (error) throw error;
       setBrands(data || []);
@@ -163,16 +163,16 @@ const BrandManagement = () => {
 
       if (editingBrand) {
         const { error } = await supabase
-          .from('brands')
+          .from('brands' as any)
           .update(brandData)
-          .eq('id', editingBrand.id);
+          .eq('id', editingBrand.id) as any;
 
         if (error) throw error;
         toast({ title: "Успех", description: "Бренд обновлен" });
       } else {
         const { error } = await supabase
-          .from('brands')
-          .insert([brandData]);
+          .from('brands' as any)
+          .insert([brandData]) as any;
 
         if (error) throw error;
         toast({ title: "Успех", description: "Бренд добавлен" });
@@ -195,9 +195,9 @@ const BrandManagement = () => {
 
     try {
       const { error } = await supabase
-        .from('brands')
+        .from('brands' as any)
         .delete()
-        .eq('id', id);
+        .eq('id', id) as any;
 
       if (error) throw error;
       
@@ -222,8 +222,11 @@ const BrandManagement = () => {
     const otherBrand = brands[newIndex];
     
     try {
-      await supabase.from('brands').update({ display_order: otherBrand.display_order }).eq('id', brand.id);
-      await supabase.from('brands').update({ display_order: brand.display_order }).eq('id', otherBrand.id);
+      const updates = [
+        supabase.from('brands' as any).update({ display_order: otherBrand.display_order } as any).eq('id', brand.id),
+        supabase.from('brands' as any).update({ display_order: brand.display_order } as any).eq('id', otherBrand.id)
+      ];
+      await Promise.all(updates) as any;
       
       fetchBrands();
     } catch (error) {

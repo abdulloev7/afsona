@@ -18,6 +18,7 @@ interface ProductCardProps {
     features?: string[] | null;
     eco?: boolean | null;
     brand?: string | null;
+    brand_id?: string | null;
     sizes?: string[] | null;
     in_stock: boolean;
     image_fit?: 'cover' | 'contain';
@@ -95,6 +96,12 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         <div className="text-2xl font-bold mb-4 text-primary">
           {product.price.toLocaleString('ru-RU')} сом.
         </div>
+        
+        {product.brand && (
+          <p className="text-sm text-muted-foreground mb-2">
+            <strong>Бренд:</strong> {product.brand}
+          </p>
+        )}
         
         {product.features && product.features.length > 0 && (
           <div className="mb-4">

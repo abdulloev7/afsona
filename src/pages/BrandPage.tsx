@@ -51,10 +51,10 @@ const BrandPage = () => {
 
       // Fetch brand
       const { data: brandData, error: brandError } = await supabase
-        .from('brands')
+        .from('brands' as any)
         .select('*')
         .eq('slug', slug)
-        .maybeSingle();
+        .maybeSingle() as any;
 
       if (brandError) throw brandError;
       
@@ -71,11 +71,13 @@ const BrandPage = () => {
       setBrand(brandData);
 
       // Fetch products for this brand
-      const { data: productsData, error: productsError } = await supabase
-        .from('products')
+      const query = supabase
+        .from('products' as any)
         .select('*')
         .eq('brand_id', brandData.id)
-        .eq('in_stock', true) as any;
+        .eq('in_stock', true);
+      
+      const { data: productsData, error: productsError } = await query as any;
 
       if (productsError) throw productsError;
       
