@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Package, Pencil, Upload, Trash2, Plus, X } from 'lucide-react';
+import { Package, Pencil, Upload, Trash2, Plus, X, Archive } from 'lucide-react';
 
 interface Product {
   id: string;
@@ -20,6 +20,7 @@ interface Product {
   brand: string | null;
   eco: boolean;
   in_stock: boolean;
+  archived: boolean;
   sizes: string[] | null;
   features: string[] | null;
   image_fit?: 'cover' | 'contain';
@@ -41,6 +42,7 @@ export function ProductManagement() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [showArchived, setShowArchived] = useState(false);
   const [newSize, setNewSize] = useState('');
   const { toast } = useToast();
 
@@ -48,6 +50,10 @@ export function ProductManagement() {
     fetchProducts();
     fetchCategories();
   }, []);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [showArchived]);
 
   const fetchProducts = async () => {
     try {
@@ -57,6 +63,7 @@ export function ProductManagement() {
           *,
           category:categories(name)
         `)
+        .eq('archived', showArchived)
         .order('name');
 
       if (error) throw error;
@@ -278,6 +285,31 @@ export function ProductManagement() {
     }
   };
 
+  const handleToggleArchive = async (productId: string, currentStatus: boolean) => {
+    try {
+      const { error } = await supabase
+        .from('products')
+        .update({ archived: !currentStatus })
+        .eq('id', productId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Успех",
+        description: currentStatus ? "Товар разархивирован" : "Товар архивирован",
+      });
+
+      fetchProducts();
+    } catch (error) {
+      console.error('Error toggling archive:', error);
+      toast({
+        title: "Ошибка",
+        description: "Не удалось изменить статус товара",
+        variant: "destructive",
+      });
+    }
+  };
+
   const openEditDialog = (product?: Product) => {
     setEditingProduct(product || {
       id: '',
@@ -289,6 +321,7 @@ export function ProductManagement() {
       brand: '',
       eco: false,
       in_stock: true,
+      archived: false,
       sizes: null,
       features: null,
       image_fit: 'cover',
@@ -309,6 +342,18 @@ export function ProductManagement() {
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Управление товарами</h2>
         <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <Label htmlFor="archive-filter">Статус:</Label>
+            <Select value={showArchived ? 'archived' : 'active'} onValueChange={(v) => setShowArchived(v === 'archived')}>
+              <SelectTrigger id="archive-filter" className="w-[200px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="active">Активные товары</SelectItem>
+                <SelectItem value="archived">Архивные товары</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
           <div className="flex items-center gap-2">
             <Label htmlFor="category-filter">Категория:</Label>
             <Select value={selectedCategory} onValueChange={setSelectedCategory}>
@@ -643,6 +688,11 @@ export function ProductManagement() {
                     </div>
                   )}
                   <div className="flex gap-2 flex-wrap">
+                    {product.archived && (
+                      <span className="bg-muted text-muted-foreground px-2 py-1 rounded text-xs font-semibold">
+                        АРХИВ
+                      </span>
+                    )}
                     {product.eco && (
                       <span className="bg-green-500/10 text-green-500 px-2 py-1 rounded text-xs">
                         ЭКО
@@ -669,6 +719,13 @@ export function ProductManagement() {
                   >
                     <Pencil className="h-4 w-4 mr-2" />
                     Изменить
+                  </Button>
+                  <Button
+                    variant={product.archived ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => handleToggleArchive(product.id, product.archived)}
+                  >
+                    <Archive className="h-4 w-4" />
                   </Button>
                   <Button
                     variant="destructive"

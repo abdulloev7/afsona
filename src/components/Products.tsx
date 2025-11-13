@@ -52,7 +52,8 @@ const Products = () => {
           const { count } = await supabase
             .from('products')
             .select('*', { count: 'exact', head: true })
-            .eq('category_id', category.id);
+            .eq('category_id', category.id)
+            .eq('archived', false);
           
           return {
             ...category,
