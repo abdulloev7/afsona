@@ -237,7 +237,10 @@ export function ProductManagement() {
         description: formData.get('description') as string,
         price: parseFloat(formData.get('price') as string),
         category_id: formData.get('category_id') as string,
-        brand_id: formData.get('brand_id') as string || null,
+        brand_id: (() => {
+          const brandId = formData.get('brand_id') as string;
+          return brandId === 'none' ? null : brandId;
+        })(),
         eco: formData.get('eco') === 'true',
         in_stock: formData.get('in_stock') === 'true',
         image: editingProduct.image,
@@ -489,12 +492,12 @@ export function ProductManagement() {
 
               <div>
                 <Label htmlFor="brand_id">Бренд</Label>
-                <Select name="brand_id" defaultValue={editingProduct?.brand_id || ''}>
+                <Select name="brand_id" defaultValue={editingProduct?.brand_id || 'none'}>
                   <SelectTrigger>
                     <SelectValue placeholder="Выберите бренд" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Без бренда</SelectItem>
+                    <SelectItem value="none">Без бренда</SelectItem>
                     {brands.map((brand) => (
                       <SelectItem key={brand.id} value={brand.id}>
                         {brand.name}
