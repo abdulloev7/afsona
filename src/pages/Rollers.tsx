@@ -40,10 +40,10 @@ const Rollers = () => {
 
       if (categoryError) throw categoryError;
 
-      const { data, error } = await supabase
+      const { data, error } = await (supabase
         .from('products')
         .select('*')
-        .eq('category_id', category.id)
+        .eq('category_id', category.id) as any)
         .eq('archived', false)
         .eq('in_stock', true);
 
