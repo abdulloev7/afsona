@@ -189,7 +189,7 @@ const Tinting = () => {
         {/* Все преимущества - Полный список */}
         <div className="mb-16">
           <h3 className="text-2xl font-bold text-center mb-8">Почему выбирают нас</h3>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 justify-items-center">
             {advantages.map((advantage, index) => (
               <Card key={index} className="text-center hover:shadow-lg transition-shadow">
                 <CardHeader>
