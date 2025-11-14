@@ -8,8 +8,8 @@ const Tinting = () => {
   // Временные placeholder изображения
   const placeholderImages = [
     "https://kolerovka.ru/wp-content/uploads/2018/07/Vybor-oborudovanija.jpg?w=800&h=600", // paint mixing machine
-    "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=800&h=600", // colorful paints
-    "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=800&h=600", // color palette
+    "https://sun1-20.userapi.com/c840424/v840424166/8b34b/2QX4c1vnz5k.jpg?w=800&h=600", // colorful paints
+    "https://drive.google.com/file/d/1hk8b01sCYFSBGrY5bIfRQer74I1_8kFR/view?usp=sharing?w=800&h=600", // color palette
   ];
 
   const advantages = [
