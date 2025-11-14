@@ -9,7 +9,7 @@ const Tinting = () => {
   const placeholderImages = [
     "https://kolerovka.ru/wp-content/uploads/2018/07/Vybor-oborudovanija.jpg?w=800&h=600", // paint mixing machine
     "https://sun1-20.userapi.com/c840424/v840424166/8b34b/2QX4c1vnz5k.jpg?w=800&h=600", // colorful paints
-    "https://drive.google.com/file/d/1hk8b01sCYFSBGrY5bIfRQer74I1_8kFR/view", // color palette
+    "https://santint.online/wp-content/uploads/2023/09/semi-automatic-toning-machine-1.png", // color palette
   ];
 
   const advantages = [
