@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -50,6 +50,7 @@ export function SearchDialog() {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const latestRequestId = useRef(0);
 
   // Обработка Ctrl+K / Cmd+K
   useEffect(() => {
@@ -65,21 +66,16 @@ export function SearchDialog() {
 
   // Поиск с debounce
   useEffect(() => {
-    if (!search) {
+    const q = search.trim();
+    if (!q) {
       setResults([]);
       return;
     }
 
     const delayDebounce = setTimeout(async () => {
       setLoading(true);
-      const searchTerm = `%${search}%`;
-      
-      // Search for matching categories
-      const { data: cats } = await supabase
-        .from('categories')
-        .select('id, name, slug')
-        .ilike('name', searchTerm)
-        .limit(10);
+      const requestId = ++latestRequestId.current;
+      const searchTerm = `%${q}%`;
 
       const selectFields = `
         id,
@@ -93,35 +89,54 @@ export function SearchDialog() {
         brand_info:brands(name)
       `;
 
-      // Direct search by product fields
-      const { data: direct } = await supabase
-        .from('products')
-        .select(selectFields)
-        .or(`name.ilike.${searchTerm},description.ilike.${searchTerm},brand.ilike.${searchTerm}`)
-        .eq('archived', false)
-        .eq('in_stock', true)
-        .limit(30);
+      try {
+        // Параллельно ищем категории и прямые совпадения товаров
+        const [catsResp, directResp] = await Promise.all([
+          supabase
+            .from('categories')
+            .select('id, name, slug')
+            .ilike('name', searchTerm)
+            .limit(10),
+          supabase
+            .from('products')
+            .select(selectFields)
+            .or(`name.ilike.${searchTerm},description.ilike.${searchTerm},brand.ilike.${searchTerm}`)
+            .eq('archived', false)
+            .eq('in_stock', true)
+            .limit(30),
+        ]);
 
-      // Search by category if categories found
-      let byCategory: SearchResult[] = [];
-      if (cats?.length) {
-        const catIds = cats.map(c => c.id);
-        const { data: catProducts } = await supabase
-          .from('products')
-          .select(selectFields)
-          .in('category_id', catIds)
-          .eq('archived', false)
-          .eq('in_stock', true)
-          .limit(50);
-        byCategory = (catProducts as SearchResult[]) || [];
+        const cats = catsResp.data || [];
+        const direct = (directResp.data || []) as SearchResult[];
+
+        // Поиск по категориям если найдены
+        let byCategory: SearchResult[] = [];
+        if (cats.length) {
+          const catIds = cats.map(c => c.id);
+          const catProductsResp = await supabase
+            .from('products')
+            .select(selectFields)
+            .in('category_id', catIds)
+            .eq('archived', false)
+            .eq('in_stock', true)
+            .limit(50);
+          byCategory = (catProductsResp.data as SearchResult[]) || [];
+        }
+
+        // Применяем результат только если это самый свежий запрос
+        if (requestId === latestRequestId.current) {
+          const merged = new Map<string, SearchResult>();
+          [...direct, ...byCategory].forEach(p => merged.set(p.id, p));
+          setResults(Array.from(merged.values()));
+          setLoading(false);
+        }
+      } catch (e) {
+        if (requestId === latestRequestId.current) {
+          setResults([]);
+          setLoading(false);
+        }
+        console.error('Search error:', e);
       }
-
-      // Merge results and remove duplicates
-      const mergedMap = new Map<string, SearchResult>();
-      [...(direct || []), ...byCategory].forEach(p => mergedMap.set(p.id, p));
-      setResults(Array.from(mergedMap.values()));
-      
-      setLoading(false);
     }, 300);
 
     return () => clearTimeout(delayDebounce);
@@ -150,7 +165,7 @@ export function SearchDialog() {
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl p-0">
-        <Command>
+        <Command shouldFilter={false}>
           <CommandInput 
             placeholder="Поиск товаров, брендов, категорий..." 
             value={search}
@@ -171,9 +186,15 @@ export function SearchDialog() {
               </CommandGroup>
             )}
 
-            {loading && <CommandEmpty>Поиск...</CommandEmpty>}
-            {!loading && results.length === 0 && search && (
-              <CommandEmpty>Ничего не найдено</CommandEmpty>
+            {loading && (
+              <div className="py-6 text-center text-sm text-muted-foreground">
+                Поиск...
+              </div>
+            )}
+            {!loading && search && results.length === 0 && (
+              <div className="py-6 text-center text-sm text-muted-foreground">
+                Ничего не найдено
+              </div>
             )}
             
             {/* Группировка по категориям */}
