@@ -62,7 +62,7 @@ const Footer = () => {
                     Открыть в Яндекс.Картах
                   </DropdownMenuItem>
                   <DropdownMenuItem 
-                    onClick={() => window.open('https://maps.app.goo.gl/pZvFZUXGvQv3P9zkF', '_blank')}
+                    onClick={() => window.open('https://share.google/dBMsPOdCoxBGsOJOy', '_blank')}
                     className="cursor-pointer"
                   >
                     <MapPin className="w-4 h-4 mr-2" />
