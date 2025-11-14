@@ -115,6 +115,8 @@ const Tinting = () => {
               className="w-full h-full"
               ></iframe>
             </div>
+          </Card>
+        </div>
 
         {/* Информационные блоки */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
