@@ -105,18 +105,16 @@ const Tinting = () => {
 
           {/* Видео placeholder */}
           <Card className="overflow-hidden">
-            <div className="aspect-video bg-gradient-to-br from-primary/20 to-purple-500/20 flex items-center justify-center">
-              <div className="text-center p-8">
-                <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-primary/20 flex items-center justify-center">
-                  <svg className="w-10 h-10 text-primary" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
-                  </svg>
-                </div>
-                <p className="text-muted-foreground font-medium">🎥 Здесь будет видео процесса колеровки</p>
-              </div>
+            <div className="aspect-video">
+              <iframe
+              src="https://www.youtube.com/embed/iF1chlZKQDw"
+              title="Видео процесса колеровки"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="w-full h-full"
+              ></iframe>
             </div>
-          </Card>
-        </div>
 
         {/* Информационные блоки */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
