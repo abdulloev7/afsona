@@ -94,9 +94,6 @@ const Tinting = () => {
                         className="w-full h-full object-cover"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                      <p className="absolute bottom-4 left-4 text-white font-semibold text-sm">
-                        📸 Замените это фото на реальное оборудование
-                      </p>
                     </div>
                   </CarouselItem>
                 ))}
@@ -115,12 +112,7 @@ const Tinting = () => {
                     <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
                   </svg>
                 </div>
-                <p className="text-muted-foreground font-medium">
-                  🎥 Здесь будет видео процесса колеровки
-                </p>
-                <p className="text-sm text-muted-foreground mt-2">
-                  Вставьте ссылку на YouTube/Vimeo или загрузите видео
-                </p>
+                <p className="text-muted-foreground font-medium">🎥 Здесь будет видео процесса колеровки</p>
               </div>
             </div>
           </Card>
