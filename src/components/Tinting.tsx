@@ -97,7 +97,7 @@ const Tinting = () => {
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                         <p className="absolute bottom-4 left-4 text-white font-semibold">
-                          📸 Замените это фото на реальное оборудование
+                          #📸 Замените это фото на реальное оборудование
                         </p>
                       </div>
                     </CarouselItem>
