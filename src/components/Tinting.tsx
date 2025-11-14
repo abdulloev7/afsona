@@ -116,7 +116,7 @@ const Tinting = () => {
                   </div>
                   <p className="text-muted-foreground font-medium">🎥 Здесь будет видео процесса колеровки</p>
                   <p className="text-sm text-muted-foreground mt-2">
-                    Вставьте ссылку на YouTube/Vimeo или загрузите видео
+                    Как вариант можем ставить ссылку на YouTube
                   </p>
                 </div>
               </div>
