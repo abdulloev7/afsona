@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import Brands from "@/components/Brands";
+import Tinting from "@/components/Tinting";
 import Products from "@/components/Products";
 import About from "@/components/About";
 import Contacts from "@/components/Contacts";
@@ -20,6 +21,7 @@ const Index = () => {
         <Hero />
         <div className="bg-background/95 backdrop-blur-sm">
           <Brands />
+          <Tinting />
           <Products />
           <About />
           <Contacts />

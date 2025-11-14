@@ -106,6 +106,12 @@ const Header = () => {
               Ассортимент
             </button>
             <button 
+              onClick={() => scrollToSection('tinting')}
+              className="text-foreground hover:text-primary transition-colors"
+            >
+              Колеровка
+            </button>
+            <button 
               onClick={() => scrollToSection('about')}
               className="text-foreground hover:text-primary transition-colors"
             >
