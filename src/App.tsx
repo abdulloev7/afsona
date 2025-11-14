@@ -27,6 +27,7 @@ import Profile from "./pages/Profile";
 import Cart from "./pages/Cart";
 import Admin from "./pages/Admin";
 import Orders from "./pages/Orders";
+import Product from "./pages/Product";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +46,7 @@ const App = () => (
               <Route path="/cart" element={<Cart />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/orders" element={<Orders />} />
+              <Route path="/product/:id" element={<Product />} />
               <Route path="/brands/:slug" element={<BrandPage />} />
               <Route path="/paints-coatings" element={<PaintsCoatings />} />
               <Route path="/wall-paints" element={<WallPaints />} />
