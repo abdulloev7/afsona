@@ -5,6 +5,7 @@ import { ShoppingCart, User, LogIn, Shield } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 import { useUserRole } from "@/hooks/useUserRole";
+import { SearchDialog } from "@/components/SearchDialog";
 import afsona_logo from "@/assets/afsona-logo.png";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -100,6 +101,12 @@ const Header = () => {
               Главная
             </button>
             <button 
+              onClick={() => scrollToSection('brands')}
+              className="text-foreground hover:text-primary transition-colors"
+            >
+              Наши бренды
+            </button>
+            <button 
               onClick={() => scrollToSection('products')}
               className="text-foreground hover:text-primary transition-colors"
             >
@@ -126,6 +133,7 @@ const Header = () => {
           </nav>
 
           <div className="flex items-center space-x-2">
+            <SearchDialog />
             {user ? (
               <>
                 {isAdmin && (
