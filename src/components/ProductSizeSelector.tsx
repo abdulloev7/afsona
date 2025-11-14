@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -21,6 +21,13 @@ export const ProductSizeSelector = ({ product, isOpen, onClose, onAddToCart }: P
   const [selectedSize, setSelectedSize] = useState<string>(product.sizes?.[0] || "");
   const [quantity, setQuantity] = useState(1);
 
+  useEffect(() => {
+    if (isOpen) {
+      setSelectedSize(product.sizes?.[0] || "");
+      setQuantity(1);
+    }
+  }, [isOpen, product.sizes]);
+
   const handleSubmit = () => {
     if (selectedSize) {
       onAddToCart(selectedSize, quantity);
@@ -34,7 +41,7 @@ export const ProductSizeSelector = ({ product, isOpen, onClose, onAddToCart }: P
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Выберите объем/размер</DialogTitle>
+          <DialogTitle>Выберите объем</DialogTitle>
         </DialogHeader>
         
         <div className="space-y-6">
@@ -45,7 +52,7 @@ export const ProductSizeSelector = ({ product, isOpen, onClose, onAddToCart }: P
 
           {product.sizes && product.sizes.length > 0 && (
             <div className="space-y-3">
-              <Label className="text-sm font-medium">Доступные размеры:</Label>
+              <Label className="text-sm font-medium">Доступные объемы:</Label>
               <RadioGroup value={selectedSize} onValueChange={setSelectedSize}>
                 {product.sizes.map((size) => (
                   <div key={size} className="flex items-center space-x-2">
