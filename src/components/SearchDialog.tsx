@@ -72,6 +72,8 @@ export function SearchDialog() {
 
     const delayDebounce = setTimeout(async () => {
       setLoading(true);
+      const searchTerm = `%${search}%`;
+      
       const { data } = await supabase
         .from('products')
         .select(`
@@ -85,10 +87,10 @@ export function SearchDialog() {
           category:categories(name),
           brand_info:brands(name)
         `)
-        .or(`name.ilike.%${search}%,description.ilike.%${search}%,brand.ilike.%${search}%`)
+        .or(`name.ilike.${searchTerm},description.ilike.${searchTerm},brand.ilike.${searchTerm}`)
         .eq('archived', false)
         .eq('in_stock', true)
-        .limit(20);
+        .limit(30);
 
       setResults((data as SearchResult[]) || []);
       setLoading(false);
@@ -153,15 +155,12 @@ export function SearchDialog() {
             {!search && (
               <CommandGroup heading="Быстрые ссылки">
                 <CommandItem onSelect={() => scrollToSection('tinting')}>
-                  <span className="mr-2">🎨</span>
                   Услуга колеровки
                 </CommandItem>
                 <CommandItem onSelect={() => scrollToSection('brands')}>
-                  <span className="mr-2">🏢</span>
                   Наши бренды
                 </CommandItem>
                 <CommandItem onSelect={() => scrollToSection('contacts')}>
-                  <span className="mr-2">📞</span>
                   Контакты
                 </CommandItem>
               </CommandGroup>
