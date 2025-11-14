@@ -7,18 +7,20 @@ interface CartItem {
   id: string;
   product_id: string;
   quantity: number;
+  selected_size?: string | null;
   product: {
     id: string;
     name: string;
     price: number;
     image?: string;
+    sizes?: string[] | null;
   };
 }
 
 interface CartContextType {
   items: CartItem[];
   loading: boolean;
-  addToCart: (productId: string, quantity?: number) => Promise<void>;
+  addToCart: (productId: string, quantity?: number, selectedSize?: string | null) => Promise<void>;
   updateQuantity: (productId: string, quantity: number) => Promise<void>;
   removeFromCart: (productId: string) => Promise<void>;
   clearCart: () => Promise<void>;
@@ -56,7 +58,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           id,
           product_id,
           quantity,
-          product:products(id, name, price, image)
+          selected_size,
+          product:products(id, name, price, image, sizes)
         `)
         .eq('user_id', user.id);
 
@@ -82,7 +85,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [session]);
 
-  const addToCart = async (productId: string, quantity: number = 1) => {
+  const addToCart = async (productId: string, quantity: number = 1, selectedSize: string | null = null) => {
     if (!user) {
       toast({
         title: "Требуется авторизация",
@@ -93,7 +96,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     try {
-      const existingItem = items.find(item => item.product_id === productId);
+      const existingItem = items.find(item => 
+        item.product_id === productId && item.selected_size === selectedSize
+      );
       
       if (existingItem) {
         await updateQuantity(productId, existingItem.quantity + quantity);
@@ -103,7 +108,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           .insert({
             user_id: user.id,
             product_id: productId,
-            quantity
+            quantity,
+            selected_size: selectedSize
           });
 
         if (error) throw error;

@@ -24,6 +24,7 @@ interface Order {
     product_id: string;
     quantity: number;
     price: number;
+    selected_size?: string | null;
     product: {
       name: string;
     };
@@ -61,6 +62,7 @@ const Orders = () => {
             product_id,
             quantity,
             price,
+            selected_size,
             product:products (
               name
             )
@@ -179,6 +181,11 @@ const Orders = () => {
                             <div key={index} className="flex justify-between text-sm">
                               <span>
                                 {item.product.name} x {item.quantity}
+                                {item.selected_size && (
+                                  <span className="text-muted-foreground ml-1">
+                                    ({item.selected_size})
+                                  </span>
+                                )}
                               </span>
                               <span className="font-medium">
                                 {(item.price * item.quantity).toLocaleString('ru-RU')} сом.

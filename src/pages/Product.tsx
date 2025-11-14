@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, ShoppingCart, Leaf } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { ProductSizeSelector } from "@/components/ProductSizeSelector";
 
 interface ProductData {
   id: string;
@@ -56,6 +57,7 @@ export default function Product() {
   const [product, setProduct] = useState<ProductData | null>(null);
   const [loading, setLoading] = useState(true);
   const [isInCart, setIsInCart] = useState(false);
+  const [showSizeSelector, setShowSizeSelector] = useState(false);
   const { addToCart, items } = useCart();
   const { user } = useAuth();
   const { toast } = useToast();
@@ -130,9 +132,41 @@ export default function Product() {
       return;
     }
 
-    if (product) {
-      addToCart(product.id);
+    if (!product) return;
+
+    // Если у товара есть несколько размеров, показать диалог
+    if (product.sizes && product.sizes.length > 1) {
+      setShowSizeSelector(true);
+      return;
+    }
+
+    // Если размер один или нет размеров, добавить сразу
+    const size = product.sizes?.[0] || null;
+    addToCart(product.id, 1, size);
+    setIsInCart(true);
+    toast({
+      title: "Товар добавлен",
+      description: "Товар успешно добавлен в корзину",
+    });
+  };
+
+  const handleSizeSelected = async (size: string, quantity: number) => {
+    if (!product) return;
+    
+    try {
+      await addToCart(product.id, quantity, size);
+      setShowSizeSelector(false);
       setIsInCart(true);
+      toast({
+        title: "Товар добавлен",
+        description: "Товар успешно добавлен в корзину",
+      });
+    } catch (error) {
+      toast({
+        title: "Ошибка",
+        description: "Не удалось добавить товар в корзину",
+        variant: "destructive",
+      });
     }
   };
 
@@ -277,6 +311,12 @@ export default function Product() {
           </div>
         </div>
       </div>
+      <ProductSizeSelector
+        product={product}
+        isOpen={showSizeSelector}
+        onClose={() => setShowSizeSelector(false)}
+        onAddToCart={handleSizeSelected}
+      />
       <Footer />
     </div>
   );
