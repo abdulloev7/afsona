@@ -189,9 +189,9 @@ const Tinting = () => {
         {/* Все преимущества - Полный список */}
         <div className="mb-16">
           <h3 className="text-2xl font-bold text-center mb-8">Почему выбирают нас</h3>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 justify-items-center">
+          <div className="flex flex-wrap justify-center gap-6">
             {advantages.map((advantage, index) => (
-              <Card key={index} className="text-center hover:shadow-lg transition-shadow">
+              <Card key={index} className="text-center hover:shadow-lg transition-shadow basis-[280px]">
                 <CardHeader>
                   <div className="mx-auto mb-2 p-3 rounded-full bg-primary/10 w-fit">
                     <advantage.icon className="w-6 h-6 text-primary" />
