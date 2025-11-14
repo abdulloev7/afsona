@@ -7,6 +7,7 @@ import { ShoppingCart, Leaf, ShoppingBag } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { ProductSizeSelector } from './ProductSizeSelector';
 
 interface ProductCardProps {
   product: {
@@ -27,10 +28,15 @@ interface ProductCardProps {
 
 export const ProductCard = ({ product }: ProductCardProps) => {
   const [isInCart, setIsInCart] = useState(false);
+  const [showSizeSelector, setShowSizeSelector] = useState(false);
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const { user } = useAuth();
   const { toast } = useToast();
+
+  const handleImageClick = () => {
+    navigate(`/product/${product.id}`);
+  };
 
   const handleAddToCart = async () => {
     if (!user) {
@@ -38,8 +44,34 @@ export const ProductCard = ({ product }: ProductCardProps) => {
       return;
     }
     
+    // Если у товара есть несколько размеров, показать диалог
+    if (product.sizes && product.sizes.length > 1) {
+      setShowSizeSelector(true);
+      return;
+    }
+    
+    // Если размер один или нет размеров, добавить сразу
+    const size = product.sizes?.[0] || null;
     try {
-      await addToCart(product.id, 1);
+      await addToCart(product.id, 1, size);
+      setIsInCart(true);
+      toast({
+        title: "Успешно!",
+        description: "Товар добавлен в корзину",
+      });
+    } catch (error) {
+      toast({
+        title: "Ошибка",
+        description: "Не удалось добавить товар в корзину",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleSizeSelected = async (size: string, quantity: number) => {
+    try {
+      await addToCart(product.id, quantity, size);
+      setShowSizeSelector(false);
       setIsInCart(true);
       toast({
         title: "Успешно!",
@@ -62,7 +94,10 @@ export const ProductCard = ({ product }: ProductCardProps) => {
     <Card className="flex flex-col shadow-card hover:shadow-brand transition-all duration-300 hover:-translate-y-1">
       <CardHeader>
         {product.image ? (
-          <div className="bg-white rounded-lg p-2 mb-4">
+          <div 
+            className="bg-white rounded-lg p-2 mb-4 cursor-pointer hover:opacity-90 transition-opacity" 
+            onClick={handleImageClick}
+          >
             <img 
               src={product.image} 
               alt={product.name}
@@ -74,7 +109,10 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             />
           </div>
         ) : (
-          <div className="w-full h-48 bg-white rounded-lg mb-4 flex items-center justify-center">
+          <div 
+            className="w-full h-48 bg-white rounded-lg mb-4 flex items-center justify-center cursor-pointer hover:opacity-90 transition-opacity"
+            onClick={handleImageClick}
+          >
             <span className="text-muted-foreground">Фото скоро появится</span>
           </div>
         )}
@@ -152,6 +190,13 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           )}
         </div>
       </CardContent>
+
+      <ProductSizeSelector
+        product={product}
+        isOpen={showSizeSelector}
+        onClose={() => setShowSizeSelector(false)}
+        onAddToCart={handleSizeSelected}
+      />
     </Card>
   );
 };

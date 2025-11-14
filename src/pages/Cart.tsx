@@ -103,6 +103,7 @@ const Cart = () => {
         product_id: item.product_id,
         quantity: item.quantity,
         price: item.product.price,
+        selected_size: item.selected_size || null,
       }));
 
       const { error: itemsError } = await supabase
@@ -117,6 +118,7 @@ const Cart = () => {
           product_name: item.product.name,
           quantity: item.quantity,
           price: item.product.price,
+          selected_size: item.selected_size || null,
         }));
 
         const { data: emailData, error: emailInvokeError } = await supabase.functions.invoke('send-order-notification', {
@@ -228,8 +230,13 @@ const Cart = () => {
                             className="w-16 h-16 object-cover rounded"
                           />
                         )}
-                        <div className="flex-1">
+                         <div className="flex-1">
                           <h3 className="font-semibold">{item.product.name}</h3>
+                          {item.selected_size && (
+                            <p className="text-sm text-muted-foreground">
+                              Объем: {item.selected_size}
+                            </p>
+                          )}
                           <p className="text-lg font-bold">
                             {item.product.price.toLocaleString('ru-RU')} сом.
                           </p>
