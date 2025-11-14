@@ -7,7 +7,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 const Tinting = () => {
   // Временные placeholder изображения
   const placeholderImages = [
-    "https://tecsa.ru/wp-content/uploads/2022/07/kolerovochnyj-dozator-fastfluid-x-smart-foto.jpg?w=800&h=600", // paint mixing machine
+    "https://kolerovka.ru/wp-content/uploads/2018/07/Vybor-oborudovanija.jpg?w=800&h=600", // paint mixing machine
     "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=800&h=600", // colorful paints
     "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=800&h=600", // color palette
   ];
