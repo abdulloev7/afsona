@@ -1,27 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Palette, 
-  MonitorCheck, 
-  Clock, 
-  Repeat, 
-  Droplets, 
-  Users, 
-  Target,
-} from "lucide-react";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
+import { Palette, MonitorCheck, Clock, Repeat, Droplets, Users, Target } from "lucide-react";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 
 const Tinting = () => {
   // Временные placeholder изображения
   const placeholderImages = [
-    "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=800&h=600", // paint mixing machine
+    "https://tecsa.ru/wp-content/uploads/2022/07/kolerovochnyj-dozator-fastfluid-x-smart-foto.jpg", // paint mixing machine
     "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=800&h=600", // colorful paints
     "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=800&h=600", // color palette
   ];
@@ -30,52 +16,52 @@ const Tinting = () => {
     {
       icon: Palette,
       title: "Более 2000 оттенков",
-      description: "Огромный выбор из различных цветовых систем"
+      description: "Огромный выбор из различных цветовых систем",
     },
     {
       icon: MonitorCheck,
       title: "Компьютерная точность",
-      description: "Гарантируем идеальное смешивание цветов"
+      description: "Гарантируем идеальное смешивание цветов",
     },
     {
       icon: Repeat,
       title: "Повторяемость результата",
-      description: "Сохраняем формулу для повторных заказов"
+      description: "Сохраняем формулу для повторных заказов",
     },
     {
       icon: Clock,
       title: "Быстрая колеровка",
-      description: "Готовая краска за 5-10 минут"
+      description: "Готовая краска за 5-10 минут",
     },
     {
       icon: Droplets,
       title: "Любой объём",
-      description: "От 1 литра до промышленных партий"
+      description: "От 1 литра до промышленных партий",
     },
     {
       icon: Users,
       title: "Профессиональные консультации",
-      description: "Поможем выбрать идеальный цвет"
+      description: "Поможем выбрать идеальный цвет",
     },
     {
       icon: Target,
       title: "Точность попадания",
-      description: "Можем заколеровать под ваш образец"
-    }
+      description: "Можем заколеровать под ваш образец",
+    },
   ];
 
   const workProcess = [
     "Выбор оттенка из палитры или по вашему образцу",
     "Компьютерный расчет точных пропорций",
     "Автоматическое смешивание пигментов",
-    "Проверка цвета и выдача готовой краски"
+    "Проверка цвета и выдача готовой краски",
   ];
 
   const colorCollections = [
     { name: "RAL Classic", colors: "213 оттенков" },
     { name: "NCS System", colors: "1950 оттенков" },
     { name: "Dulux Colour", colors: "Более 5000 цветов" },
-    { name: "Tikkurila", colors: "Более 20000 оттенков" }
+    { name: "Tikkurila", colors: "Более 20000 оттенков" },
   ];
 
   return (
@@ -86,18 +72,15 @@ const Tinting = () => {
           <Badge className="mb-4 bg-gradient-to-r from-red-500 via-yellow-500 via-green-500 via-blue-500 to-purple-500 text-white">
             Профессиональное оборудование
           </Badge>
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-primary">
-            Компьютерная колеровка краски
-          </h2>
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-primary">Компьютерная колеровка краски</h2>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            С помощью современного колеровочного оборудования мы можем подобрать около 2000 оттенков краски 
-            под любые ваши потребности. Точность, скорость и гарантия повторяемости результата.
+            С помощью современного колеровочного оборудования мы можем подобрать около 2000 оттенков краски под любые
+            ваши потребности. Точность, скорость и гарантия повторяемости результата.
           </p>
         </div>
 
         {/* Основной контент - Grid Layout */}
         <div className="grid lg:grid-cols-2 gap-12 mb-16">
-          
           {/* Левая колонка - Визуальный контент */}
           <div className="space-y-6">
             {/* Carousel с фото оборудования */}
@@ -107,8 +90,8 @@ const Tinting = () => {
                   {placeholderImages.map((image, index) => (
                     <CarouselItem key={index}>
                       <div className="aspect-video bg-muted relative overflow-hidden">
-                        <img 
-                          src={image} 
+                        <img
+                          src={image}
                           alt={`Колеровочное оборудование ${index + 1}`}
                           className="w-full h-full object-cover"
                         />
@@ -134,9 +117,7 @@ const Tinting = () => {
                       <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
                     </svg>
                   </div>
-                  <p className="text-muted-foreground font-medium">
-                    🎥 Здесь будет видео процесса колеровки
-                  </p>
+                  <p className="text-muted-foreground font-medium">🎥 Здесь будет видео процесса колеровки</p>
                   <p className="text-sm text-muted-foreground mt-2">
                     Вставьте ссылку на YouTube/Vimeo или загрузите видео
                   </p>
@@ -147,7 +128,6 @@ const Tinting = () => {
 
           {/* Правая колонка - Информационный блок */}
           <div className="space-y-6">
-            
             {/* О оборудовании */}
             <Card className="border-2 border-primary/20">
               <CardHeader>
@@ -158,8 +138,8 @@ const Tinting = () => {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground mb-4">
-                  Мы используем профессиональное колеровочное оборудование последнего поколения, 
-                  которое обеспечивает максимальную точность и скорость работы.
+                  Мы используем профессиональное колеровочное оборудование последнего поколения, которое обеспечивает
+                  максимальную точность и скорость работы.
                 </p>
                 <div className="bg-muted/50 rounded-lg p-4 italic text-sm">
                   💡 Добавьте здесь название модели оборудования и техническое описание
@@ -233,21 +213,30 @@ const Tinting = () => {
           <CardContent className="py-12 text-center">
             <h3 className="text-3xl font-bold mb-4">Готовы подобрать идеальный цвет?</h3>
             <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Приходите в наш магазин или позвоните нам для консультации. 
-              Мы поможем выбрать идеальный оттенок для вашего проекта!
+              Приходите в наш магазин или позвоните нам для консультации. Мы поможем выбрать идеальный оттенок для
+              вашего проекта!
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
-              <Button size="lg" className="gap-2" onClick={() => {
-                const element = document.getElementById('contacts');
-                element?.scrollIntoView({ behavior: 'smooth' });
-              }}>
+              <Button
+                size="lg"
+                className="gap-2"
+                onClick={() => {
+                  const element = document.getElementById("contacts");
+                  element?.scrollIntoView({ behavior: "smooth" });
+                }}
+              >
                 <Palette className="w-5 h-5" />
                 Заказать колеровку
               </Button>
-              <Button size="lg" variant="outline" className="gap-2" onClick={() => {
-                const element = document.getElementById('contacts');
-                element?.scrollIntoView({ behavior: 'smooth' });
-              }}>
+              <Button
+                size="lg"
+                variant="outline"
+                className="gap-2"
+                onClick={() => {
+                  const element = document.getElementById("contacts");
+                  element?.scrollIntoView({ behavior: "smooth" });
+                }}
+              >
                 <Users className="w-5 h-5" />
                 Получить консультацию
               </Button>
