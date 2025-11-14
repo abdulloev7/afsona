@@ -8,6 +8,18 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Edit, Trash2, Upload, MoveUp, MoveDown } from "lucide-react";
+import { z } from 'zod';
+
+const brandSchema = z.object({
+  name: z.string().trim().min(1, "Название обязательно").max(100, "Название должно быть короче 100 символов"),
+  slug: z.string().trim().min(1, "Slug обязателен").max(100, "Slug должен быть короче 100 символов")
+    .regex(/^[a-z0-9-]+$/, "Slug может содержать только строчные буквы, цифры и дефисы"),
+  logo: z.string().url("Неверный URL логотипа").optional().or(z.literal('')),
+  description: z.string().trim().max(1000, "Описание должно быть короче 1000 символов").optional().or(z.literal('')),
+  website: z.string().url("Неверный URL сайта").optional().or(z.literal('')),
+  country: z.string().trim().max(100, "Название страны должно быть короче 100 символов").optional().or(z.literal('')),
+  established_year: z.number().int().min(1800, "Год должен быть больше 1800").max(new Date().getFullYear(), "Год не может быть в будущем").nullable(),
+});
 
 interface Brand {
   id: string;
@@ -140,24 +152,36 @@ const BrandManagement = () => {
   };
 
   const handleSaveBrand = async () => {
-    if (!formData.name || !formData.slug) {
-      toast({
-        title: "Ошибка",
-        description: "Название и slug обязательны",
-        variant: "destructive",
-      });
-      return;
-    }
-
     try {
-      const brandData = {
+      const rawYear = formData.established_year ? parseInt(formData.established_year) : null;
+      
+      // Validate form data
+      const validationResult = brandSchema.safeParse({
         name: formData.name,
         slug: formData.slug,
-        logo: formData.logo || null,
-        description: formData.description || null,
-        website: formData.website || null,
-        country: formData.country || null,
-        established_year: formData.established_year ? parseInt(formData.established_year) : null,
+        logo: formData.logo || '',
+        description: formData.description || '',
+        website: formData.website || '',
+        country: formData.country || '',
+        established_year: rawYear,
+      });
+
+      if (!validationResult.success) {
+        const errors = validationResult.error.issues.map(e => e.message).join(', ');
+        toast({
+          title: "Ошибка валидации",
+          description: errors,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const brandData = {
+        ...validationResult.data,
+        logo: validationResult.data.logo || null,
+        description: validationResult.data.description || null,
+        website: validationResult.data.website || null,
+        country: validationResult.data.country || null,
         display_order: editingBrand ? editingBrand.display_order : brands.length,
       };
 
