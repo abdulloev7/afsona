@@ -21,7 +21,7 @@ interface SearchResult {
   id: string;
   name: string;
   description: string | null;
-  category: { name: string } | null;
+  category: { name: string; slug: string } | null;
   brand: string | null;
   brand_info: { name: string } | null;
   price: number;
@@ -74,25 +74,53 @@ export function SearchDialog() {
       setLoading(true);
       const searchTerm = `%${search}%`;
       
-      const { data } = await supabase
+      // Search for matching categories
+      const { data: cats } = await supabase
+        .from('categories')
+        .select('id, name, slug')
+        .ilike('name', searchTerm)
+        .limit(10);
+
+      const selectFields = `
+        id,
+        name,
+        description,
+        brand,
+        price,
+        image,
+        category_id,
+        category:categories(name, slug),
+        brand_info:brands(name)
+      `;
+
+      // Direct search by product fields
+      const { data: direct } = await supabase
         .from('products')
-        .select(`
-          id,
-          name,
-          description,
-          brand,
-          price,
-          image,
-          category_id,
-          category:categories(name),
-          brand_info:brands(name)
-        `)
+        .select(selectFields)
         .or(`name.ilike.${searchTerm},description.ilike.${searchTerm},brand.ilike.${searchTerm}`)
         .eq('archived', false)
         .eq('in_stock', true)
         .limit(30);
 
-      setResults((data as SearchResult[]) || []);
+      // Search by category if categories found
+      let byCategory: SearchResult[] = [];
+      if (cats?.length) {
+        const catIds = cats.map(c => c.id);
+        const { data: catProducts } = await supabase
+          .from('products')
+          .select(selectFields)
+          .in('category_id', catIds)
+          .eq('archived', false)
+          .eq('in_stock', true)
+          .limit(50);
+        byCategory = (catProducts as SearchResult[]) || [];
+      }
+
+      // Merge results and remove duplicates
+      const mergedMap = new Map<string, SearchResult>();
+      [...(direct || []), ...byCategory].forEach(p => mergedMap.set(p.id, p));
+      setResults(Array.from(mergedMap.values()));
+      
       setLoading(false);
     }, 300);
 
@@ -100,32 +128,9 @@ export function SearchDialog() {
   }, [search]);
 
   const handleSelectItem = (item: SearchResult) => {
-    // Навигация на страницу категории
-    const categoryRoutes: { [key: string]: string } = {
-      'Краски и покрытия': '/paints-coatings',
-      'Декоративные покрытия': '/decorative-coatings',
-      'Фасадные краски': '/facade-paints',
-      'Краски для потолков': '/ceiling-paints',
-      'Краски для стен': '/wall-paints',
-      'Грунтовки': '/primers',
-      'Шпатлёвки и выравнивание': '/putties-leveling',
-      'Гидроизоляция': '/waterproofing',
-      'Клеи и герметики': '/adhesives-sealants',
-      'Колеры и растворители': '/tints-thinners',
-      'Инструменты': '/tools',
-      'Кисти и принадлежности': '/brushes-tools',
-      'Валики': '/rollers',
-      'Шпатели и аксессуары': '/spatulas-accessories',
-    };
-
-    const categoryName = item.category?.name || '';
-    const route = categoryRoutes[categoryName];
-    
-    if (route) {
-      navigate(route);
-      setOpen(false);
-      setSearch("");
-    }
+    navigate(`/product/${item.id}`);
+    setOpen(false);
+    setSearch("");
   };
 
   const scrollToSection = (sectionId: string) => {
@@ -189,7 +194,7 @@ export function SearchDialog() {
                     <div className="flex-1 min-w-0">
                       <div className="font-medium truncate">{item.name}</div>
                       <div className="text-sm text-muted-foreground truncate">
-                        {item.brand_info?.name || item.brand} • {item.price.toLocaleString()} ₽
+                        {item.brand_info?.name || item.brand} • {item.price.toLocaleString('ru-RU')} сом.
                       </div>
                     </div>
                   </CommandItem>
