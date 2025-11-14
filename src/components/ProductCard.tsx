@@ -169,7 +169,16 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         )}
         
         <div className="mt-auto pt-4">
-          {!isInCart ? (
+          {product.sizes && product.sizes.length > 1 ? (
+            <Button 
+              className="w-full" 
+              onClick={handleAddToCart}
+              disabled={!product.in_stock}
+            >
+              <ShoppingCart className="h-4 w-4 mr-2" />
+              {product.in_stock ? 'Добавить в корзину' : 'Нет в наличии'}
+            </Button>
+          ) : !isInCart ? (
             <Button 
               className="w-full" 
               onClick={handleAddToCart}

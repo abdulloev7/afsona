@@ -264,7 +264,7 @@ export default function Product() {
 
             {product.sizes && product.sizes.length > 0 && (
               <div>
-                <h2 className="text-xl font-semibold mb-2">Доступные размеры</h2>
+                <h2 className="text-xl font-semibold mb-2">Доступные объемы</h2>
                 <div className="flex flex-wrap gap-2">
                   {product.sizes.map((size, index) => (
                     <Badge key={index} variant="outline">
@@ -287,7 +287,17 @@ export default function Product() {
             )}
 
             <div className="flex gap-4 pt-4">
-              {!isInCart ? (
+              {product.sizes && product.sizes.length > 1 ? (
+                <Button
+                  onClick={handleAddToCart}
+                  disabled={!product.in_stock}
+                  size="lg"
+                  className="flex-1"
+                >
+                  <ShoppingCart className="mr-2 h-5 w-5" />
+                  Добавить в корзину
+                </Button>
+              ) : !isInCart ? (
                 <Button
                   onClick={handleAddToCart}
                   disabled={!product.in_stock}
