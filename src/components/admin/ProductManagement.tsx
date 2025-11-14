@@ -9,6 +9,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Package, Pencil, Upload, Trash2, Plus, X, Archive } from 'lucide-react';
+import { z } from 'zod';
+
+const productSchema = z.object({
+  name: z.string().trim().min(1, "Название обязательно").max(200, "Название должно быть короче 200 символов"),
+  description: z.string().trim().max(2000, "Описание должно быть короче 2000 символов").optional().or(z.literal('')),
+  price: z.number().positive("Цена должна быть положительной").max(999999.99, "Цена слишком высокая"),
+  category_id: z.string().uuid("Выберите категорию"),
+  brand_id: z.string().uuid("Неверный идентификатор бренда").nullable(),
+  eco: z.boolean(),
+  in_stock: z.boolean(),
+  image_fit: z.enum(['cover', 'contain']),
+});
 
 interface Product {
   id: string;
@@ -232,10 +244,13 @@ export function ProductManagement() {
 
     try {
       const formData = new FormData(e.currentTarget);
-      const productData = {
+      const rawPrice = parseFloat(formData.get('price') as string);
+      
+      // Validate form data
+      const validationResult = productSchema.safeParse({
         name: formData.get('name') as string,
         description: formData.get('description') as string,
-        price: parseFloat(formData.get('price') as string),
+        price: isNaN(rawPrice) ? 0 : rawPrice,
         category_id: formData.get('category_id') as string,
         brand_id: (() => {
           const brandId = formData.get('brand_id') as string;
@@ -243,8 +258,22 @@ export function ProductManagement() {
         })(),
         eco: formData.get('eco') === 'true',
         in_stock: formData.get('in_stock') === 'true',
-        image: editingProduct.image,
         image_fit: (formData.get('image_fit') as 'cover' | 'contain') || 'cover',
+      });
+
+      if (!validationResult.success) {
+        const errors = validationResult.error.issues.map(e => e.message).join(', ');
+        toast({
+          title: "Ошибка валидации",
+          description: errors,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const productData = {
+        ...validationResult.data,
+        image: editingProduct.image,
         sizes: editingProduct.sizes,
       };
 
