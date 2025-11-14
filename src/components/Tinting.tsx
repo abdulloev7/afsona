@@ -79,126 +79,127 @@ const Tinting = () => {
           </p>
         </div>
 
-        {/* Основной контент - Grid Layout */}
-        <div className="grid lg:grid-cols-2 gap-12 mb-16">
-          {/* Левая колонка - Визуальный контент */}
-          <div className="space-y-6">
-            {/* Carousel с фото оборудования */}
-            <div className="rounded-xl overflow-hidden shadow-lg">
-              <Carousel className="w-full">
-                <CarouselContent>
-                  {placeholderImages.map((image, index) => (
-                    <CarouselItem key={index}>
-                      <div className="aspect-video bg-muted relative overflow-hidden">
-                        <img
-                          src={image}
-                          alt={`Колеровочное оборудование ${index + 1}`}
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                      </div>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-                <CarouselPrevious className="left-4" />
-                <CarouselNext className="right-4" />
-              </Carousel>
-            </div>
-
-            {/* Видео placeholder */}
-            <Card className="overflow-hidden">
-              <div className="aspect-video bg-gradient-to-br from-primary/20 to-purple-500/20 flex items-center justify-center">
-                <div className="text-center p-8">
-                  <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-primary/20 flex items-center justify-center">
-                    <svg className="w-10 h-10 text-primary" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
-                    </svg>
-                  </div>
-                  <p className="text-muted-foreground font-medium">🎥 Здесь будет видео процесса колеровки</p>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    Как вариант можем ставить ссылку на YouTube
-                  </p>
-                </div>
-              </div>
-            </Card>
+        {/* Медиа-контент - Фото и Видео */}
+        <div className="grid md:grid-cols-2 gap-6 mb-12">
+          {/* Carousel с фото */}
+          <div className="rounded-xl overflow-hidden shadow-lg">
+            <Carousel className="w-full">
+              <CarouselContent>
+                {placeholderImages.map((image, index) => (
+                  <CarouselItem key={index}>
+                    <div className="aspect-video bg-muted relative overflow-hidden">
+                      <img
+                        src={image}
+                        alt={`Колеровочное оборудование ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                      <p className="absolute bottom-4 left-4 text-white font-semibold text-sm">
+                        📸 Замените это фото на реальное оборудование
+                      </p>
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="left-4" />
+              <CarouselNext className="right-4" />
+            </Carousel>
           </div>
 
-          {/* Правая колонка - Информационный блок */}
-          <div className="space-y-6">
-            {/* О оборудовании */}
-            <Card className="border-2 border-primary/20">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <MonitorCheck className="w-6 h-6 text-primary" />
-                  Наше оборудование
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground mb-4">
-                  Мы используем профессиональное колеровочное оборудование последнего поколения, которое обеспечивает
-                  максимальную точность и скорость работы.
+          {/* Видео placeholder */}
+          <Card className="overflow-hidden">
+            <div className="aspect-video bg-gradient-to-br from-primary/20 to-purple-500/20 flex items-center justify-center">
+              <div className="text-center p-8">
+                <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-primary/20 flex items-center justify-center">
+                  <svg className="w-10 h-10 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
+                  </svg>
+                </div>
+                <p className="text-muted-foreground font-medium">
+                  🎥 Здесь будет видео процесса колеровки
                 </p>
-                <div className="bg-muted/50 rounded-lg p-4 italic text-sm">
-                  💡 Добавьте здесь название модели оборудования и техническое описание
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Преимущества */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Преимущества нашей колеровки</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid gap-4">
-                  {advantages.map((advantage, index) => (
-                    <div key={index} className="flex items-start gap-3">
-                      <div className="mt-1 p-2 rounded-lg bg-primary/10">
-                        <advantage.icon className="w-5 h-5 text-primary" />
-                      </div>
-                      <div>
-                        <h4 className="font-semibold mb-1">{advantage.title}</h4>
-                        <p className="text-sm text-muted-foreground">{advantage.description}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Процесс работы */}
-            <Card className="bg-gradient-to-br from-primary/5 to-purple-500/5">
-              <CardHeader>
-                <CardTitle>Как это работает</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {workProcess.map((step, index) => (
-                    <div key={index} className="flex items-start gap-3">
-                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm">
-                        {index + 1}
-                      </div>
-                      <p className="pt-1">{step}</p>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+                <p className="text-sm text-muted-foreground mt-2">
+                  Вставьте ссылку на YouTube/Vimeo или загрузите видео
+                </p>
+              </div>
+            </div>
+          </Card>
         </div>
 
-        {/* Цветовые коллекции */}
+        {/* Информационные блоки */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+          {/* Карточка 1: О оборудовании */}
+          <Card className="border-2 border-primary/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <MonitorCheck className="w-5 h-5 text-primary" />
+                Наше оборудование
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-4">
+                Мы используем профессиональное колеровочное оборудование последнего поколения, которое обеспечивает
+                максимальную точность и скорость работы.
+              </p>
+              <div className="bg-muted/50 rounded-lg p-3 italic text-xs">
+                💡 Добавьте здесь название модели оборудования и техническое описание
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Карточка 2: Преимущества (компактная версия) */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Преимущества</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {advantages.slice(0, 4).map((advantage, index) => (
+                  <div key={index} className="flex items-start gap-2">
+                    <advantage.icon className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-semibold text-sm">{advantage.title}</h4>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Карточка 3: Процесс работы */}
+          <Card className="bg-gradient-to-br from-primary/5 to-purple-500/5">
+            <CardHeader>
+              <CardTitle className="text-lg">Как это работает</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                {workProcess.map((step, index) => (
+                  <div key={index} className="flex items-start gap-2">
+                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs">
+                      {index + 1}
+                    </div>
+                    <p className="text-sm pt-0.5">{step}</p>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Все преимущества - Полный список */}
         <div className="mb-16">
-          <h3 className="text-2xl font-bold text-center mb-8">Популярные цветовые коллекции</h3>
+          <h3 className="text-2xl font-bold text-center mb-8">Почему выбирают нас</h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {colorCollections.map((collection, index) => (
+            {advantages.map((advantage, index) => (
               <Card key={index} className="text-center hover:shadow-lg transition-shadow">
                 <CardHeader>
-                  <div className="w-16 h-16 mx-auto mb-2 rounded-full bg-gradient-to-r from-red-500 via-yellow-500 via-green-500 via-blue-500 to-purple-500" />
-                  <CardTitle className="text-lg">{collection.name}</CardTitle>
+                  <div className="mx-auto mb-2 p-3 rounded-full bg-primary/10 w-fit">
+                    <advantage.icon className="w-6 h-6 text-primary" />
+                  </div>
+                  <CardTitle className="text-base">{advantage.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-muted-foreground">{collection.colors}</p>
+                  <p className="text-sm text-muted-foreground">{advantage.description}</p>
                 </CardContent>
               </Card>
             ))}
