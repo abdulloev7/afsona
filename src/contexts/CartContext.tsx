@@ -22,8 +22,8 @@ interface CartContextType {
   items: CartItem[];
   loading: boolean;
   addToCart: (productId: string, quantity?: number, selectedSize?: string | null) => Promise<void>;
-  updateQuantity: (productId: string, quantity: number) => Promise<void>;
-  removeFromCart: (productId: string) => Promise<void>;
+  updateQuantity: (itemId: string, quantity: number) => Promise<void>;
+  removeFromCart: (itemId: string) => Promise<void>;
   clearCart: () => Promise<void>;
   getCartTotal: () => number;
   getCartCount: () => number;
@@ -141,20 +141,20 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const updateQuantity = async (productId: string, quantity: number) => {
+  const updateQuantity = async (itemId: string, quantity: number) => {
     if (!user) return;
 
     try {
       if (quantity <= 0) {
-        await removeFromCart(productId);
+        await removeFromCart(itemId);
         return;
       }
 
       const { error } = await supabase
         .from('cart_items')
         .update({ quantity })
-        .eq('user_id', user.id)
-        .eq('product_id', productId);
+        .eq('id', itemId)
+        .eq('user_id', user.id);
 
       if (error) throw error;
       await fetchCartItems();
@@ -168,15 +168,15 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const removeFromCart = async (productId: string) => {
+  const removeFromCart = async (itemId: string) => {
     if (!user) return;
 
     try {
       const { error } = await supabase
         .from('cart_items')
         .delete()
-        .eq('user_id', user.id)
-        .eq('product_id', productId);
+        .eq('id', itemId)
+        .eq('user_id', user.id);
 
       if (error) throw error;
       await fetchCartItems();
