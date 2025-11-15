@@ -112,7 +112,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       );
       
       if (existingItem) {
-        await updateQuantity(productId, existingItem.quantity + quantity);
+        await updateQuantity(existingItem.id, existingItem.quantity + quantity);
       } else {
         const { error } = await supabase
           .from('cart_items')
