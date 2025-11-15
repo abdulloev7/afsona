@@ -14,6 +14,7 @@ interface CartItem {
     price: number;
     image?: string;
     sizes?: string[] | null;
+    size_variants?: { volume: string; price: number }[] | null;
   };
 }
 
@@ -59,12 +60,22 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           product_id,
           quantity,
           selected_size,
-          product:products(id, name, price, image, sizes)
+          product:products(id, name, price, image, sizes, size_variants)
         `)
         .eq('user_id', user.id);
 
       if (error) throw error;
-      setItems(data || []);
+      
+      // Cast size_variants from Json to proper type
+      const typedData = (data as any[])?.map(item => ({
+        ...item,
+        product: {
+          ...item.product,
+          size_variants: item.product?.size_variants as { volume: string; price: number }[] | null
+        }
+      })) || [];
+      
+      setItems(typedData);
     } catch (error) {
       console.error('Error fetching cart items:', error);
       toast({

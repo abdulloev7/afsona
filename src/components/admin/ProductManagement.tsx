@@ -22,6 +22,11 @@ const productSchema = z.object({
   image_fit: z.enum(['cover', 'contain']),
 });
 
+interface SizeVariant {
+  volume: string;
+  price: number;
+}
+
 interface Product {
   id: string;
   name: string;
@@ -35,6 +40,7 @@ interface Product {
   in_stock: boolean;
   archived: boolean;
   sizes: string[] | null;
+  size_variants?: SizeVariant[] | null;
   features: string[] | null;
   image_fit?: 'cover' | 'contain';
   category?: {
@@ -64,6 +70,8 @@ export function ProductManagement() {
   const [selectedBrand, setSelectedBrand] = useState<string>('all');
   const [showArchived, setShowArchived] = useState(false);
   const [newSize, setNewSize] = useState('');
+  const [newVariantVolume, setNewVariantVolume] = useState('');
+  const [newVariantPrice, setNewVariantPrice] = useState('');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -238,6 +246,48 @@ export function ProductManagement() {
     });
   };
 
+  const handleAddVariant = () => {
+    if (!newVariantVolume.trim() || !newVariantPrice || !editingProduct) return;
+    
+    const price = parseFloat(newVariantPrice);
+    if (isNaN(price) || price <= 0) {
+      toast({
+        title: "Ошибка",
+        description: "Цена должна быть положительным числом",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const exists = editingProduct.size_variants?.some(v => v.volume === newVariantVolume.trim());
+    if (exists) {
+      toast({
+        title: "Ошибка",
+        description: "Такой объем уже существует",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setEditingProduct({
+      ...editingProduct,
+      size_variants: [...(editingProduct.size_variants || []), { volume: newVariantVolume.trim(), price }]
+    });
+    setNewVariantVolume('');
+    setNewVariantPrice('');
+  };
+
+  const handleRemoveVariant = (index: number) => {
+    if (!editingProduct) return;
+    
+    const newVariants = [...(editingProduct.size_variants || [])];
+    newVariants.splice(index, 1);
+    setEditingProduct({
+      ...editingProduct,
+      size_variants: newVariants
+    });
+  };
+
   const handleSaveProduct = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!editingProduct) return;
@@ -275,6 +325,7 @@ export function ProductManagement() {
         ...validationResult.data,
         image: editingProduct.image,
         sizes: editingProduct.sizes,
+        size_variants: editingProduct.size_variants ? JSON.parse(JSON.stringify(editingProduct.size_variants)) : null,
       };
 
       if (editingProduct.id) {
@@ -565,7 +616,62 @@ export function ProductManagement() {
               </div>
 
               <div>
-                <Label>Доступные объемы</Label>
+                <Label>Варианты объемов с ценами</Label>
+                <div className="space-y-2 mt-2">
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="Объем (например: 0,7 л)"
+                      value={newVariantVolume}
+                      onChange={(e) => setNewVariantVolume(e.target.value)}
+                      className="flex-1"
+                    />
+                    <Input
+                      type="number"
+                      step="0.01"
+                      placeholder="Цена"
+                      value={newVariantPrice}
+                      onChange={(e) => setNewVariantPrice(e.target.value)}
+                      className="w-32"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleAddVariant}
+                      disabled={!newVariantVolume.trim() || !newVariantPrice}
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  {editingProduct?.size_variants && editingProduct.size_variants.length > 0 && (
+                    <div className="space-y-2 mt-3">
+                      {editingProduct.size_variants.map((variant, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center justify-between bg-primary/10 text-primary px-3 py-2 rounded"
+                        >
+                          <span className="font-medium">{variant.volume}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm">{variant.price} сом</span>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveVariant(index)}
+                              className="hover:bg-primary/20 rounded-full p-1"
+                            >
+                              <X className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Если варианты не указаны, будет использована общая цена
+                </p>
+              </div>
+
+              <div>
+                <Label>Доступные объемы (устаревшее)</Label>
                 <div className="flex gap-2 mt-2">
                   <Input
                     placeholder="Например: 1л, 5л, 10кг"
@@ -606,6 +712,9 @@ export function ProductManagement() {
                     ))}
                   </div>
                 )}
+                <p className="text-xs text-muted-foreground mt-1">
+                  Используйте "Варианты объемов с ценами" выше
+                </p>
               </div>
 
               <div>

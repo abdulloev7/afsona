@@ -21,6 +21,7 @@ interface ProductCardProps {
     brand?: string | null;
     brand_id?: string | null;
     sizes?: string[] | null;
+    size_variants?: { volume: string; price: number }[] | null;
     in_stock: boolean;
     image_fit?: 'cover' | 'contain';
   };
@@ -132,7 +133,18 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         )}
         
         <div className="text-2xl font-bold mb-4 text-primary">
-          {product.price.toLocaleString('ru-RU')} сом.
+          {product.size_variants && product.size_variants.length > 0 ? (
+            (() => {
+              const prices = product.size_variants.map(v => v.price);
+              const minPrice = Math.min(...prices);
+              const maxPrice = Math.max(...prices);
+              return minPrice === maxPrice 
+                ? `${minPrice.toLocaleString('ru-RU')} сом.`
+                : `от ${minPrice.toLocaleString('ru-RU')} до ${maxPrice.toLocaleString('ru-RU')} сом.`;
+            })()
+          ) : (
+            `${product.price.toLocaleString('ru-RU')} сом.`
+          )}
         </div>
         
         {product.brand && (
@@ -155,7 +167,18 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           </div>
         )}
 
-        {product.sizes && product.sizes.length > 0 && (
+        {(product.size_variants && product.size_variants.length > 0) ? (
+          <div className="mb-4">
+            <h4 className="font-semibold mb-2">Доступные объемы:</h4>
+            <div className="flex flex-wrap gap-2">
+              {product.size_variants.map((variant, index) => (
+                <Badge key={index} variant="outline" className="text-xs">
+                  {variant.volume} - {variant.price} сом
+                </Badge>
+              ))}
+            </div>
+          </div>
+        ) : product.sizes && product.sizes.length > 0 && (
           <div className="mb-4">
             <h4 className="font-semibold mb-2">Доступные объемы:</h4>
             <div className="flex flex-wrap gap-1">
