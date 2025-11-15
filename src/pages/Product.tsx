@@ -7,7 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, ShoppingCart, Leaf } from "lucide-react";
+import { ArrowLeft, ShoppingCart, Leaf, ShoppingBag } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { ProductSizeSelector } from "@/components/ProductSizeSelector";
@@ -22,6 +22,7 @@ interface ProductData {
   brand: string | null;
   brand_id: string | null;
   sizes: string[] | null;
+  size_variants: { volume: string; price: number }[] | null;
   features: string[] | null;
   eco: boolean | null;
   in_stock: boolean | null;
@@ -78,6 +79,7 @@ export default function Product() {
           brand,
           brand_id,
           sizes,
+          size_variants,
           features,
           eco,
           in_stock,
@@ -99,16 +101,17 @@ export default function Product() {
       }
 
       if (!data) {
-        toast({
-          title: "Товар не найден",
-          description: "Такой товар не существует",
-          variant: "destructive",
-        });
         navigate('/');
         return;
       }
 
-      setProduct(data as ProductData);
+      // Cast size_variants from Json to proper type
+      const typedData = {
+        ...data,
+        size_variants: data.size_variants as { volume: string; price: number }[] | null
+      };
+
+      setProduct(typedData);
       setLoading(false);
     };
 
@@ -252,7 +255,18 @@ export default function Product() {
             </div>
 
             <div className="text-4xl font-bold text-primary">
-              {product.price.toLocaleString('ru-RU')} сом.
+              {product.size_variants && product.size_variants.length > 0 ? (
+                (() => {
+                  const prices = product.size_variants.map(v => v.price);
+                  const minPrice = Math.min(...prices);
+                  const maxPrice = Math.max(...prices);
+                  return minPrice === maxPrice 
+                    ? `${minPrice.toLocaleString('ru-RU')} сом.`
+                    : `от ${minPrice.toLocaleString('ru-RU')} до ${maxPrice.toLocaleString('ru-RU')} сом.`;
+                })()
+              ) : (
+                `${product.price.toLocaleString('ru-RU')} сом.`
+              )}
             </div>
 
             {product.description && (
@@ -262,7 +276,18 @@ export default function Product() {
               </div>
             )}
 
-            {product.sizes && product.sizes.length > 0 && (
+            {(product.size_variants && product.size_variants.length > 0) ? (
+              <div>
+                <h2 className="text-xl font-semibold mb-2">Доступные объемы</h2>
+                <div className="flex flex-wrap gap-2">
+                  {product.size_variants.map((variant, index) => (
+                    <Badge key={index} variant="outline" className="text-sm py-1 px-3">
+                      {variant.volume} - {variant.price.toLocaleString('ru-RU')} сом
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            ) : product.sizes && product.sizes.length > 0 && (
               <div>
                 <h2 className="text-xl font-semibold mb-2">Доступные объемы</h2>
                 <div className="flex flex-wrap gap-2">
@@ -287,7 +312,8 @@ export default function Product() {
             )}
 
             <div className="flex gap-4 pt-4">
-              {product.sizes && product.sizes.length > 1 ? (
+              {((product.size_variants && product.size_variants.length > 1) || 
+                (product.sizes && product.sizes.length > 1)) ? (
                 <Button
                   onClick={handleAddToCart}
                   disabled={!product.in_stock}
@@ -311,9 +337,10 @@ export default function Product() {
                 <Button
                   onClick={handleGoToCart}
                   size="lg"
-                  className="flex-1"
                   variant="secondary"
+                  className="flex-1"
                 >
+                  <ShoppingBag className="mr-2 h-5 w-5" />
                   Перейти к заказу
                 </Button>
               )}

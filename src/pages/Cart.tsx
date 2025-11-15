@@ -98,13 +98,24 @@ const Cart = () => {
       if (orderError) throw orderError;
 
       // Create order items
-      const orderItems = items.map(item => ({
-        order_id: order.id,
-        product_id: item.product_id,
-        quantity: item.quantity,
-        price: item.product.price,
-        selected_size: item.selected_size || null,
-      }));
+      const orderItems = items.map(item => {
+        // Find correct price from size_variants if available
+        let itemPrice = item.product.price;
+        if (item.product.size_variants && item.selected_size) {
+          const variant = item.product.size_variants.find(v => v.volume === item.selected_size);
+          if (variant) {
+            itemPrice = variant.price;
+          }
+        }
+        
+        return {
+          order_id: order.id,
+          product_id: item.product_id,
+          quantity: item.quantity,
+          price: itemPrice,
+          selected_size: item.selected_size || null,
+        };
+      });
 
       const { error: itemsError } = await supabase
         .from('order_items')
@@ -114,12 +125,23 @@ const Cart = () => {
 
       // Send order notification email
       try {
-        const orderItemsForEmail = items.map(item => ({
-          product_name: item.product.name,
-          quantity: item.quantity,
-          price: item.product.price,
-          selected_size: item.selected_size || null,
-        }));
+        const orderItemsForEmail = items.map(item => {
+          // Find correct price from size_variants if available
+          let itemPrice = item.product.price;
+          if (item.product.size_variants && item.selected_size) {
+            const variant = item.product.size_variants.find(v => v.volume === item.selected_size);
+            if (variant) {
+              itemPrice = variant.price;
+            }
+          }
+          
+          return {
+            product_name: item.product.name,
+            quantity: item.quantity,
+            price: itemPrice,
+            selected_size: item.selected_size || null,
+          };
+        });
 
         const { data: emailData, error: emailInvokeError } = await supabase.functions.invoke('send-order-notification', {
           body: {
@@ -238,7 +260,14 @@ const Cart = () => {
                             </p>
                           )}
                           <p className="text-lg font-bold">
-                            {item.product.price.toLocaleString('ru-RU')} сом.
+                            {(() => {
+                              let itemPrice = item.product.price;
+                              if (item.product.size_variants && item.selected_size) {
+                                const variant = item.product.size_variants.find(v => v.volume === item.selected_size);
+                                if (variant) itemPrice = variant.price;
+                              }
+                              return itemPrice.toLocaleString('ru-RU');
+                            })()} сом.
                           </p>
                         </div>
                         <div className="flex items-center gap-2">

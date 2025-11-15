@@ -11,6 +11,7 @@ interface ProductSizeSelectorProps {
     name: string;
     price: number;
     sizes?: string[] | null;
+    size_variants?: { volume: string; price: number }[] | null;
   };
   isOpen: boolean;
   onClose: () => void;
@@ -18,15 +19,18 @@ interface ProductSizeSelectorProps {
 }
 
 export const ProductSizeSelector = ({ product, isOpen, onClose, onAddToCart }: ProductSizeSelectorProps) => {
-  const [selectedSize, setSelectedSize] = useState<string>(product.sizes?.[0] || "");
+  // Use size_variants if available, otherwise fall back to sizes
+  const volumes = product.size_variants?.map(v => v.volume) || product.sizes || [];
+  const [selectedSize, setSelectedSize] = useState<string>(volumes[0] || "");
   const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
     if (isOpen) {
-      setSelectedSize(product.sizes?.[0] || "");
+      const currentVolumes = product.size_variants?.map(v => v.volume) || product.sizes || [];
+      setSelectedSize(currentVolumes[0] || "");
       setQuantity(1);
     }
-  }, [isOpen, product.sizes]);
+  }, [isOpen, product.sizes, product.size_variants]);
 
   const handleSubmit = () => {
     if (selectedSize) {
@@ -47,21 +51,44 @@ export const ProductSizeSelector = ({ product, isOpen, onClose, onAddToCart }: P
         <div className="space-y-6">
           <div>
             <h4 className="font-medium mb-2">{product.name}</h4>
-            <p className="text-lg font-semibold text-primary">{product.price} сом.</p>
+            {product.size_variants ? (
+              <p className="text-sm text-muted-foreground">
+                {selectedSize && product.size_variants.find(v => v.volume === selectedSize)
+                  ? `${product.size_variants.find(v => v.volume === selectedSize)?.price} сом.`
+                  : 'Выберите объем'}
+              </p>
+            ) : (
+              <p className="text-lg font-semibold text-primary">{product.price} сом.</p>
+            )}
           </div>
 
-          {product.sizes && product.sizes.length > 0 && (
+          {((product.size_variants && product.size_variants.length > 0) || 
+            (product.sizes && product.sizes.length > 0)) && (
             <div className="space-y-3">
               <Label className="text-sm font-medium">Доступные объемы:</Label>
               <RadioGroup value={selectedSize} onValueChange={setSelectedSize}>
-                {product.sizes.map((size) => (
-                  <div key={size} className="flex items-center space-x-2">
-                    <RadioGroupItem value={size} id={`size-${size}`} />
-                    <Label htmlFor={`size-${size}`} className="cursor-pointer">
-                      {size}
-                    </Label>
-                  </div>
-                ))}
+                {product.size_variants ? (
+                  product.size_variants.map((variant) => (
+                    <div key={variant.volume} className="flex items-center justify-between space-x-2 p-2 hover:bg-accent rounded">
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value={variant.volume} id={`size-${variant.volume}`} />
+                        <Label htmlFor={`size-${variant.volume}`} className="cursor-pointer font-normal">
+                          {variant.volume}
+                        </Label>
+                      </div>
+                      <span className="text-sm font-semibold text-primary">{variant.price} сом</span>
+                    </div>
+                  ))
+                ) : (
+                  product.sizes?.map((size) => (
+                    <div key={size} className="flex items-center space-x-2">
+                      <RadioGroupItem value={size} id={`size-${size}`} />
+                      <Label htmlFor={`size-${size}`} className="cursor-pointer">
+                        {size}
+                      </Label>
+                    </div>
+                  ))
+                )}
               </RadioGroup>
             </div>
           )}
