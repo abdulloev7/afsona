@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MapPin, Phone, Clock, Mail, ExternalLink } from "lucide-react";
+import { MapPin, Phone, Clock, Mail, ExternalLink, MessageCircle, Instagram } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -148,30 +148,47 @@ const Contacts = () => {
               <CardTitle className="text-2xl text-primary">Быстрая связь</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Button 
-                  size="lg" 
-                  className="w-full"
-                  onClick={() => window.open('tel:+992927557919')}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+                <button
+                  onClick={() => window.open('https://t.me/abdulloev7', '_blank')}
+                  className="flex flex-col items-center gap-2 p-4 rounded-lg hover:bg-muted/50 transition-colors"
                 >
-                  <Phone className="w-5 h-5 mr-2" />
-                  Позвонить
-                </Button>
-                <Button 
-                  size="lg" 
-                  variant="outline" 
-                  className="w-full"
-                  onClick={() => window.open('https://t.me/afsona_paints')}
+                  <div className="w-16 h-16 rounded-full bg-[#0088cc] flex items-center justify-center">
+                    <MessageCircle className="w-8 h-8 text-white" />
+                  </div>
+                  <span className="text-sm font-medium">Telegram</span>
+                </button>
+
+                <button
+                  onClick={() => window.open('https://wa.me/992927557919', '_blank')}
+                  className="flex flex-col items-center gap-2 p-4 rounded-lg hover:bg-muted/50 transition-colors"
                 >
-                  Написать в Telegram
-                </Button>
-              </div>
-              
-              <div className="text-center">
-                <div className="flex items-center justify-center space-x-2 text-muted-foreground">
-                  <Mail className="w-4 h-4" />
-                  <span>info@afsona.com.tj</span>
-                </div>
+                  <div className="w-16 h-16 rounded-full bg-[#25D366] flex items-center justify-center">
+                    <Phone className="w-8 h-8 text-white" />
+                  </div>
+                  <span className="text-sm font-medium">WhatsApp</span>
+                </button>
+
+                <button
+                  disabled
+                  className="flex flex-col items-center gap-2 p-4 rounded-lg opacity-50 cursor-not-allowed"
+                >
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-[#f09433] via-[#e6683c] to-[#dc2743] flex items-center justify-center">
+                    <Instagram className="w-8 h-8 text-white" />
+                  </div>
+                  <span className="text-sm font-medium">Instagram</span>
+                  <span className="text-xs text-muted-foreground">Скоро</span>
+                </button>
+
+                <button
+                  onClick={() => window.location.href = 'mailto:info@afsona.com.tj'}
+                  className="flex flex-col items-center gap-2 p-4 rounded-lg hover:bg-muted/50 transition-colors"
+                >
+                  <div className="w-16 h-16 rounded-full bg-brand-blue flex items-center justify-center">
+                    <Mail className="w-8 h-8 text-white" />
+                  </div>
+                  <span className="text-sm font-medium">Email</span>
+                </button>
               </div>
               
               <div className="bg-brand-cream-light rounded-lg p-4 text-center">
