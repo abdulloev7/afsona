@@ -95,6 +95,53 @@ const Contacts = () => {
           </Card>
         </div>
 
+        <div className="max-w-4xl mx-auto mb-12">
+          <Card className="shadow-brand overflow-hidden">
+            <CardHeader className="text-center">
+              <CardTitle className="text-2xl text-primary">Как нас найти</CardTitle>
+              <p className="text-muted-foreground">г. Худжанд, 20-й микрорайон, 27</p>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="w-full h-[400px] md:h-[500px]">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.6145924934943!2d69.62291!3d40.28451!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDDCsDE3JzA0LjIiTiA2OcKwMzcnMjIuNSJF!5e0!3m2!1sen!2s!4v1234567890"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Карта расположения магазина Афсона"
+                />
+              </div>
+              
+              <div className="p-6 bg-muted/30">
+                <p className="text-center text-sm text-muted-foreground mb-4">
+                  Откройте в приложении для построения маршрута
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => window.open('https://share.google/dBMsPOdCoxBGsOJOy', '_blank')}
+                  >
+                    <MapPin className="w-4 h-4 mr-2" />
+                    Открыть в Google Maps
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => window.open('https://yandex.tj/maps/-/CLCdFG~t', '_blank')}
+                  >
+                    <MapPin className="w-4 h-4 mr-2" />
+                    Открыть в Яндекс.Картах
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
         <div className="max-w-2xl mx-auto">
           <Card className="shadow-brand">
             <CardHeader className="text-center">
