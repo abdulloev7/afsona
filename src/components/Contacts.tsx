@@ -65,12 +65,61 @@ const Contacts = () => {
               <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-4">
                 <Phone className="w-8 h-8 text-white" />
               </div>
-              <CardTitle className="text-primary">Телефоны</CardTitle>
+              <CardTitle className="text-primary">Контакты и связь</CardTitle>
             </CardHeader>
-            <CardContent className="text-center space-y-2">
+            <CardContent className="text-center space-y-6">
               <div>
-                <p className="font-semibold">+992 927 55 79 19</p>
+                <p className="font-semibold text-lg">+992 927 55 79 19</p>
                 <p className="text-sm text-muted-foreground">Основной номер</p>
+              </div>
+              
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <button
+                  onClick={() => window.open('https://t.me/abdulloev7', '_blank')}
+                  className="flex flex-col items-center gap-2 p-3 rounded-xl hover:bg-muted/30 transition-all duration-300 group"
+                >
+                  <div className="w-14 h-14 rounded-full bg-[#0088cc] flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-[#0088cc]/30 transition-all duration-300">
+                    <MessageCircle className="w-7 h-7 text-white" />
+                  </div>
+                  <span className="text-xs font-medium">Telegram</span>
+                </button>
+
+                <button
+                  onClick={() => window.open('https://wa.me/992927557919', '_blank')}
+                  className="flex flex-col items-center gap-2 p-3 rounded-xl hover:bg-muted/30 transition-all duration-300 group"
+                >
+                  <div className="w-14 h-14 rounded-full bg-[#25D366] flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-[#25D366]/30 transition-all duration-300">
+                    <Phone className="w-7 h-7 text-white" />
+                  </div>
+                  <span className="text-xs font-medium">WhatsApp</span>
+                </button>
+
+                <button
+                  disabled
+                  className="flex flex-col items-center gap-2 p-3 rounded-xl opacity-50 cursor-not-allowed"
+                >
+                  <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#f09433] via-[#e6683c] to-[#dc2743] flex items-center justify-center shadow-lg">
+                    <Instagram className="w-7 h-7 text-white" />
+                  </div>
+                  <span className="text-xs font-medium">Instagram</span>
+                  <span className="text-[10px] text-muted-foreground">Скоро</span>
+                </button>
+
+                <button
+                  onClick={() => window.location.href = 'mailto:info@afsona.com.tj'}
+                  className="flex flex-col items-center gap-2 p-3 rounded-xl hover:bg-muted/30 transition-all duration-300 group"
+                >
+                  <div className="w-14 h-14 rounded-full bg-brand-blue flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-brand-blue/30 transition-all duration-300">
+                    <Mail className="w-7 h-7 text-white" />
+                  </div>
+                  <span className="text-xs font-medium">Email</span>
+                </button>
+              </div>
+              
+              <div className="bg-brand-cream-light rounded-lg p-3 text-center">
+                <p className="text-xs text-foreground">
+                  <strong>Бесплатная консультация:</strong> Наши специалисты помогут подобрать материалы для вашего проекта
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -142,64 +191,6 @@ const Contacts = () => {
           </Card>
         </div>
 
-        <div className="max-w-2xl mx-auto">
-          <Card className="shadow-brand">
-            <CardHeader className="text-center">
-              <CardTitle className="text-2xl text-primary">Быстрая связь</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
-                <button
-                  onClick={() => window.open('https://t.me/abdulloev7', '_blank')}
-                  className="flex flex-col items-center gap-2 p-4 rounded-lg hover:bg-muted/50 transition-colors"
-                >
-                  <div className="w-16 h-16 rounded-full bg-[#0088cc] flex items-center justify-center">
-                    <MessageCircle className="w-8 h-8 text-white" />
-                  </div>
-                  <span className="text-sm font-medium">Telegram</span>
-                </button>
-
-                <button
-                  onClick={() => window.open('https://wa.me/992927557919', '_blank')}
-                  className="flex flex-col items-center gap-2 p-4 rounded-lg hover:bg-muted/50 transition-colors"
-                >
-                  <div className="w-16 h-16 rounded-full bg-[#25D366] flex items-center justify-center">
-                    <Phone className="w-8 h-8 text-white" />
-                  </div>
-                  <span className="text-sm font-medium">WhatsApp</span>
-                </button>
-
-                <button
-                  disabled
-                  className="flex flex-col items-center gap-2 p-4 rounded-lg opacity-50 cursor-not-allowed"
-                >
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-[#f09433] via-[#e6683c] to-[#dc2743] flex items-center justify-center">
-                    <Instagram className="w-8 h-8 text-white" />
-                  </div>
-                  <span className="text-sm font-medium">Instagram</span>
-                  <span className="text-xs text-muted-foreground">Скоро</span>
-                </button>
-
-                <button
-                  onClick={() => window.location.href = 'mailto:info@afsona.com.tj'}
-                  className="flex flex-col items-center gap-2 p-4 rounded-lg hover:bg-muted/50 transition-colors"
-                >
-                  <div className="w-16 h-16 rounded-full bg-brand-blue flex items-center justify-center">
-                    <Mail className="w-8 h-8 text-white" />
-                  </div>
-                  <span className="text-sm font-medium">Email</span>
-                </button>
-              </div>
-              
-              <div className="bg-brand-cream-light rounded-lg p-4 text-center">
-                <p className="text-sm text-foreground">
-                  <strong>Бесплатная консультация:</strong> Наши специалисты помогут подобрать 
-                  идеальные материалы для вашего проекта
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
       </div>
     </section>
   );
