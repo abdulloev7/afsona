@@ -9,6 +9,7 @@ interface MediaItem {
   type: 'image' | 'video';
   url: string;
   caption?: string;
+  fit?: 'cover' | 'contain';
   file?: File;
 }
 
@@ -45,7 +46,7 @@ const MediaUploader = ({ media, onChange }: MediaUploaderProps) => {
       const type = file.type.startsWith('image/') ? 'image' : 'video';
       const url = URL.createObjectURL(file);
       
-      onChange([...media, { type, url, file, caption: '' }]);
+      onChange([...media, { type, url, file, caption: '', fit: 'cover' }]);
     });
 
     e.target.value = '';
@@ -63,6 +64,12 @@ const MediaUploader = ({ media, onChange }: MediaUploaderProps) => {
   const updateCaption = (index: number, caption: string) => {
     const newMedia = [...media];
     newMedia[index].caption = caption;
+    onChange(newMedia);
+  };
+
+  const updateFit = (index: number, fit: 'cover' | 'contain') => {
+    const newMedia = [...media];
+    newMedia[index].fit = fit;
     onChange(newMedia);
   };
 
@@ -104,14 +111,14 @@ const MediaUploader = ({ media, onChange }: MediaUploaderProps) => {
                     <img
                       src={item.url}
                       alt={item.caption || `Media ${index + 1}`}
-                      className="w-full h-40 object-cover rounded"
+                      className={`w-full h-40 rounded ${item.fit === 'contain' ? 'object-contain bg-muted' : 'object-cover'}`}
                     />
                   ) : (
-                    <div className="w-full h-40 bg-muted rounded flex items-center justify-center">
+                    <div className="w-full h-40 bg-muted rounded flex items-center justify-center relative">
                       <Video className="h-12 w-12 text-muted-foreground" />
                       <video
                         src={item.url}
-                        className="w-full h-40 object-cover rounded absolute inset-0"
+                        className={`absolute inset-0 w-full h-40 rounded ${item.fit === 'contain' ? 'object-contain' : 'object-cover'}`}
                         controls
                       />
                     </div>
@@ -133,11 +140,21 @@ const MediaUploader = ({ media, onChange }: MediaUploaderProps) => {
                     )}
                   </div>
                 </div>
-                <Input
-                  placeholder="Подпись (необязательно)"
-                  value={item.caption || ''}
-                  onChange={(e) => updateCaption(index, e.target.value)}
-                />
+                <div className="space-y-2">
+                  <Input
+                    placeholder="Подпись (необязательно)"
+                    value={item.caption || ''}
+                    onChange={(e) => updateCaption(index, e.target.value)}
+                  />
+                  <select
+                    value={item.fit || 'cover'}
+                    onChange={(e) => updateFit(index, e.target.value as 'cover' | 'contain')}
+                    className="w-full px-3 py-2 rounded-md border border-input bg-background text-foreground text-sm"
+                  >
+                    <option value="cover">Cover (заполнить)</option>
+                    <option value="contain">Contain (вместить)</option>
+                  </select>
+                </div>
               </div>
             ))}
           </div>

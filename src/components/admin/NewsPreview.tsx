@@ -7,6 +7,7 @@ interface MediaItem {
   type: 'image' | 'video';
   url: string;
   caption?: string;
+  fit?: 'cover' | 'contain';
 }
 
 interface NewsPreviewProps {
@@ -88,14 +89,14 @@ const NewsPreview = ({
                       <img
                         src={item.url}
                         alt={item.caption || `Media ${index + 1}`}
-                        className="w-full h-60 object-cover rounded-lg"
+                        className={`w-full h-60 rounded-lg ${item.fit === 'contain' ? 'object-contain bg-muted' : 'object-cover'}`}
                       />
                     ) : (
                       <div className="relative">
                         <video
                           src={item.url}
                           controls
-                          className="w-full h-60 object-cover rounded-lg"
+                          className={`w-full h-60 rounded-lg ${item.fit === 'contain' ? 'object-contain bg-muted' : 'object-cover'}`}
                         />
                         <div className="absolute top-2 left-2 bg-black/60 rounded px-2 py-1">
                           <Video className="h-4 w-4 text-white" />
