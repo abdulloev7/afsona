@@ -73,6 +73,29 @@ export const MediaUploader = ({ media, onChange }: MediaUploaderProps) => {
     onChange(newMedia);
   };
 
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', index.toString());
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleDrop = (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault();
+    const dragIndex = parseInt(e.dataTransfer.getData('text/plain'));
+    
+    if (dragIndex === dropIndex) return;
+
+    const newMedia = [...media];
+    const [draggedItem] = newMedia.splice(dragIndex, 1);
+    newMedia.splice(dropIndex, 0, draggedItem);
+    
+    onChange(newMedia);
+  };
+
   return (
     <div className="space-y-4">
       <div>
@@ -103,9 +126,34 @@ export const MediaUploader = ({ media, onChange }: MediaUploaderProps) => {
       {media.length > 0 && (
         <div className="space-y-4">
           <Label>Загруженные медиафайлы ({media.length})</Label>
+          <p className="text-sm text-muted-foreground">Перетащите карточки для изменения порядка</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {media.map((item, index) => (
-              <div key={index} className="border rounded-lg p-3 space-y-2">
+              <div 
+                key={index} 
+                className="border rounded-lg p-3 space-y-2 cursor-move hover:shadow-md transition-shadow bg-card"
+                draggable
+                onDragStart={(e) => handleDragStart(e, index)}
+                onDragOver={handleDragOver}
+                onDrop={(e) => handleDrop(e, index)}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-medium text-muted-foreground flex items-center gap-1">
+                    <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-muted text-xs">
+                      {index + 1}
+                    </span>
+                    {item.type === 'image' ? <ImageIcon className="h-4 w-4" /> : <Video className="h-4 w-4" />}
+                  </span>
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => removeMedia(index)}
+                    className="h-7 w-7 p-0"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
                 <div className="relative">
                   {item.type === 'image' ? (
                     <img
@@ -123,22 +171,6 @@ export const MediaUploader = ({ media, onChange }: MediaUploaderProps) => {
                       />
                     </div>
                   )}
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    size="icon"
-                    className="absolute top-2 right-2"
-                    onClick={() => removeMedia(index)}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                  <div className="absolute top-2 left-2">
-                    {item.type === 'image' ? (
-                      <ImageIcon className="h-5 w-5 text-white drop-shadow-lg" />
-                    ) : (
-                      <Video className="h-5 w-5 text-white drop-shadow-lg" />
-                    )}
-                  </div>
                 </div>
                 <div className="space-y-2">
                   <Input

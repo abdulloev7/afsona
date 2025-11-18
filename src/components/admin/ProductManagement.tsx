@@ -70,7 +70,6 @@ export function ProductManagement() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedBrand, setSelectedBrand] = useState<string>('all');
   const [showArchived, setShowArchived] = useState(false);
-  const [newSize, setNewSize] = useState('');
   const [newVariantVolume, setNewVariantVolume] = useState('');
   const [newVariantPrice, setNewVariantPrice] = useState('');
   const [media, setMedia] = useState<MediaItem[]>([]);
@@ -148,34 +147,6 @@ export function ProductManagement() {
     }
   };
 
-
-  const handleAddSize = () => {
-    if (!newSize.trim() || !editingProduct) return;
-    
-    const currentSizes = editingProduct.sizes || [];
-    if (currentSizes.includes(newSize.trim())) {
-      toast({
-        title: "Внимание",
-        description: "Такой объем уже добавлен",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    setEditingProduct({
-      ...editingProduct,
-      sizes: [...currentSizes, newSize.trim()],
-    });
-    setNewSize('');
-  };
-
-  const handleRemoveSize = (sizeToRemove: string) => {
-    if (!editingProduct) return;
-    setEditingProduct({
-      ...editingProduct,
-      sizes: (editingProduct.sizes || []).filter(size => size !== sizeToRemove),
-    });
-  };
 
   const handleAddVariant = () => {
     if (!newVariantVolume.trim() || !newVariantPrice || !editingProduct) return;
@@ -299,7 +270,7 @@ export function ProductManagement() {
         image: mainImage,
         image_fit: mainImageFit,
         media: uploadedMedia,
-        sizes: editingProduct.sizes,
+        sizes: null, // Больше не используем старое поле
         size_variants: editingProduct.size_variants ? JSON.parse(JSON.stringify(editingProduct.size_variants)) : null,
       };
 
@@ -397,7 +368,16 @@ export function ProductManagement() {
   };
 
   const openEditDialog = (product?: Product) => {
-    setEditingProduct(product || {
+    // Если есть старые sizes но нет size_variants, конвертируем их
+    let updatedProduct = product;
+    if (product && product.sizes && product.sizes.length > 0 && (!product.size_variants || product.size_variants.length === 0)) {
+      updatedProduct = {
+        ...product,
+        size_variants: product.sizes.map(size => ({ volume: size, price: product.price }))
+      };
+    }
+    
+    setEditingProduct(updatedProduct || {
       id: '',
       name: '',
       description: '',
@@ -661,52 +641,6 @@ export function ProductManagement() {
                 </p>
               </div>
 
-              <div>
-                <Label>Доступные объемы (устаревшее)</Label>
-                <div className="flex gap-2 mt-2">
-                  <Input
-                    placeholder="Например: 1л, 5л, 10кг"
-                    value={newSize}
-                    onChange={(e) => setNewSize(e.target.value)}
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        handleAddSize();
-                      }
-                    }}
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={handleAddSize}
-                    disabled={!newSize.trim()}
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </div>
-                {editingProduct?.sizes && editingProduct.sizes.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-3">
-                    {editingProduct.sizes.map((size, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center gap-1 bg-primary/10 text-primary px-3 py-1 rounded-full text-sm"
-                      >
-                        <span>{size}</span>
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveSize(size)}
-                          className="hover:bg-primary/20 rounded-full p-0.5"
-                        >
-                          <X className="h-3 w-3" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                <p className="text-xs text-muted-foreground mt-1">
-                  Используйте "Варианты объемов с ценами" выше
-                </p>
-              </div>
 
               <div>
                 <Label>Медиа галерея (фото и видео)</Label>
