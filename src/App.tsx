@@ -28,6 +28,8 @@ import Cart from "./pages/Cart";
 import Admin from "./pages/Admin";
 import Orders from "./pages/Orders";
 import Product from "./pages/Product";
+import News from "./pages/News";
+import NewsDetail from "./pages/NewsDetail";
 
 const queryClient = new QueryClient();
 
@@ -62,6 +64,8 @@ const App = () => (
               <Route path="/rollers" element={<Rollers />} />
               <Route path="/spatulas-accessories" element={<SpatulasAccessories />} />
               <Route path="/tools" element={<Tools />} />
+              <Route path="/news" element={<News />} />
+              <Route path="/news/:slug" element={<NewsDetail />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
