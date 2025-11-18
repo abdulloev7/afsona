@@ -54,6 +54,7 @@ interface News {
   content: string;
   excerpt: string | null;
   image: string | null;
+  image_fit: string | null;
   media: any;
   author_id: string;
   published: boolean;
@@ -86,6 +87,7 @@ const NewsManagement = () => {
   });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
+  const [imageFit, setImageFit] = useState<'cover' | 'contain'>('cover');
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
 
   useEffect(() => {
@@ -201,6 +203,7 @@ const NewsManagement = () => {
         content: validated.content,
         excerpt: validated.excerpt || null,
         image: imageUrl,
+        image_fit: imageFit,
         media: uploadedMedia as any,
         author_id: user.id,
         published: validated.published,
@@ -252,6 +255,7 @@ const NewsManagement = () => {
       published: newsItem.published,
     });
     setImagePreview(newsItem.image || "");
+    setImageFit((newsItem.image_fit as 'cover' | 'contain') || 'cover');
     setMediaItems((newsItem.media as unknown as MediaItem[]) || []);
     setDialogOpen(true);
   };
@@ -333,6 +337,7 @@ const NewsManagement = () => {
     });
     setImageFile(null);
     setImagePreview("");
+    setImageFit('cover');
     setMediaItems([]);
     setEditingNews(null);
   };
@@ -416,12 +421,20 @@ const NewsManagement = () => {
                   onChange={handleImageChange}
                 />
                 {imagePreview && (
-                  <div className="mt-2">
+                  <div className="mt-2 space-y-2">
                     <img
                       src={imagePreview}
                       alt="Preview"
-                      className="max-w-full h-48 object-cover rounded-md"
+                      className={`max-w-full h-48 rounded-md ${imageFit === 'contain' ? 'object-contain bg-muted' : 'object-cover'}`}
                     />
+                    <select
+                      value={imageFit}
+                      onChange={(e) => setImageFit(e.target.value as 'cover' | 'contain')}
+                      className="w-full px-3 py-2 rounded-md border border-input bg-background text-foreground text-sm"
+                    >
+                      <option value="cover">Cover (заполнить)</option>
+                      <option value="contain">Contain (вместить)</option>
+                    </select>
                   </div>
                 )}
               </div>
@@ -560,6 +573,7 @@ const NewsManagement = () => {
         content={formData.content}
         excerpt={formData.excerpt}
         image={imagePreview}
+        imageFit={imageFit}
         media={mediaItems}
         published={formData.published}
       />

@@ -17,6 +17,7 @@ interface NewsPreviewProps {
   content: string;
   excerpt?: string;
   image?: string;
+  imageFit?: 'cover' | 'contain';
   media?: MediaItem[];
   published: boolean;
 }
@@ -28,6 +29,7 @@ const NewsPreview = ({
   content,
   excerpt,
   image,
+  imageFit = 'cover',
   media = [],
   published,
 }: NewsPreviewProps) => {
@@ -58,7 +60,7 @@ const NewsPreview = ({
             <img
               src={image}
               alt={title}
-              className="w-full rounded-lg max-h-[400px] object-cover"
+              className={`w-full rounded-lg max-h-[400px] ${imageFit === 'contain' ? 'object-contain bg-muted' : 'object-cover'}`}
             />
           )}
 

@@ -22,6 +22,7 @@ interface NewsItem {
   content: string;
   excerpt: string | null;
   image: string | null;
+  image_fit: string | null;
   media: MediaItem[];
   published_at: string;
 }
@@ -52,7 +53,7 @@ const NewsDetail = () => {
     try {
       const { data, error } = await supabase
         .from("news")
-        .select("id, title, content, excerpt, image, media, published_at")
+        .select("id, title, content, excerpt, image, image_fit, media, published_at")
         .eq("slug", slug)
         .eq("published", true)
         .maybeSingle();
@@ -154,7 +155,7 @@ const NewsDetail = () => {
             <img
               src={news.image}
               alt={news.title}
-              className="w-full rounded-lg mb-8 max-h-[500px] object-cover"
+              className={`w-full rounded-lg mb-8 max-h-[500px] ${news.image_fit === 'contain' ? 'object-contain bg-muted' : 'object-cover'}`}
             />
           )}
 
