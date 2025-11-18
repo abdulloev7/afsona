@@ -6,14 +6,22 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatNewsDate } from "@/lib/utils";
-import { Calendar, ArrowLeft, Home } from "lucide-react";
+import { Calendar, ArrowLeft, Home, Image as ImageIcon, Video } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+
+interface MediaItem {
+  type: 'image' | 'video';
+  url: string;
+  caption?: string;
+}
 
 interface NewsItem {
   id: string;
   title: string;
   content: string;
+  excerpt: string | null;
   image: string | null;
+  media: MediaItem[];
   published_at: string;
 }
 
@@ -43,7 +51,7 @@ const NewsDetail = () => {
     try {
       const { data, error } = await supabase
         .from("news")
-        .select("id, title, content, image, published_at")
+        .select("id, title, content, excerpt, image, media, published_at")
         .eq("slug", slug)
         .eq("published", true)
         .maybeSingle();
@@ -53,7 +61,10 @@ const NewsDetail = () => {
       if (!data) {
         setNotFound(true);
       } else {
-        setNews(data);
+        setNews({
+          ...data,
+          media: (data.media as unknown as MediaItem[]) || [],
+        });
       }
     } catch (error: any) {
       toast({
@@ -137,7 +148,7 @@ const NewsDetail = () => {
             </time>
           </div>
 
-          {/* Image */}
+          {/* Main Image */}
           {news.image && (
             <img
               src={news.image}
@@ -146,12 +157,57 @@ const NewsDetail = () => {
             />
           )}
 
-          {/* Content */}
-          <div className="prose prose-lg max-w-none mb-12">
-            <p className="whitespace-pre-wrap text-foreground leading-relaxed">
-              {news.content}
-            </p>
-          </div>
+          {/* Excerpt */}
+          {news.excerpt && (
+            <div className="bg-muted p-4 rounded-lg border-l-4 border-primary mb-8">
+              <p className="text-muted-foreground italic">{news.excerpt}</p>
+            </div>
+          )}
+
+          {/* Rich Text Content */}
+          <div
+            className="prose prose-lg max-w-none mb-12"
+            dangerouslySetInnerHTML={{ __html: news.content }}
+          />
+
+          {/* Media Gallery */}
+          {news.media && news.media.length > 0 && (
+            <div className="space-y-4 border-t pt-8 mb-12">
+              <h3 className="text-2xl font-semibold flex items-center gap-2">
+                <ImageIcon className="h-6 w-6" />
+                Медиагалерея ({news.media.length})
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {news.media.map((item, index) => (
+                  <div key={index} className="space-y-2">
+                    {item.type === 'image' ? (
+                      <img
+                        src={item.url}
+                        alt={item.caption || `Media ${index + 1}`}
+                        className="w-full h-80 object-cover rounded-lg"
+                      />
+                    ) : (
+                      <div className="relative">
+                        <video
+                          src={item.url}
+                          controls
+                          className="w-full h-80 object-cover rounded-lg"
+                        />
+                        <div className="absolute top-3 left-3 bg-black/60 rounded px-2 py-1">
+                          <Video className="h-5 w-5 text-white" />
+                        </div>
+                      </div>
+                    )}
+                    {item.caption && (
+                      <p className="text-sm text-muted-foreground text-center">
+                        {item.caption}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Back button */}
           <Button onClick={() => navigate("/news")} variant="outline">
