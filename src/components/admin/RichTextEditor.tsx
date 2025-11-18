@@ -34,7 +34,7 @@ const RichTextEditor = ({ content, onChange }: RichTextEditorProps) => {
     extensions: [
       StarterKit,
       TextAlign.configure({
-        types: ['heading', 'paragraph', 'image'],
+        types: ['heading', 'paragraph'],
         alignments: ['left', 'center', 'right'],
       }),
       Link.configure({
