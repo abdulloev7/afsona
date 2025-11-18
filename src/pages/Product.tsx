@@ -11,6 +11,7 @@ import { ArrowLeft, ShoppingCart, Leaf, ShoppingBag } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { ProductSizeSelector } from "@/components/ProductSizeSelector";
+import { ProductMediaCarousel } from "@/components/ProductMediaCarousel";
 
 interface ProductData {
   id: string;
@@ -217,55 +218,24 @@ export default function Product() {
         </Button>
 
         <div className="grid md:grid-cols-2 gap-8">
-          {/* Product Media/Image */}
-          <div className="space-y-4">
-            {product.media && product.media.length > 0 ? (
-              <div className="space-y-4">
-                {product.media.map((item, index) => (
-                  <Card key={index} className="p-6">
-                    {item.type === 'image' ? (
-                      <img
-                        src={item.url}
-                        alt={item.caption || product.name}
-                        className={`w-full h-[400px] ${
-                          item.fit === 'contain' ? 'object-contain' : 'object-cover'
-                        } rounded-lg`}
-                      />
-                    ) : (
-                      <video
-                        src={item.url}
-                        controls
-                        className={`w-full h-[400px] ${
-                          item.fit === 'contain' ? 'object-contain' : 'object-cover'
-                        } rounded-lg`}
-                      />
-                    )}
-                    {item.caption && (
-                      <p className="text-sm text-muted-foreground mt-2 text-center">
-                        {item.caption}
-                      </p>
-                    )}
-                  </Card>
-                ))}
-              </div>
-            ) : product.image ? (
-              <Card className="p-6">
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className={`w-full h-[400px] ${
-                    product.image_fit === 'contain' ? 'object-contain' : 'object-cover'
-                  } rounded-lg`}
-                />
-              </Card>
-            ) : (
-              <Card className="p-6">
-                <div className="w-full h-[400px] bg-muted rounded-lg flex items-center justify-center">
-                  <span className="text-muted-foreground">Нет изображения</span>
-                </div>
-              </Card>
-            )}
-          </div>
+          {/* Product Media Carousel */}
+          <ProductMediaCarousel 
+            media={(() => {
+              const allMedia = [];
+              if (product.image) {
+                allMedia.push({
+                  type: 'image' as const,
+                  url: product.image,
+                  fit: (product.image_fit || 'cover') as 'cover' | 'contain'
+                });
+              }
+              if (product.media) {
+                allMedia.push(...product.media);
+              }
+              return allMedia;
+            })()}
+            productName={product.name}
+          />
 
           {/* Product Info */}
           <div className="space-y-6">
