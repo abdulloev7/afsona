@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import { X, Upload, Image as ImageIcon, Video } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
-interface MediaItem {
+export interface MediaItem {
   type: 'image' | 'video';
   url: string;
   caption?: string;
@@ -18,7 +18,7 @@ interface MediaUploaderProps {
   onChange: (media: MediaItem[]) => void;
 }
 
-const MediaUploader = ({ media, onChange }: MediaUploaderProps) => {
+export const MediaUploader = ({ media, onChange }: MediaUploaderProps) => {
   const [uploading, setUploading] = useState(false);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {

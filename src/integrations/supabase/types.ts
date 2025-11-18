@@ -302,6 +302,7 @@ export type Database = {
           image: string | null
           image_fit: string | null
           in_stock: boolean | null
+          media: Json | null
           name: string
           price: number
           size_variants: Json | null
@@ -321,6 +322,7 @@ export type Database = {
           image?: string | null
           image_fit?: string | null
           in_stock?: boolean | null
+          media?: Json | null
           name: string
           price: number
           size_variants?: Json | null
@@ -340,6 +342,7 @@ export type Database = {
           image?: string | null
           image_fit?: string | null
           in_stock?: boolean | null
+          media?: Json | null
           name?: string
           price?: number
           size_variants?: Json | null

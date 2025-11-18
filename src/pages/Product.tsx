@@ -26,6 +26,7 @@ interface ProductData {
   features: string[] | null;
   eco: boolean | null;
   in_stock: boolean | null;
+  media: { type: 'image' | 'video'; url: string; caption?: string; fit?: 'cover' | 'contain' }[] | null;
   category: {
     name: string;
     slug: string;
@@ -83,6 +84,7 @@ export default function Product() {
           features,
           eco,
           in_stock,
+          media,
           category:categories(name, slug),
           brand_info:brands(name)
         `)
@@ -108,7 +110,8 @@ export default function Product() {
       // Cast size_variants from Json to proper type
       const typedData = {
         ...data,
-        size_variants: data.size_variants as { volume: string; price: number }[] | null
+        size_variants: data.size_variants as { volume: string; price: number }[] | null,
+        media: data.media as { type: 'image' | 'video'; url: string; caption?: string; fit?: 'cover' | 'contain' }[] | null
       };
 
       setProduct(typedData);
@@ -214,22 +217,55 @@ export default function Product() {
         </Button>
 
         <div className="grid md:grid-cols-2 gap-8">
-          {/* Product Image */}
-          <Card className="p-6">
-            {product.image ? (
-              <img
-                src={product.image}
-                alt={product.name}
-                className={`w-full h-[400px] ${
-                  product.image_fit === 'contain' ? 'object-contain' : 'object-cover'
-                } rounded-lg`}
-              />
-            ) : (
-              <div className="w-full h-[400px] bg-muted rounded-lg flex items-center justify-center">
-                <span className="text-muted-foreground">Нет изображения</span>
+          {/* Product Media/Image */}
+          <div className="space-y-4">
+            {product.media && product.media.length > 0 ? (
+              <div className="space-y-4">
+                {product.media.map((item, index) => (
+                  <Card key={index} className="p-6">
+                    {item.type === 'image' ? (
+                      <img
+                        src={item.url}
+                        alt={item.caption || product.name}
+                        className={`w-full h-[400px] ${
+                          item.fit === 'contain' ? 'object-contain' : 'object-cover'
+                        } rounded-lg`}
+                      />
+                    ) : (
+                      <video
+                        src={item.url}
+                        controls
+                        className={`w-full h-[400px] ${
+                          item.fit === 'contain' ? 'object-contain' : 'object-cover'
+                        } rounded-lg`}
+                      />
+                    )}
+                    {item.caption && (
+                      <p className="text-sm text-muted-foreground mt-2 text-center">
+                        {item.caption}
+                      </p>
+                    )}
+                  </Card>
+                ))}
               </div>
+            ) : product.image ? (
+              <Card className="p-6">
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className={`w-full h-[400px] ${
+                    product.image_fit === 'contain' ? 'object-contain' : 'object-cover'
+                  } rounded-lg`}
+                />
+              </Card>
+            ) : (
+              <Card className="p-6">
+                <div className="w-full h-[400px] bg-muted rounded-lg flex items-center justify-center">
+                  <span className="text-muted-foreground">Нет изображения</span>
+                </div>
+              </Card>
             )}
-          </Card>
+          </div>
 
           {/* Product Info */}
           <div className="space-y-6">
