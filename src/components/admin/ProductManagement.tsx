@@ -67,7 +67,6 @@ export function ProductManagement() {
   const [loading, setLoading] = useState(true);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [uploading, setUploading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedBrand, setSelectedBrand] = useState<string>('all');
   const [showArchived, setShowArchived] = useState(false);
@@ -149,79 +148,6 @@ export function ProductManagement() {
     }
   };
 
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>, productId?: string) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    // Проверка типа файла
-    if (!file.type.startsWith('image/')) {
-      toast({
-        title: "Ошибка",
-        description: "Можно загружать только изображения",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // Проверка размера (макс 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      toast({
-        title: "Ошибка",
-        description: "Размер файла не должен превышать 5MB",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setUploading(true);
-
-    try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-      const filePath = `${fileName}`;
-
-      // Загрузка в Storage
-      const { error: uploadError } = await supabase.storage
-        .from('product-images')
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      // Получение публичного URL
-      const { data: { publicUrl } } = supabase.storage
-        .from('product-images')
-        .getPublicUrl(filePath);
-
-      // Обновление товара с новым URL изображения
-      if (productId) {
-        const { error: updateError } = await supabase
-          .from('products')
-          .update({ image: publicUrl })
-          .eq('id', productId);
-
-        if (updateError) throw updateError;
-
-        toast({
-          title: "Успех",
-          description: "Изображение загружено",
-        });
-
-        fetchProducts();
-      } else if (editingProduct) {
-        // Обновление локального состояния для нового товара
-        setEditingProduct({ ...editingProduct, image: publicUrl });
-      }
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      toast({
-        title: "Ошибка",
-        description: "Не удалось загрузить изображение",
-        variant: "destructive",
-      });
-    } finally {
-      setUploading(false);
-    }
-  };
 
   const handleAddSize = () => {
     if (!newSize.trim() || !editingProduct) return;
@@ -359,9 +285,19 @@ export function ProductManagement() {
         }
       }
 
+      // Используем первое медиа как главное изображение для обратной совместимости
+      const mainImage = uploadedMedia.length > 0 && uploadedMedia[0].type === 'image' 
+        ? uploadedMedia[0].url 
+        : editingProduct.image;
+      
+      const mainImageFit = uploadedMedia.length > 0 
+        ? uploadedMedia[0].fit 
+        : validationResult.data.image_fit;
+
       const productData = {
         ...validationResult.data,
-        image: editingProduct.image,
+        image: mainImage,
+        image_fit: mainImageFit,
         media: uploadedMedia,
         sizes: editingProduct.sizes,
         size_variants: editingProduct.size_variants ? JSON.parse(JSON.stringify(editingProduct.size_variants)) : null,
@@ -477,7 +413,21 @@ export function ProductManagement() {
       features: null,
       image_fit: 'cover',
     });
-    setMedia(product?.media || []);
+    
+    // Объединяем старое изображение с новыми медиа
+    const combinedMedia: MediaItem[] = [];
+    if (product?.image) {
+      combinedMedia.push({
+        type: 'image',
+        url: product.image,
+        fit: product.image_fit || 'cover'
+      });
+    }
+    if (product?.media) {
+      combinedMedia.push(...product.media);
+    }
+    
+    setMedia(combinedMedia);
     setDialogOpen(true);
   };
 
@@ -759,60 +709,10 @@ export function ProductManagement() {
               </div>
 
               <div>
-                <Label>Медиа (фото и видео)</Label>
+                <Label>Медиа галерея (фото и видео)</Label>
                 <MediaUploader media={media} onChange={setMedia} />
-              </div>
-
-              <div>
-                <Label>Изображение (устаревшее)</Label>
-                {editingProduct?.image && (
-                  <div className="mt-2 mb-2 space-y-2">
-                    <div className="bg-white rounded p-4">
-                      <img
-                        src={editingProduct.image}
-                        alt="Product"
-                        className={`w-full h-48 rounded ${
-                          editingProduct.image_fit === 'contain' 
-                            ? 'object-contain' 
-                            : 'object-cover'
-                        }`}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="image_fit">Масштаб изображения</Label>
-                      <Select 
-                        name="image_fit" 
-                        value={editingProduct.image_fit || 'cover'}
-                        onValueChange={(value: 'cover' | 'contain') => {
-                          setEditingProduct({ ...editingProduct, image_fit: value });
-                        }}
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="cover">Заполнить (обрезать края)</SelectItem>
-                          <SelectItem value="contain">Вместить (показать всё)</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {editingProduct.image_fit === 'contain' 
-                          ? 'Изображение полностью помещается в рамку, могут быть отступы'
-                          : 'Изображение заполняет всю рамку, края могут обрезаться'
-                        }
-                      </p>
-                    </div>
-                  </div>
-                )}
-                <Input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => handleImageUpload(e)}
-                  disabled={uploading}
-                />
-                {uploading && <p className="text-sm text-muted-foreground mt-1">Загрузка...</p>}
-                <p className="text-xs text-muted-foreground mt-1">
-                  Используйте "Медиа" выше для новых товаров
+                <p className="text-xs text-muted-foreground mt-2">
+                  Первое медиа будет отображаться на карточке товара. Используйте стрелки для навигации в полном просмотре.
                 </p>
               </div>
 
@@ -820,7 +720,7 @@ export function ProductManagement() {
                 <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
                   Отмена
                 </Button>
-                <Button type="submit" disabled={uploading}>
+                <Button type="submit">
                   Сохранить
                 </Button>
               </div>
@@ -861,57 +761,20 @@ export function ProductManagement() {
               </CardHeader>
               <CardContent>
                 {product.image ? (
-                  <div className="relative mb-4">
-                    <div className="bg-white rounded p-2">
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        className={`w-full h-48 rounded ${
-                          product.image_fit === 'contain' 
-                            ? 'object-contain' 
-                            : 'object-cover'
-                        }`}
-                      />
-                    </div>
-                    <Button
-                      size="icon"
-                      variant="secondary"
-                      className="absolute top-2 right-2"
-                      onClick={() => document.getElementById(`upload-${product.id}`)?.click()}
-                      disabled={uploading}
-                    >
-                      <Upload className="h-4 w-4" />
-                    </Button>
-                    <input
-                      id={`upload-${product.id}`}
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => handleImageUpload(e, product.id)}
+                  <div className="bg-white rounded p-2 mb-4">
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className={`w-full h-48 rounded ${
+                        product.image_fit === 'contain' 
+                          ? 'object-contain' 
+                          : 'object-cover'
+                      }`}
                     />
                   </div>
                 ) : (
-                  <div className="mb-4">
-                    <div className="w-full h-48 bg-white rounded flex items-center justify-center">
-                      <Package className="h-16 w-16 opacity-30" />
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="w-full mt-2"
-                      onClick={() => document.getElementById(`upload-${product.id}`)?.click()}
-                      disabled={uploading}
-                    >
-                      <Upload className="h-4 w-4 mr-2" />
-                      Загрузить фото
-                    </Button>
-                    <input
-                      id={`upload-${product.id}`}
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => handleImageUpload(e, product.id)}
-                    />
+                  <div className="w-full h-48 bg-white rounded flex items-center justify-center mb-4">
+                    <Package className="h-16 w-16 opacity-30" />
                   </div>
                 )}
                 

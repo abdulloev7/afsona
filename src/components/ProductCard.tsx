@@ -92,49 +92,49 @@ export const ProductCard = ({ product }: ProductCardProps) => {
     navigate('/cart');
   };
 
+  // Объединяем старое изображение с медиа для единой галереи
+  const allMedia = [];
+  if (product.image) {
+    allMedia.push({
+      type: 'image' as const,
+      url: product.image,
+      fit: product.image_fit || 'cover'
+    });
+  }
+  if (product.media) {
+    allMedia.push(...product.media);
+  }
+
+  const firstMedia = allMedia[0];
+
   return (
     <Card className="flex flex-col shadow-card hover:shadow-brand transition-all duration-300 hover:-translate-y-1">
       <CardHeader>
-        {product.media && product.media.length > 0 ? (
+        {firstMedia ? (
           <div 
             className="bg-white rounded-lg p-2 mb-4 cursor-pointer hover:opacity-90 transition-opacity" 
             onClick={handleImageClick}
           >
-            {product.media[0].type === 'image' ? (
+            {firstMedia.type === 'image' ? (
               <img 
-                src={product.media[0].url} 
+                src={firstMedia.url} 
                 alt={product.name}
                 className={`w-full h-48 rounded-lg ${
-                  product.media[0].fit === 'contain' 
+                  firstMedia.fit === 'contain' 
                     ? 'object-contain' 
                     : 'object-cover'
                 }`}
               />
             ) : (
               <video 
-                src={product.media[0].url}
+                src={firstMedia.url}
                 className={`w-full h-48 rounded-lg ${
-                  product.media[0].fit === 'contain' 
+                  firstMedia.fit === 'contain' 
                     ? 'object-contain' 
                     : 'object-cover'
                 }`}
               />
             )}
-          </div>
-        ) : product.image ? (
-          <div 
-            className="bg-white rounded-lg p-2 mb-4 cursor-pointer hover:opacity-90 transition-opacity" 
-            onClick={handleImageClick}
-          >
-            <img 
-              src={product.image} 
-              alt={product.name}
-              className={`w-full h-48 rounded-lg ${
-                product.image_fit === 'contain' 
-                  ? 'object-contain' 
-                  : 'object-cover'
-              }`}
-            />
           </div>
         ) : (
           <div 
