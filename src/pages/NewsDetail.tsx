@@ -13,6 +13,7 @@ interface MediaItem {
   type: 'image' | 'video';
   url: string;
   caption?: string;
+  fit?: 'cover' | 'contain';
 }
 
 interface NewsItem {
@@ -184,14 +185,14 @@ const NewsDetail = () => {
                       <img
                         src={item.url}
                         alt={item.caption || `Media ${index + 1}`}
-                        className="w-full h-80 object-cover rounded-lg"
+                        className={`w-full h-80 rounded-lg ${item.fit === 'contain' ? 'object-contain bg-muted' : 'object-cover'}`}
                       />
                     ) : (
                       <div className="relative">
                         <video
                           src={item.url}
                           controls
-                          className="w-full h-80 object-cover rounded-lg"
+                          className={`w-full h-80 rounded-lg ${item.fit === 'contain' ? 'object-contain bg-muted' : 'object-cover'}`}
                         />
                         <div className="absolute top-3 left-3 bg-black/60 rounded px-2 py-1">
                           <Video className="h-5 w-5 text-white" />
