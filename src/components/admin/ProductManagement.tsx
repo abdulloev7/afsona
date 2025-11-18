@@ -10,6 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Package, Pencil, Upload, Trash2, Plus, X, Archive } from 'lucide-react';
 import { z } from 'zod';
+import { MediaUploader, MediaItem } from './MediaUploader';
 
 const productSchema = z.object({
   name: z.string().trim().min(1, "Название обязательно").max(200, "Название должно быть короче 200 символов"),
@@ -43,6 +44,7 @@ interface Product {
   size_variants?: SizeVariant[] | null;
   features: string[] | null;
   image_fit?: 'cover' | 'contain';
+  media?: MediaItem[] | null;
   category?: {
     name: string;
   };
@@ -72,6 +74,7 @@ export function ProductManagement() {
   const [newSize, setNewSize] = useState('');
   const [newVariantVolume, setNewVariantVolume] = useState('');
   const [newVariantPrice, setNewVariantPrice] = useState('');
+  const [media, setMedia] = useState<MediaItem[]>([]);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -91,7 +94,8 @@ export function ProductManagement() {
         .select(`
           *,
           category:categories(name),
-          brand:brands(id, name)
+          brand:brands(id, name),
+          media
         `)
         .eq('archived', showArchived)
         .order('name');
@@ -102,7 +106,8 @@ export function ProductManagement() {
       setProducts(((data || []) as any[]).map(p => ({
         ...p,
         archived: p.archived ?? false,
-        image_fit: (p.image_fit as 'cover' | 'contain') || 'cover'
+        image_fit: (p.image_fit as 'cover' | 'contain') || 'cover',
+        media: p.media as MediaItem[] | null
       })) as Product[]);
     } catch (error) {
       console.error('Error fetching products:', error);
@@ -321,9 +326,43 @@ export function ProductManagement() {
         return;
       }
 
+      // Upload media files to Storage
+      const uploadedMedia: Omit<MediaItem, 'file'>[] = [];
+      for (const item of media) {
+        if (item.file) {
+          const fileExt = item.file.name.split('.').pop();
+          const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+          
+          const { error: uploadError } = await supabase.storage
+            .from('product-images')
+            .upload(fileName, item.file);
+
+          if (uploadError) throw uploadError;
+
+          const { data: { publicUrl } } = supabase.storage
+            .from('product-images')
+            .getPublicUrl(fileName);
+
+          uploadedMedia.push({
+            type: item.type,
+            url: publicUrl,
+            caption: item.caption,
+            fit: item.fit,
+          });
+        } else {
+          uploadedMedia.push({
+            type: item.type,
+            url: item.url,
+            caption: item.caption,
+            fit: item.fit,
+          });
+        }
+      }
+
       const productData = {
         ...validationResult.data,
         image: editingProduct.image,
+        media: uploadedMedia,
         sizes: editingProduct.sizes,
         size_variants: editingProduct.size_variants ? JSON.parse(JSON.stringify(editingProduct.size_variants)) : null,
       };
@@ -357,6 +396,7 @@ export function ProductManagement() {
 
       setDialogOpen(false);
       setEditingProduct(null);
+      setMedia([]);
       fetchProducts();
     } catch (error) {
       console.error('Error saving product:', error);
@@ -437,6 +477,7 @@ export function ProductManagement() {
       features: null,
       image_fit: 'cover',
     });
+    setMedia(product?.media || []);
     setDialogOpen(true);
   };
 
@@ -718,7 +759,12 @@ export function ProductManagement() {
               </div>
 
               <div>
-                <Label>Изображение</Label>
+                <Label>Медиа (фото и видео)</Label>
+                <MediaUploader media={media} onChange={setMedia} />
+              </div>
+
+              <div>
+                <Label>Изображение (устаревшее)</Label>
                 {editingProduct?.image && (
                   <div className="mt-2 mb-2 space-y-2">
                     <div className="bg-white rounded p-4">
@@ -765,6 +811,9 @@ export function ProductManagement() {
                   disabled={uploading}
                 />
                 {uploading && <p className="text-sm text-muted-foreground mt-1">Загрузка...</p>}
+                <p className="text-xs text-muted-foreground mt-1">
+                  Используйте "Медиа" выше для новых товаров
+                </p>
               </div>
 
               <div className="flex gap-2 justify-end">

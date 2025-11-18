@@ -24,6 +24,7 @@ interface ProductCardProps {
     size_variants?: { volume: string; price: number }[] | null;
     in_stock: boolean;
     image_fit?: 'cover' | 'contain';
+    media?: { type: 'image' | 'video'; url: string; caption?: string; fit?: 'cover' | 'contain' }[] | null;
   };
 }
 
@@ -94,7 +95,33 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   return (
     <Card className="flex flex-col shadow-card hover:shadow-brand transition-all duration-300 hover:-translate-y-1">
       <CardHeader>
-        {product.image ? (
+        {product.media && product.media.length > 0 ? (
+          <div 
+            className="bg-white rounded-lg p-2 mb-4 cursor-pointer hover:opacity-90 transition-opacity" 
+            onClick={handleImageClick}
+          >
+            {product.media[0].type === 'image' ? (
+              <img 
+                src={product.media[0].url} 
+                alt={product.name}
+                className={`w-full h-48 rounded-lg ${
+                  product.media[0].fit === 'contain' 
+                    ? 'object-contain' 
+                    : 'object-cover'
+                }`}
+              />
+            ) : (
+              <video 
+                src={product.media[0].url}
+                className={`w-full h-48 rounded-lg ${
+                  product.media[0].fit === 'contain' 
+                    ? 'object-contain' 
+                    : 'object-cover'
+                }`}
+              />
+            )}
+          </div>
+        ) : product.image ? (
           <div 
             className="bg-white rounded-lg p-2 mb-4 cursor-pointer hover:opacity-90 transition-opacity" 
             onClick={handleImageClick}
