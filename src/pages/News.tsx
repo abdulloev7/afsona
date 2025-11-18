@@ -78,7 +78,7 @@ const News = () => {
             {news.map((item) => (
               <Card
                 key={item.id}
-                className="overflow-hidden hover:shadow-lg transition-shadow duration-300"
+                className="overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col"
               >
                 <CardHeader className="p-0">
                   {item.image ? (
@@ -93,7 +93,7 @@ const News = () => {
                     </div>
                   )}
                 </CardHeader>
-                <CardContent className="p-6">
+                <CardContent className="p-6 flex-1 flex flex-col">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
                     <Calendar className="h-4 w-4" />
                     <span>{formatNewsDate(item.published_at)}</span>
@@ -107,7 +107,7 @@ const News = () => {
                     </p>
                   )}
                 </CardContent>
-                <CardFooter className="p-6 pt-0">
+                <CardFooter className="p-6 pt-0 mt-auto">
                   <Button asChild variant="default" className="w-full">
                     <Link to={`/news/${item.slug}`}>Читать далее</Link>
                   </Button>
