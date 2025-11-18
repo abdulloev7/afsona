@@ -45,7 +45,7 @@ const RichTextEditor = ({ content, onChange }: RichTextEditorProps) => {
       }),
       Image.configure({
         HTMLAttributes: {
-          class: 'max-w-full h-auto rounded-lg',
+          class: 'max-w-full h-auto rounded-lg mx-auto block',
         },
       }),
     ],
@@ -109,7 +109,7 @@ const RichTextEditor = ({ content, onChange }: RichTextEditorProps) => {
         .getPublicUrl(filePath);
 
       editor.chain().focus().setImage({ src: publicUrl }).run();
-      
+
       toast({
         title: 'Успешно',
         description: 'Изображение добавлено в текст',
@@ -123,6 +123,15 @@ const RichTextEditor = ({ content, onChange }: RichTextEditorProps) => {
     }
 
     e.target.value = '';
+  };
+
+  const handleTextAlign = (alignment: 'left' | 'center' | 'right') => {
+    // Не даем команде выравнивания сработать, если выделено изображение,
+    // чтобы медиа не удалялись при попытке выровнять
+    if (editor.isActive('image')) {
+      return;
+    }
+    editor.chain().focus().setTextAlign(alignment).run();
   };
 
   return (
@@ -196,7 +205,7 @@ const RichTextEditor = ({ content, onChange }: RichTextEditorProps) => {
           type="button"
           variant="ghost"
           size="sm"
-          onClick={() => editor.chain().focus().setTextAlign('left').run()}
+          onClick={() => handleTextAlign('left')}
           className={editor.isActive({ textAlign: 'left' }) ? 'bg-accent' : ''}
         >
           <AlignLeft className="h-4 w-4" />
@@ -205,7 +214,7 @@ const RichTextEditor = ({ content, onChange }: RichTextEditorProps) => {
           type="button"
           variant="ghost"
           size="sm"
-          onClick={() => editor.chain().focus().setTextAlign('center').run()}
+          onClick={() => handleTextAlign('center')}
           className={editor.isActive({ textAlign: 'center' }) ? 'bg-accent' : ''}
         >
           <AlignCenter className="h-4 w-4" />
@@ -214,7 +223,7 @@ const RichTextEditor = ({ content, onChange }: RichTextEditorProps) => {
           type="button"
           variant="ghost"
           size="sm"
-          onClick={() => editor.chain().focus().setTextAlign('right').run()}
+          onClick={() => handleTextAlign('right')}
           className={editor.isActive({ textAlign: 'right' }) ? 'bg-accent' : ''}
         >
           <AlignRight className="h-4 w-4" />
