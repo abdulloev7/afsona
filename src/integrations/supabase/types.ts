@@ -161,6 +161,7 @@ export type Database = {
           excerpt: string | null
           id: string
           image: string | null
+          media: Json | null
           published: boolean
           published_at: string | null
           slug: string
@@ -174,6 +175,7 @@ export type Database = {
           excerpt?: string | null
           id?: string
           image?: string | null
+          media?: Json | null
           published?: boolean
           published_at?: string | null
           slug: string
@@ -187,6 +189,7 @@ export type Database = {
           excerpt?: string | null
           id?: string
           image?: string | null
+          media?: Json | null
           published?: boolean
           published_at?: string | null
           slug?: string
