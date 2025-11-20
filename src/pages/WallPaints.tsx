@@ -90,8 +90,11 @@ const WallPaints = () => {
           <div className="mb-8">
             <Button 
               variant="outline" 
-              onClick={() => navigate('/')}
               className="mb-6"
+              onClick={() => {
+                sessionStorage.setItem('afsona-scroll-target', 'products');
+                navigate('/#products');
+              }}
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Назад к ассортименту

@@ -2,9 +2,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, ShoppingCart, Info } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const CeilingPaints = () => {
+  const navigate = useNavigate();
   const ceilingPaints = [
     {
       name: "Матовая краска для потолка Premium",
@@ -36,12 +37,18 @@ const CeilingPaints = () => {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center mb-8">
-          <Link to="/">
-            <Button variant="outline" size="sm" className="mr-4">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Назад к ассортименту
-            </Button>
-          </Link>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="mr-4"
+            onClick={() => {
+              sessionStorage.setItem('afsona-scroll-target', 'products');
+              navigate('/#products');
+            }}
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Назад к ассортименту
+          </Button>
           <div>
             <h1 className="text-3xl md:text-4xl font-bold text-primary">Краски для потолка</h1>
             <p className="text-muted-foreground mt-2">Специальные составы для идеального потолка</p>

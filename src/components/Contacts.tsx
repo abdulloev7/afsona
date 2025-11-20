@@ -49,7 +49,7 @@ const Contacts = () => {
                     Открыть в Яндекс.Картах
                   </DropdownMenuItem>
                   <DropdownMenuItem 
-                    onClick={() => window.open('https://share.google/dBMsPOdCoxBGsOJOy', '_blank')}
+                    onClick={() => window.open('https://maps.app.goo.gl/MEsrzn3JajJZfYk99', '_blank')}
                     className="cursor-pointer"
                   >
                     <MapPin className="w-4 h-4 mr-2" />
@@ -153,7 +153,7 @@ const Contacts = () => {
             <CardContent className="p-0">
               <div className="w-full h-[400px] md:h-[500px]">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.6145924934943!2d69.62291!3d40.28451!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDDCsDE3JzA0LjIiTiA2OcKwMzcnMjIuNSJF!5e0!3m2!1sen!2s!4v1234567890"
+                  src="https://www.google.com/maps?q=40.2997405,69.6201071&z=17&output=embed"
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}
@@ -172,7 +172,7 @@ const Contacts = () => {
                   <Button
                     variant="outline"
                     className="w-full"
-                    onClick={() => window.open('https://share.google/dBMsPOdCoxBGsOJOy', '_blank')}
+                    onClick={() => window.open('https://maps.app.goo.gl/MEsrzn3JajJZfYk99', '_blank')}
                   >
                     <MapPin className="w-4 h-4 mr-2" />
                     Открыть в Google Maps

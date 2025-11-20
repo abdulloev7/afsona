@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ShoppingCart, User, LogIn, Shield } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
@@ -15,14 +15,32 @@ const Header = () => {
   const { getCartCount } = useCart();
   const { isAdmin } = useUserRole();
   const location = useLocation();
+  const navigate = useNavigate();
   const [completedOrdersCount, setCompletedOrdersCount] = useState(0);
   
+  const storeScrollTarget = (sectionId: string) => {
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('afsona-scroll-target', sectionId);
+    }
+  };
+
   const scrollToSection = (sectionId: string) => {
-    if (location.pathname !== '/') {
-      window.location.href = `/#${sectionId}`;
-    } else {
+    const scrollOnPage = () => {
       const element = document.getElementById(sectionId);
-      element?.scrollIntoView({ behavior: 'smooth' });
+      if (element) {
+        const headerOffset = document.querySelector('header')?.clientHeight ?? 0;
+        const elementTop = element.getBoundingClientRect().top + window.scrollY - headerOffset;
+        window.scrollTo({ top: Math.max(elementTop, 0), behavior: 'smooth' });
+      } else if (sectionId === 'home') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    };
+
+    if (location.pathname !== '/') {
+      storeScrollTarget(sectionId);
+      navigate(`/#${sectionId}`);
+    } else {
+      scrollOnPage();
     }
   };
 

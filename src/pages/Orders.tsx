@@ -37,6 +37,12 @@ const Orders = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const goToCatalog = () => {
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('afsona-scroll-target', 'products');
+    }
+    navigate(`/#products`);
+  };
 
   useEffect(() => {
     if (!user) {
@@ -134,7 +140,7 @@ const Orders = () => {
               <p className="text-muted-foreground mb-6">
                 Вы еще не сделали ни одного заказа
               </p>
-              <Button onClick={() => navigate('/#products')}>
+              <Button onClick={goToCatalog}>
                 Перейти к каталогу
               </Button>
             </div>

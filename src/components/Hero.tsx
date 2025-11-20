@@ -1,7 +1,6 @@
 // src/components/Hero.tsx
 import { Button } from "@/components/ui/button";
 import { ArrowDown } from "lucide-react";
-import { AuroraBackground } from "@/components/ui/aurora-background";
 import { motion } from "framer-motion";
 
 const Hero = () => {
@@ -15,7 +14,7 @@ const Hero = () => {
   };
 
   return (
-    <AuroraBackground className="min-h-screen flex items-center justify-center">
+    <section className="min-h-screen flex items-center justify-center bg-background">
       <motion.div
         initial={{ opacity: 0.0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -63,7 +62,7 @@ const Hero = () => {
           <ArrowDown className="w-6 h-6 text-muted-foreground mx-auto" />
         </div>
       </motion.div>
-    </AuroraBackground>
+    </section>
   );
 };
 

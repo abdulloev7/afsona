@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { supabase } from '@/integrations/supabase/client';
 import { ProductCard } from '@/components/ProductCard';
 import { useToast } from '@/hooks/use-toast';
@@ -25,6 +25,7 @@ const PaintsCoatings = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchProducts();
@@ -82,12 +83,18 @@ const PaintsCoatings = () => {
       <main className="flex-1 py-16">
         <div className="container mx-auto px-4">
           <div className="mb-8">
-            <Link to="/">
-              <Button variant="outline" size="sm" className="mb-6">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Назад к ассортименту
-              </Button>
-            </Link>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="mb-6"
+              onClick={() => {
+                sessionStorage.setItem('afsona-scroll-target', 'products');
+                navigate('/#products');
+              }}
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Назад к ассортименту
+            </Button>
             <h1 className="text-4xl font-bold mb-4">Краски и лакокрасочные материалы</h1>
             <p className="text-muted-foreground text-lg">
               Профессиональные краски для различных поверхностей
