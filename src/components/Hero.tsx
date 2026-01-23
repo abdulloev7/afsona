@@ -169,28 +169,30 @@ const Hero = () => {
                 {/* Dark gradient overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
 
-                {/* Content */}
+                {/* Content - positioned bottom left */}
                 <AnimatePresence mode="wait">
-                  {current === index && (
+                  {current === index && (banner.title || banner.subtitle || banner.button_text) && (
                     <motion.div
                       initial={{ opacity: 0, y: 30 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -20 }}
                       transition={{ duration: 0.5, ease: "easeOut" }}
-                      className="absolute inset-0 flex flex-col items-center justify-center text-center px-4"
+                      className="absolute bottom-16 left-6 md:left-12 lg:left-16 z-10"
                     >
-                      <div className="max-w-4xl mx-auto">
-                        <h2
-                          className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-4 leading-tight"
-                          style={{
-                            textShadow: "0 2px 8px rgba(0,0,0,0.5)",
-                          }}
-                        >
-                          {banner.title}
-                        </h2>
+                      <div className="bg-primary/30 backdrop-blur-sm rounded-lg p-4 md:p-6 max-w-lg">
+                        {banner.title && (
+                          <h2
+                            className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-2 leading-tight"
+                            style={{
+                              textShadow: "0 2px 8px rgba(0,0,0,0.5)",
+                            }}
+                          >
+                            {banner.title}
+                          </h2>
+                        )}
                         {banner.subtitle && (
                           <p
-                            className="text-lg md:text-xl lg:text-2xl text-white/90 mb-8 max-w-2xl mx-auto"
+                            className="text-sm md:text-base lg:text-lg text-white/90 mb-4"
                             style={{
                               textShadow: "0 1px 4px rgba(0,0,0,0.5)",
                             }}
@@ -200,9 +202,9 @@ const Hero = () => {
                         )}
                         {banner.button_text && (
                           <Button
-                            size="lg"
+                            size="default"
                             onClick={() => handleButtonClick(banner.button_link)}
-                            className="text-lg px-8 py-6"
+                            className="text-sm md:text-base px-6 py-2"
                           >
                             {banner.button_text}
                           </Button>
