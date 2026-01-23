@@ -13,13 +13,13 @@ const About = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h3 className="text-2xl font-bold mb-6 text-primary">Наша миссия</h3>
-              <p className="text-base mb-6 text-foreground leading-relaxed">
+            <div className="bg-card border rounded-lg p-8 text-foreground shadow-card">
+              <h3 className="text-2xl font-bold mb-6">Наша миссия</h3>
+              <p className="text-base mb-6 leading-relaxed">
                 AFSONA — это больше чем магазин красок. Мы стремимся предоставить нашим клиентам 
                 только самые качественные и экологичные материалы для создания уютного и красивого дома.
               </p>
-              <p className="text-base mb-6 text-foreground leading-relaxed">
+              <p className="text-base mb-6 leading-relaxed">
                 Наша команда экспертов поможет вам выбрать идеальные материалы для любого проекта — 
                 от небольшого ремонта до масштабной реновации.
               </p>
