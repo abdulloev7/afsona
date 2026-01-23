@@ -2,6 +2,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Badge } from '@/components/ui/badge';
 import { Calendar, Image as ImageIcon, Video } from 'lucide-react';
 import { formatNewsDate } from '@/lib/utils';
+import { sanitizeHtml } from '@/lib/sanitize';
 
 interface MediaItem {
   type: 'image' | 'video';
@@ -74,7 +75,7 @@ const NewsPreview = ({
           {/* Rich Text Content */}
           <div
             className="prose prose-sm max-w-none"
-            dangerouslySetInnerHTML={{ __html: content || '<p>Нет содержания</p>' }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(content || '<p>Нет содержания</p>') }}
           />
 
           {/* Media Gallery */}
