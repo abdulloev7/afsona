@@ -1,132 +1,116 @@
 
-# План: Исправление работы корзины с мульти-вариантными товарами
+# План: Исправление уникального ключа корзины для поддержки разных вариантов
 
-## Обнаруженные проблемы
+## Обнаруженная проблема
 
-После анализа кода и базы данных выявлены следующие проблемы:
+В консоли появляется ошибка:
+```
+duplicate key value violates unique constraint "cart_items_user_id_product_id_key"
+```
 
-1. **Неправильная проверка при добавлении в корзину**: код проверяет `product.sizes?.length > 1`, но у многих товаров `sizes = null`, а варианты хранятся в `size_variants`
-
-2. **Неверный расчёт итога корзины**: функция `getCartTotal()` использует `item.product.price` (устаревшую базовую цену), игнорируя цену выбранного варианта
-
-3. **Товар добавляется без выбора объёма**: когда `sizes = null`, товар добавляется без открытия селектора объёмов, даже если есть `size_variants`
+**Причина**: В таблице `cart_items` есть UNIQUE constraint `(user_id, product_id)`, который запрещает добавлять один и тот же товар более одного раза, даже если выбраны разные объемы/варианты.
 
 ---
 
-## План исправлений
+## Решение
 
-### 1. Исправить ProductCard.tsx
+### 1. Миграция базы данных
 
-**Проблема**: Условие показа селектора объёмов проверяет только `sizes`:
-```typescript
-if (product.sizes && product.sizes.length > 1) {
-  setShowSizeSelector(true);
-}
+Нужно удалить старый constraint и создать новый с учётом `selected_size`:
+
+```sql
+-- Drop the old unique constraint
+ALTER TABLE cart_items 
+DROP CONSTRAINT cart_items_user_id_product_id_key;
+
+-- Create new unique constraint including selected_size
+-- Using COALESCE to handle NULL values for products without sizes
+CREATE UNIQUE INDEX cart_items_user_product_size_unique 
+ON cart_items (user_id, product_id, COALESCE(selected_size, ''));
 ```
 
-**Решение**: Добавить проверку `size_variants`:
-```typescript
-const hasMultipleVariants = 
-  (product.size_variants && product.size_variants.length > 0) ||
-  (product.sizes && product.sizes.length > 1);
-
-if (hasMultipleVariants) {
-  setShowSizeSelector(true);
-}
-```
-
-Также исправить условие отображения кнопки (строки 222-249).
+Это позволит:
+- Добавлять товар "Радуга-210" с объёмом "1 кг" 
+- Добавлять тот же товар с объёмом "5 кг" как отдельную строку
+- Сохранить поведение для товаров без вариантов (один товар = одна запись)
 
 ---
 
-### 2. Исправить Product.tsx (страница товара)
+### 2. Обновление логики CartContext.tsx
 
-**Проблема**: Аналогичная проверка `product.sizes.length > 1`
-
-**Решение**: Использовать ту же логику с `hasMultipleVariants`:
+Текущая логика проверки дубликатов уже корректна:
 ```typescript
-const hasMultipleVariants = 
-  (product.size_variants && product.size_variants.length > 0) ||
-  (product.sizes && product.sizes.length > 1);
+const existingItem = items.find(item => 
+  item.product_id === productId && item.selected_size === selectedSize
+);
 ```
 
-Применить к `handleAddToCart()` и условиям отображения кнопок.
+Но нужно удостовериться, что при добавлении товара с `size_variants` всегда передаётся `selected_size`, иначе возникнет ситуация как сейчас (товар добавлен с `selected_size = null`).
 
 ---
 
-### 3. Исправить CartContext.tsx - getCartTotal()
+### 3. Очистка некорректных данных
 
-**Проблема**: Расчёт итога игнорирует цены вариантов:
-```typescript
-const getCartTotal = () => {
-  return items.reduce((total, item) => 
-    total + (item.product.price * item.quantity), 0
-  );
-};
-```
-
-**Решение**: Использовать цену из `size_variants` если она есть:
-```typescript
-const getCartTotal = () => {
-  return items.reduce((total, item) => {
-    let itemPrice = item.product.price;
-    if (item.product.size_variants && item.selected_size) {
-      const variant = item.product.size_variants.find(
-        v => v.volume === item.selected_size
-      );
-      if (variant) itemPrice = variant.price;
-    }
-    return total + (itemPrice * item.quantity);
-  }, 0);
-};
-```
-
----
-
-### 4. Дополнительная защита - обязательный выбор объёма
-
-Для товаров с `size_variants` добавить валидацию: нельзя добавить в корзину без выбора конкретного объёма.
-
-Если товар имеет варианты, но пользователь каким-то образом пытается добавить его без выбора — показать селектор принудительно.
+В БД уже есть записи с `selected_size = NULL` для товаров с вариантами. Их нужно удалить или исправить.
 
 ---
 
 ## Файлы для изменения
 
-| Файл | Изменения |
-|------|-----------|
-| `src/components/ProductCard.tsx` | Логика проверки вариантов, условия кнопок |
-| `src/pages/Product.tsx` | Логика проверки вариантов, условия кнопок |
-| `src/contexts/CartContext.tsx` | Расчёт `getCartTotal()` с учётом цен вариантов |
+| Файл / Ресурс | Изменения |
+|---------------|-----------|
+| **Миграция SQL** | Удалить старый constraint, создать новый с `selected_size` |
+| `src/contexts/CartContext.tsx` | Добавить валидацию: если у товара есть `size_variants`, требовать `selected_size` |
 
 ---
 
-## Техническая реализация
+## Пошаговая реализация
 
-### Вспомогательная функция (опционально)
+### Шаг 1: Миграция базы данных
 
-Для DRY можно создать утилиту:
+```sql
+-- Remove old unique constraint that prevents multiple variants
+ALTER TABLE cart_items 
+DROP CONSTRAINT IF EXISTS cart_items_user_id_product_id_key;
+
+-- Create new unique constraint that allows different sizes
+CREATE UNIQUE INDEX IF NOT EXISTS cart_items_user_product_size_unique 
+ON cart_items (user_id, product_id, COALESCE(selected_size, ''));
+
+-- Clean up any cart items without selected_size for products that have variants
+DELETE FROM cart_items 
+WHERE selected_size IS NULL 
+AND product_id IN (
+  SELECT id FROM products WHERE size_variants IS NOT NULL AND jsonb_array_length(size_variants) > 0
+);
+```
+
+### Шаг 2: Защита в CartContext.tsx
+
+Добавить проверку в `addToCart`:
+
 ```typescript
-// src/lib/product-utils.ts
-export const hasMultipleVariants = (product: {
-  sizes?: string[] | null;
-  size_variants?: { volume: string; price: number }[] | null;
-}) => {
-  return (
-    (product.size_variants && product.size_variants.length > 0) ||
-    (product.sizes && product.sizes.length > 1)
-  );
-};
-
-export const getVariantPrice = (
-  product: { price: number; size_variants?: { volume: string; price: number }[] | null },
-  selectedSize: string | null
-) => {
-  if (product.size_variants && selectedSize) {
-    const variant = product.size_variants.find(v => v.volume === selectedSize);
-    if (variant) return variant.price;
+const addToCart = async (productId: string, quantity: number = 1, selectedSize: string | null = null) => {
+  // ... existing auth check ...
+  
+  // Fetch product to check if it requires size selection
+  const { data: product } = await supabase
+    .from('products')
+    .select('size_variants')
+    .eq('id', productId)
+    .single();
+  
+  // Validate: if product has variants, size must be selected
+  if (product?.size_variants && product.size_variants.length > 0 && !selectedSize) {
+    toast({
+      title: "Ошибка",
+      description: "Пожалуйста, выберите объем товара",
+      variant: "destructive",
+    });
+    return;
   }
-  return product.price;
+  
+  // ... rest of the function ...
 };
 ```
 
@@ -136,7 +120,7 @@ export const getVariantPrice = (
 
 После исправлений:
 
-1. Для товаров с `size_variants` всегда открывается диалог выбора объёма
-2. Каждый вариант добавляется как отдельная строка в корзине с правильной ценой
-3. Итоговая сумма корзины рассчитывается по ценам выбранных вариантов
-4. Можно добавить один и тот же товар с разными объёмами — они будут отображаться как разные позиции
+1. Товары с разными вариантами можно добавлять в корзину как отдельные позиции
+2. "Краска Радуга-210" с объёмом "1 кг" и "5 кг" будут двумя разными строками в корзине
+3. Каждая строка показывает правильную цену для выбранного объёма
+4. Невозможно добавить товар с вариантами без выбора конкретного объёма
