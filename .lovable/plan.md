@@ -1,173 +1,142 @@
 
+# План: Исправление работы корзины с мульти-вариантными товарами
 
-# Plan: Hero Carousel with Admin Management
+## Обнаруженные проблемы
 
-## Overview
+После анализа кода и базы данных выявлены следующие проблемы:
 
-This plan redesigns the Hero section from a static text block to a full-screen carousel slider with images, overlay content, and complete admin panel management.
+1. **Неправильная проверка при добавлении в корзину**: код проверяет `product.sizes?.length > 1`, но у многих товаров `sizes = null`, а варианты хранятся в `size_variants`
 
----
+2. **Неверный расчёт итога корзины**: функция `getCartTotal()` использует `item.product.price` (устаревшую базовую цену), игнорируя цену выбранного варианта
 
-## Database Schema
-
-### New Table: `hero_banners`
-
-| Column | Type | Nullable | Default | Description |
-|--------|------|----------|---------|-------------|
-| id | uuid | No | gen_random_uuid() | Primary key |
-| image_url | text | No | - | Banner background image URL |
-| title | text | No | - | Main heading text |
-| subtitle | text | Yes | null | Secondary text below title |
-| button_text | text | Yes | null | CTA button label |
-| button_link | text | Yes | null | CTA button destination URL |
-| is_active | boolean | No | true | Toggle banner visibility |
-| display_order | integer | No | 0 | Sort order (ascending) |
-| created_at | timestamptz | No | now() | Creation timestamp |
-| updated_at | timestamptz | No | now() | Last update timestamp |
-
-### RLS Policies
-- **SELECT**: Everyone can view active banners (`is_active = true`)
-- **SELECT**: Admins can view all banners
-- **INSERT/UPDATE/DELETE**: Admins only
+3. **Товар добавляется без выбора объёма**: когда `sizes = null`, товар добавляется без открытия селектора объёмов, даже если есть `size_variants`
 
 ---
 
-## Component Architecture
+## План исправлений
 
-```text
-src/
-  components/
-    Hero.tsx                  [MODIFY] - Full carousel implementation
-    admin/
-      BannerManagement.tsx    [CREATE] - Admin CRUD for banners
-  pages/
-    Admin.tsx                 [MODIFY] - Add "Banners" tab
-```
+### 1. Исправить ProductCard.tsx
 
----
-
-## Technical Implementation
-
-### 1. Hero Component Redesign
-
-**Visual Structure:**
-- Full-width section with 75vh height (visible below fixed header)
-- Margin-top for header offset (64px)
-- Each slide: background image + dark gradient overlay + centered text content
-
-**Carousel Features:**
-- Autoplay every 5 seconds using `embla-carousel-autoplay` plugin
-- Pause autoplay on mouse hover
-- Smooth fade/slide transition
-- Navigation arrows positioned bottom-right
-- Dot indicators for current slide (optional)
-
-**Content Overlay:**
-- Semi-transparent black gradient from bottom
-- Title: large bold white text with text-shadow
-- Subtitle: medium white text
-- CTA Button: using existing brand primary color
-
-**Data Fetching:**
-- Query `hero_banners` table where `is_active = true`
-- Order by `display_order` ascending
-- Fallback to static content if no banners exist
-
-### 2. Banner Management Component
-
-**Features:**
-- Table view of all banners (similar to NewsManagement)
-- Add/Edit dialog with form fields:
-  - Image upload with preview
-  - Title input
-  - Subtitle input
-  - Button text input
-  - Button link input
-  - Active toggle checkbox
-- Drag or arrow buttons for reordering
-- Delete with confirmation dialog
-- Toggle active/inactive status quickly
-
-**Image Upload:**
-- Reuse existing pattern from BrandManagement/NewsManagement
-- Upload to `product-images` bucket in `banners/` folder
-- Show preview after selection
-
-### 3. Admin Panel Integration
-
-- Add new tab "Баннеры" (Banners) in Admin.tsx tabs list
-- Import and render BannerManagement component
-
----
-
-## Dependency
-
-**New package required:**
-- `embla-carousel-autoplay` - Autoplay plugin for Embla Carousel
-
----
-
-## Implementation Steps
-
-1. **Database migration** - Create `hero_banners` table with RLS policies
-2. **Install autoplay plugin** - Add `embla-carousel-autoplay` package
-3. **Create BannerManagement.tsx** - Admin component for banner CRUD
-4. **Update Admin.tsx** - Add Banners tab
-5. **Rewrite Hero.tsx** - Implement carousel with data fetching
-
----
-
-## Visual Example
-
-```text
-+------------------------------------------------------------------+
-|                    [Header - fixed, z-50]                        |
-+------------------------------------------------------------------+
-|                                                                   |
-|    +---------------------------------------------------------+   |
-|    |                                                         |   |
-|    |          [Background Image - full width]                |   |
-|    |                                                         |   |
-|    |                                                         |   |
-|    |                      TITLE TEXT                         |   |
-|    |                    Subtitle text                        |   |
-|    |                  [  CTA Button  ]                       |   |
-|    |                                                         |   |
-|    |                                         [<] [>]         |   |
-|    +---------------------------------------------------------+   |
-|                           o  o  o                                |
-+------------------------------------------------------------------+
-```
-
----
-
-## Technical Details
-
-### Carousel Configuration
-
+**Проблема**: Условие показа селектора объёмов проверяет только `sizes`:
 ```typescript
-// Autoplay configuration
-Autoplay({
-  delay: 5000,
-  stopOnInteraction: false,
-  stopOnMouseEnter: true,
-  playOnInit: true
-})
-
-// Embla options
-{
-  loop: true,
-  align: 'start'
+if (product.sizes && product.sizes.length > 1) {
+  setShowSizeSelector(true);
 }
 ```
 
-### Text Readability Strategy
+**Решение**: Добавить проверку `size_variants`:
+```typescript
+const hasMultipleVariants = 
+  (product.size_variants && product.size_variants.length > 0) ||
+  (product.sizes && product.sizes.length > 1);
 
-- Dark gradient overlay on images: `bg-gradient-to-t from-black/70 via-black/30 to-transparent`
-- Text shadows for titles: `text-shadow: 0 2px 4px rgba(0,0,0,0.5)`
-- White text color for contrast
+if (hasMultipleVariants) {
+  setShowSizeSelector(true);
+}
+```
 
-### Fallback Behavior
+Также исправить условие отображения кнопки (строки 222-249).
 
-If no active banners exist, display default static content similar to current Hero to prevent empty section.
+---
 
+### 2. Исправить Product.tsx (страница товара)
+
+**Проблема**: Аналогичная проверка `product.sizes.length > 1`
+
+**Решение**: Использовать ту же логику с `hasMultipleVariants`:
+```typescript
+const hasMultipleVariants = 
+  (product.size_variants && product.size_variants.length > 0) ||
+  (product.sizes && product.sizes.length > 1);
+```
+
+Применить к `handleAddToCart()` и условиям отображения кнопок.
+
+---
+
+### 3. Исправить CartContext.tsx - getCartTotal()
+
+**Проблема**: Расчёт итога игнорирует цены вариантов:
+```typescript
+const getCartTotal = () => {
+  return items.reduce((total, item) => 
+    total + (item.product.price * item.quantity), 0
+  );
+};
+```
+
+**Решение**: Использовать цену из `size_variants` если она есть:
+```typescript
+const getCartTotal = () => {
+  return items.reduce((total, item) => {
+    let itemPrice = item.product.price;
+    if (item.product.size_variants && item.selected_size) {
+      const variant = item.product.size_variants.find(
+        v => v.volume === item.selected_size
+      );
+      if (variant) itemPrice = variant.price;
+    }
+    return total + (itemPrice * item.quantity);
+  }, 0);
+};
+```
+
+---
+
+### 4. Дополнительная защита - обязательный выбор объёма
+
+Для товаров с `size_variants` добавить валидацию: нельзя добавить в корзину без выбора конкретного объёма.
+
+Если товар имеет варианты, но пользователь каким-то образом пытается добавить его без выбора — показать селектор принудительно.
+
+---
+
+## Файлы для изменения
+
+| Файл | Изменения |
+|------|-----------|
+| `src/components/ProductCard.tsx` | Логика проверки вариантов, условия кнопок |
+| `src/pages/Product.tsx` | Логика проверки вариантов, условия кнопок |
+| `src/contexts/CartContext.tsx` | Расчёт `getCartTotal()` с учётом цен вариантов |
+
+---
+
+## Техническая реализация
+
+### Вспомогательная функция (опционально)
+
+Для DRY можно создать утилиту:
+```typescript
+// src/lib/product-utils.ts
+export const hasMultipleVariants = (product: {
+  sizes?: string[] | null;
+  size_variants?: { volume: string; price: number }[] | null;
+}) => {
+  return (
+    (product.size_variants && product.size_variants.length > 0) ||
+    (product.sizes && product.sizes.length > 1)
+  );
+};
+
+export const getVariantPrice = (
+  product: { price: number; size_variants?: { volume: string; price: number }[] | null },
+  selectedSize: string | null
+) => {
+  if (product.size_variants && selectedSize) {
+    const variant = product.size_variants.find(v => v.volume === selectedSize);
+    if (variant) return variant.price;
+  }
+  return product.price;
+};
+```
+
+---
+
+## Ожидаемый результат
+
+После исправлений:
+
+1. Для товаров с `size_variants` всегда открывается диалог выбора объёма
+2. Каждый вариант добавляется как отдельная строка в корзине с правильной ценой
+3. Итоговая сумма корзины рассчитывается по ценам выбранных вариантов
+4. Можно добавить один и тот же товар с разными объёмами — они будут отображаться как разные позиции
