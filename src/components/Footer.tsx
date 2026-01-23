@@ -1,4 +1,4 @@
-import afsona_logo from "@/assets/afsona-logo.png";
+import afsona_logo_full from "@/assets/afsona-logo-full.jpg";
 import { MapPin, ExternalLink } from "lucide-react";
 import {
   DropdownMenu,
@@ -13,16 +13,12 @@ const Footer = () => {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
-            <div className="flex items-center space-x-3 mb-4">
+            <div className="mb-4">
               <img 
-                src={afsona_logo} 
-                alt="AFSONA Logo" 
-                className="h-10 w-auto"
+                src={afsona_logo_full} 
+                alt="AFSONA - Эко материалы для ремонта" 
+                className="h-16 w-auto"
               />
-              <div>
-                <h3 className="text-xl font-bold">AFSONA</h3>
-                <p className="text-sm opacity-90">Эко материалы для ремонта</p>
-              </div>
             </div>
             <p className="text-sm opacity-80 leading-relaxed">
               Качественные краски и материалы для профессионального и домашнего ремонта. 
