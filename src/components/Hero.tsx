@@ -177,9 +177,9 @@ const Hero = () => {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -20 }}
                       transition={{ duration: 0.5, ease: "easeOut" }}
-                      className="absolute bottom-16 left-6 md:left-12 lg:left-16 z-10"
+                      className="absolute bottom-16 left-[25%] -translate-x-1/2 z-10"
                     >
-                      <div className="bg-primary/30 backdrop-blur-sm rounded-lg p-4 md:p-6 max-w-lg">
+                      <div className="max-w-lg text-left">
                         {banner.title && (
                           <h2
                             className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-2 leading-tight"
