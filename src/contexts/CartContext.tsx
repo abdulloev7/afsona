@@ -107,6 +107,26 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     try {
+      // Fetch product to check if it requires size selection
+      const { data: productData } = await supabase
+        .from('products')
+        .select('size_variants')
+        .eq('id', productId)
+        .single();
+      
+      // Cast size_variants to proper type
+      const sizeVariants = productData?.size_variants as { volume: string; price: number }[] | null;
+      
+      // Validate: if product has variants, size must be selected
+      if (sizeVariants && sizeVariants.length > 0 && !selectedSize) {
+        toast({
+          title: "Ошибка",
+          description: "Пожалуйста, выберите объем товара",
+          variant: "destructive",
+        });
+        return;
+      }
+
       const existingItem = items.find(item => 
         item.product_id === productId && item.selected_size === selectedSize
       );
