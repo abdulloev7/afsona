@@ -71,6 +71,14 @@ const Footer = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
               <p>📞 +992 927 55 79 19</p>
+              <a 
+                href="https://wa.me/992927557919" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 hover:text-green-500 transition-colors cursor-pointer"
+              >
+                💬 WhatsApp
+              </a>
               <p>✉️ info@afsona.com.tj</p>
               <p>🕒 Пн-Сб: 08:00-12:00, 13:00-18:00</p>
               <p>🕒 Воскресенье: Выходной</p>
