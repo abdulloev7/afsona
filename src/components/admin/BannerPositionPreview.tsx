@@ -2,7 +2,6 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Move, Keyboard } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { ImagePositionSettings } from './BannerImagePositioner';
 
 export interface ElementPositions {
   title: { x: number; y: number };
@@ -16,7 +15,6 @@ interface BannerPositionPreviewProps {
   subtitle: string;
   buttonText: string;
   positions: ElementPositions;
-  imagePosition?: ImagePositionSettings;
   onPositionsChange: (positions: ElementPositions) => void;
 }
 
@@ -28,7 +26,6 @@ const BannerPositionPreview = ({
   subtitle,
   buttonText,
   positions,
-  imagePosition,
   onPositionsChange,
 }: BannerPositionPreviewProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -245,19 +242,10 @@ const BannerPositionPreview = ({
         onTouchMove={handleMouseMove}
         onTouchEnd={handleMouseUp}
       >
-        {/* Background image with position and scale from imagePosition */}
+        {/* Background image */}
         <div
-          className="absolute inset-0"
-          style={{ 
-            backgroundImage: `url(${imageUrl})`,
-            backgroundPosition: imagePosition 
-              ? `${imagePosition.x}% ${imagePosition.y}%` 
-              : 'center center',
-            backgroundSize: imagePosition 
-              ? `${imagePosition.scale}%` 
-              : 'cover',
-            backgroundRepeat: 'no-repeat',
-          }}
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${imageUrl})` }}
         />
         
         {/* Gradient overlay - matching Hero */}
