@@ -178,9 +178,9 @@ const BannerPositionPreview = ({
         key={element}
         tabIndex={0}
         className={cn(
-          "absolute transform -translate-x-1/2 -translate-y-1/2 transition-transform duration-75 outline-none",
-          isBeingDragged ? 'cursor-grabbing scale-105 z-30' : 'cursor-grab z-20',
-          isActive && !isBeingDragged && 'ring-2 ring-primary ring-offset-2 ring-offset-transparent z-30'
+          "absolute transform -translate-x-1/2 -translate-y-1/2 outline-none z-10",
+          isBeingDragged ? 'cursor-grabbing z-30' : 'cursor-grab z-20',
+          isActive && !isBeingDragged && 'z-30'
         )}
         style={{
           left: `${pos.x}%`,
@@ -194,16 +194,11 @@ const BannerPositionPreview = ({
         }}
         onFocus={() => setActiveElement(element)}
       >
-        <div 
-          className={cn(
-            "rounded-lg p-2 border-2 transition-all",
-            isActive 
-              ? 'bg-black/60 border-primary shadow-lg shadow-primary/30' 
-              : 'bg-black/40 border-white/30 hover:border-white/60'
-          )}
-        >
-          {renderContent(isActive)}
-        </div>
+        {/* Selection indicator - positioned around content without affecting layout */}
+        {isActive && (
+          <div className="absolute -inset-2 border-2 border-primary rounded-lg bg-primary/10 pointer-events-none" />
+        )}
+        {renderContent(isActive)}
       </div>
     );
   };
@@ -256,42 +251,31 @@ const BannerPositionPreview = ({
         {/* Gradient overlay - matching Hero */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
 
-        {/* Title element */}
-        {renderDraggableElement('title', title, (isActive) => (
-          <div className={getTextAlign(getDisplayPosition('title').x)}>
-            <h3 className="text-white text-base md:text-lg lg:text-xl font-bold leading-tight whitespace-nowrap"
-                style={{ textShadow: '0 2px 8px rgba(0,0,0,0.5)' }}>
-              {title}
-            </h3>
-            {isActive && (
-              <span className="text-xs text-primary mt-1 block">Заголовок</span>
-            )}
-          </div>
+        {/* Title element - matches Hero.tsx styling exactly */}
+        {renderDraggableElement('title', title, () => (
+          <h2
+            className={`text-lg md:text-xl lg:text-2xl font-bold text-white leading-tight whitespace-nowrap ${getTextAlign(getDisplayPosition('title').x)}`}
+            style={{ textShadow: '0 2px 8px rgba(0,0,0,0.5)' }}
+          >
+            {title}
+          </h2>
         ))}
 
-        {/* Subtitle element */}
-        {renderDraggableElement('subtitle', subtitle, (isActive) => (
-          <div className={getTextAlign(getDisplayPosition('subtitle').x)}>
-            <p className="text-white/90 text-sm md:text-base whitespace-nowrap"
-               style={{ textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}>
-              {subtitle}
-            </p>
-            {isActive && (
-              <span className="text-xs text-primary mt-1 block">Подзаголовок</span>
-            )}
-          </div>
+        {/* Subtitle element - matches Hero.tsx styling exactly */}
+        {renderDraggableElement('subtitle', subtitle, () => (
+          <p
+            className={`text-xs md:text-sm lg:text-base text-white/90 whitespace-nowrap ${getTextAlign(getDisplayPosition('subtitle').x)}`}
+            style={{ textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}
+          >
+            {subtitle}
+          </p>
         ))}
 
-        {/* Button element */}
-        {renderDraggableElement('button', buttonText, (isActive) => (
-          <div className="flex flex-col items-center">
-            <Button size="sm" className="text-xs md:text-sm px-4">
-              {buttonText}
-            </Button>
-            {isActive && (
-              <span className="text-xs text-primary mt-1">Кнопка</span>
-            )}
-          </div>
+        {/* Button element - matches Hero.tsx styling exactly */}
+        {renderDraggableElement('button', buttonText, () => (
+          <Button size="default" className="text-xs md:text-sm px-6 py-2">
+            {buttonText}
+          </Button>
         ))}
 
         {/* No content placeholder */}
