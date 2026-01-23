@@ -19,8 +19,12 @@ interface Banner {
   button_text: string | null;
   button_link: string | null;
   display_order: number;
-  text_position_x: number | null;
-  text_position_y: number | null;
+  title_position_x: number | null;
+  title_position_y: number | null;
+  subtitle_position_x: number | null;
+  subtitle_position_y: number | null;
+  button_position_x: number | null;
+  button_position_y: number | null;
 }
 
 const getTextAlign = (x: number): string => {
@@ -165,75 +169,109 @@ const Hero = () => {
         className="w-full h-full"
       >
         <CarouselContent className="h-full -ml-0">
-          {banners.map((banner, index) => (
-            <CarouselItem key={banner.id} className="h-full pl-0">
-              <div className="relative w-full h-[75vh]">
-                {/* Background image */}
-                <div
-                  className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-                  style={{ backgroundImage: `url(${banner.image_url})` }}
-                />
+          {banners.map((banner, index) => {
+            const titleX = banner.title_position_x ?? 25;
+            const titleY = banner.title_position_y ?? 70;
+            const subtitleX = banner.subtitle_position_x ?? 25;
+            const subtitleY = banner.subtitle_position_y ?? 78;
+            const buttonX = banner.button_position_x ?? 25;
+            const buttonY = banner.button_position_y ?? 88;
 
-                {/* Dark gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+            return (
+              <CarouselItem key={banner.id} className="h-full pl-0">
+                <div className="relative w-full h-[75vh]">
+                  {/* Background image */}
+                  <div
+                    className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+                    style={{ backgroundImage: `url(${banner.image_url})` }}
+                  />
 
-                {/* Content - dynamically positioned */}
-                <AnimatePresence mode="wait">
-                  {current === index && (banner.title || banner.subtitle || banner.button_text) && (() => {
-                    const posX = banner.text_position_x ?? 25;
-                    const posY = banner.text_position_y ?? 85;
-                    const textAlign = getTextAlign(posX);
-                    
-                    return (
+                  {/* Dark gradient overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+
+                  {/* Title - independently positioned */}
+                  <AnimatePresence mode="wait">
+                    {current === index && banner.title && (
                       <motion.div
-                        initial={{ opacity: 0, y: 30 }}
+                        key={`title-${banner.id}`}
+                        initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
+                        exit={{ opacity: 0, y: -10 }}
                         transition={{ duration: 0.5, ease: "easeOut" }}
                         className="absolute z-10 transform -translate-x-1/2 -translate-y-1/2"
                         style={{
-                          left: `${posX}%`,
-                          top: `${posY}%`,
+                          left: `${titleX}%`,
+                          top: `${titleY}%`,
                         }}
                       >
-                        <div className={`max-w-lg ${textAlign}`}>
-                          {banner.title && (
-                            <h2
-                              className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-2 leading-tight"
-                              style={{
-                                textShadow: "0 2px 8px rgba(0,0,0,0.5)",
-                              }}
-                            >
-                              {banner.title}
-                            </h2>
-                          )}
-                          {banner.subtitle && (
-                            <p
-                              className="text-sm md:text-base lg:text-lg text-white/90 mb-4"
-                              style={{
-                                textShadow: "0 1px 4px rgba(0,0,0,0.5)",
-                              }}
-                            >
-                              {banner.subtitle}
-                            </p>
-                          )}
-                          {banner.button_text && (
-                            <Button
-                              size="default"
-                              onClick={() => handleButtonClick(banner.button_link)}
-                              className="text-sm md:text-base px-6 py-2"
-                            >
-                              {banner.button_text}
-                            </Button>
-                          )}
-                        </div>
+                        <h2
+                          className={`text-2xl md:text-3xl lg:text-4xl font-bold text-white leading-tight whitespace-nowrap ${getTextAlign(titleX)}`}
+                          style={{
+                            textShadow: "0 2px 8px rgba(0,0,0,0.5)",
+                          }}
+                        >
+                          {banner.title}
+                        </h2>
                       </motion.div>
-                    );
-                  })()}
-                </AnimatePresence>
-              </div>
-            </CarouselItem>
-          ))}
+                    )}
+                  </AnimatePresence>
+
+                  {/* Subtitle - independently positioned */}
+                  <AnimatePresence mode="wait">
+                    {current === index && banner.subtitle && (
+                      <motion.div
+                        key={`subtitle-${banner.id}`}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.5, ease: "easeOut", delay: 0.1 }}
+                        className="absolute z-10 transform -translate-x-1/2 -translate-y-1/2"
+                        style={{
+                          left: `${subtitleX}%`,
+                          top: `${subtitleY}%`,
+                        }}
+                      >
+                        <p
+                          className={`text-sm md:text-base lg:text-lg text-white/90 whitespace-nowrap ${getTextAlign(subtitleX)}`}
+                          style={{
+                            textShadow: "0 1px 4px rgba(0,0,0,0.5)",
+                          }}
+                        >
+                          {banner.subtitle}
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  {/* Button - independently positioned */}
+                  <AnimatePresence mode="wait">
+                    {current === index && banner.button_text && (
+                      <motion.div
+                        key={`button-${banner.id}`}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.5, ease: "easeOut", delay: 0.2 }}
+                        className="absolute z-10 transform -translate-x-1/2 -translate-y-1/2"
+                        style={{
+                          left: `${buttonX}%`,
+                          top: `${buttonY}%`,
+                        }}
+                      >
+                        <Button
+                          size="default"
+                          onClick={() => handleButtonClick(banner.button_link)}
+                          className="text-sm md:text-base px-6 py-2"
+                        >
+                          {banner.button_text}
+                        </Button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </CarouselItem>
+            );
+          })}
         </CarouselContent>
 
         {/* Navigation arrows - bottom right */}
