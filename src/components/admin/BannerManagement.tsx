@@ -24,6 +24,7 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Plus, Pencil, Trash2, ArrowUp, ArrowDown, Image as ImageIcon, Eye, EyeOff } from 'lucide-react';
+import BannerPositionPreview from './BannerPositionPreview';
 
 interface Banner {
   id: string;
@@ -398,16 +399,19 @@ const BannerManagement = () => {
                   />
                   {uploading && <span className="text-sm text-muted-foreground">Загрузка...</span>}
                 </div>
-                {imagePreview && (
-                  <div className="mt-2 relative aspect-video w-full max-w-md overflow-hidden rounded-lg border">
-                    <img
-                      src={imagePreview}
-                      alt="Preview"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                )}
               </div>
+
+              {/* Interactive position preview */}
+              {imagePreview && (
+                <BannerPositionPreview
+                  imageUrl={imagePreview}
+                  title={formData.title}
+                  subtitle={formData.subtitle}
+                  buttonText={formData.button_text}
+                  position={formData.text_position}
+                  onPositionChange={(pos) => setFormData((prev) => ({ ...prev, text_position: pos }))}
+                />
+              )}
 
               {/* Title */}
               <div className="space-y-2">
