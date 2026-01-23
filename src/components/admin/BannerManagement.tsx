@@ -34,6 +34,7 @@ interface Banner {
   button_link: string | null;
   is_active: boolean;
   display_order: number;
+  text_position: string;
   created_at: string;
   updated_at: string;
 }
@@ -45,7 +46,25 @@ interface BannerFormData {
   button_text: string;
   button_link: string;
   is_active: boolean;
+  text_position: string;
 }
+
+type TextPosition = 
+  | 'top-left' | 'top-center' | 'top-right'
+  | 'center-left' | 'center' | 'center-right'
+  | 'bottom-left' | 'bottom-center' | 'bottom-right';
+
+const POSITION_LABELS: Record<TextPosition, string> = {
+  'top-left': '↖',
+  'top-center': '↑',
+  'top-right': '↗',
+  'center-left': '←',
+  'center': '●',
+  'center-right': '→',
+  'bottom-left': '↙',
+  'bottom-center': '↓',
+  'bottom-right': '↘',
+};
 
 const BannerManagement = () => {
   const [banners, setBanners] = useState<Banner[]>([]);
@@ -63,6 +82,7 @@ const BannerManagement = () => {
     button_text: '',
     button_link: '',
     is_active: true,
+    text_position: 'bottom-left',
   });
 
   const { toast } = useToast();
@@ -156,6 +176,7 @@ const BannerManagement = () => {
       button_text: '',
       button_link: '',
       is_active: true,
+      text_position: 'bottom-left',
     });
     setImagePreview(null);
     setEditingBanner(null);
@@ -170,6 +191,7 @@ const BannerManagement = () => {
       button_text: banner.button_text || '',
       button_link: banner.button_link || '',
       is_active: banner.is_active,
+      text_position: banner.text_position || 'bottom-left',
     });
     setImagePreview(banner.image_url);
     setDialogOpen(true);
@@ -196,6 +218,7 @@ const BannerManagement = () => {
             button_text: formData.button_text || null,
             button_link: formData.button_link || null,
             is_active: formData.is_active,
+            text_position: formData.text_position,
           })
           .eq('id', editingBanner.id);
 
@@ -218,6 +241,7 @@ const BannerManagement = () => {
             button_text: formData.button_text || null,
             button_link: formData.button_link || null,
             is_active: formData.is_active,
+            text_position: formData.text_position,
             display_order: maxOrder + 1,
           });
 
@@ -427,6 +451,31 @@ const BannerManagement = () => {
                   onChange={(e) => setFormData((prev) => ({ ...prev, button_link: e.target.value }))}
                   placeholder="Например: /#products или /category/paints"
                 />
+              </div>
+
+              {/* Text position selector */}
+              <div className="space-y-2">
+                <Label>Позиция текста</Label>
+                <p className="text-sm text-muted-foreground mb-2">
+                  Выберите расположение текстового блока на баннере
+                </p>
+                <div className="grid grid-cols-3 gap-1 w-fit">
+                  {(['top-left', 'top-center', 'top-right', 'center-left', 'center', 'center-right', 'bottom-left', 'bottom-center', 'bottom-right'] as TextPosition[]).map((pos) => (
+                    <button
+                      key={pos}
+                      type="button"
+                      onClick={() => setFormData((prev) => ({ ...prev, text_position: pos }))}
+                      className={`w-10 h-10 flex items-center justify-center rounded border text-lg transition-colors ${
+                        formData.text_position === pos
+                          ? 'bg-primary text-primary-foreground border-primary'
+                          : 'bg-muted hover:bg-muted/80 border-border'
+                      }`}
+                      title={pos}
+                    >
+                      {POSITION_LABELS[pos]}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               {/* Active toggle */}
