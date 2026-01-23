@@ -6,9 +6,9 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatNewsDate } from "@/lib/utils";
+import { sanitizeHtml } from "@/lib/sanitize";
 import { Calendar, ArrowLeft, Home, Image as ImageIcon, Video } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-
 interface MediaItem {
   type: 'image' | 'video';
   url: string;
@@ -169,7 +169,7 @@ const NewsDetail = () => {
           {/* Rich Text Content */}
           <div
             className="prose prose-lg max-w-none mb-12"
-            dangerouslySetInnerHTML={{ __html: news.content }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(news.content) }}
           />
 
           {/* Media Gallery */}
