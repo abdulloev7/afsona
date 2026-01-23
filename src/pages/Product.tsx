@@ -128,6 +128,12 @@ export default function Product() {
     }
   }, [items, product]);
 
+  // Check if product has multiple variants requiring selection
+  const productHasVariants = product ? (
+    (product.size_variants && product.size_variants.length > 0) ||
+    (product.sizes && product.sizes.length > 1)
+  ) : false;
+
   const handleAddToCart = () => {
     if (!user) {
       toast({
@@ -141,8 +147,8 @@ export default function Product() {
 
     if (!product) return;
 
-    // Если у товара есть несколько размеров, показать диалог
-    if (product.sizes && product.sizes.length > 1) {
+    // Если у товара есть варианты, показать диалог выбора
+    if (productHasVariants) {
       setShowSizeSelector(true);
       return;
     }
@@ -318,8 +324,7 @@ export default function Product() {
             )}
 
             <div className="flex gap-4 pt-4">
-              {((product.size_variants && product.size_variants.length > 1) || 
-                (product.sizes && product.sizes.length > 1)) ? (
+              {productHasVariants ? (
                 <Button
                   onClick={handleAddToCart}
                   disabled={!product.in_stock}

@@ -221,8 +221,18 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const getCartTotal = () => {
-    return items.reduce((total, item) => total + (item.product.price * item.quantity), 0);
+const getCartTotal = () => {
+    return items.reduce((total, item) => {
+      let itemPrice = item.product.price;
+      // Use variant price if size_variants exist and a size was selected
+      if (item.product.size_variants && item.selected_size) {
+        const variant = item.product.size_variants.find(
+          v => v.volume === item.selected_size
+        );
+        if (variant) itemPrice = variant.price;
+      }
+      return total + (itemPrice * item.quantity);
+    }, 0);
   };
 
   const getCartCount = () => {
