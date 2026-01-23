@@ -1,126 +1,99 @@
 
-# План: Исправление уникального ключа корзины для поддержки разных вариантов
+# План: Настройка позиции текста для каждого баннера
 
-## Обнаруженная проблема
+## Что будет сделано
 
-В консоли появляется ошибка:
+Добавим возможность выбирать расположение текстового блока (заголовок, подзаголовок, кнопка) для каждого баннера индивидуально через админ-панель.
+
+## Доступные позиции
+
+Предлагаю 9 вариантов расположения текста на баннере:
+
+```text
++---------------------------+
+|  ↖ Левый      ↑ Центр   ↗ Правый  |
+|    верх        верх       верх    |
++---------------------------+
+|  ← Левый     ● Центр    → Правый  |
+|    центр      центр      центр    |
++---------------------------+
+|  ↙ Левый     ↓ Центр    ↘ Правый  |
+|    низ        низ         низ     |
++---------------------------+
 ```
-duplicate key value violates unique constraint "cart_items_user_id_product_id_key"
-```
 
-**Причина**: В таблице `cart_items` есть UNIQUE constraint `(user_id, product_id)`, который запрещает добавлять один и тот же товар более одного раза, даже если выбраны разные объемы/варианты.
+В админке это будет выглядеть как сетка 3x3 из кнопок, где можно кликнуть на нужную позицию.
 
 ---
 
-## Решение
+## Изменения
 
-### 1. Миграция базы данных
+### 1. База данных
+Добавим новую колонку `text_position` в таблицу `hero_banners`:
+- Тип: `text`
+- Значение по умолчанию: `'bottom-left'` (текущее поведение)
+- Возможные значения: `top-left`, `top-center`, `top-right`, `center-left`, `center`, `center-right`, `bottom-left`, `bottom-center`, `bottom-right`
 
-Нужно удалить старый constraint и создать новый с учётом `selected_size`:
+### 2. Админ-панель (BannerManagement.tsx)
+- Добавим визуальный селектор позиции в форме редактирования баннера
+- Сетка 3x3 кнопок для интуитивного выбора позиции
+- Подсветка текущей выбранной позиции
 
+### 3. Главная страница (Hero.tsx)
+- Обновим интерфейс `Banner` с новым полем `text_position`
+- Применим соответствующие CSS-классы в зависимости от выбранной позиции
+
+---
+
+## Технические детали
+
+### Миграция SQL
 ```sql
--- Drop the old unique constraint
-ALTER TABLE cart_items 
-DROP CONSTRAINT cart_items_user_id_product_id_key;
-
--- Create new unique constraint including selected_size
--- Using COALESCE to handle NULL values for products without sizes
-CREATE UNIQUE INDEX cart_items_user_product_size_unique 
-ON cart_items (user_id, product_id, COALESCE(selected_size, ''));
+ALTER TABLE hero_banners 
+ADD COLUMN text_position text DEFAULT 'bottom-left';
 ```
 
-Это позволит:
-- Добавлять товар "Радуга-210" с объёмом "1 кг" 
-- Добавлять тот же товар с объёмом "5 кг" как отдельную строку
-- Сохранить поведение для товаров без вариантов (один товар = одна запись)
+### Маппинг позиций на CSS-классы
 
----
+| Позиция | CSS классы |
+|---------|-----------|
+| top-left | `top-16 left-[25%] -translate-x-1/2` |
+| top-center | `top-16 left-1/2 -translate-x-1/2 text-center` |
+| top-right | `top-16 right-[25%] translate-x-1/2` |
+| center-left | `top-1/2 left-[25%] -translate-x-1/2 -translate-y-1/2` |
+| center | `top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center` |
+| center-right | `top-1/2 right-[25%] translate-x-1/2 -translate-y-1/2` |
+| bottom-left | `bottom-16 left-[25%] -translate-x-1/2` |
+| bottom-center | `bottom-16 left-1/2 -translate-x-1/2 text-center` |
+| bottom-right | `bottom-16 right-[25%] translate-x-1/2` |
 
-### 2. Обновление логики CartContext.tsx
-
-Текущая логика проверки дубликатов уже корректна:
-```typescript
-const existingItem = items.find(item => 
-  item.product_id === productId && item.selected_size === selectedSize
-);
+### Компонент выбора позиции (в форме редактирования)
+```text
+┌───┬───┬───┐
+│ ↖ │ ↑ │ ↗ │
+├───┼───┼───┤
+│ ← │ ● │ → │
+├───┼───┼───┤
+│ ↙ │ ↓ │ ↘ │
+└───┴───┴───┘
 ```
-
-Но нужно удостовериться, что при добавлении товара с `size_variants` всегда передаётся `selected_size`, иначе возникнет ситуация как сейчас (товар добавлен с `selected_size = null`).
-
----
-
-### 3. Очистка некорректных данных
-
-В БД уже есть записи с `selected_size = NULL` для товаров с вариантами. Их нужно удалить или исправить.
 
 ---
 
 ## Файлы для изменения
 
-| Файл / Ресурс | Изменения |
-|---------------|-----------|
-| **Миграция SQL** | Удалить старый constraint, создать новый с `selected_size` |
-| `src/contexts/CartContext.tsx` | Добавить валидацию: если у товара есть `size_variants`, требовать `selected_size` |
+| Файл | Изменения |
+|------|-----------|
+| Миграция SQL | Добавить колонку `text_position` |
+| `src/integrations/supabase/types.ts` | Будет обновлён автоматически |
+| `src/components/admin/BannerManagement.tsx` | Добавить селектор позиции в форму |
+| `src/components/Hero.tsx` | Применять позицию из БД |
 
 ---
 
-## Пошаговая реализация
+## Результат
 
-### Шаг 1: Миграция базы данных
-
-```sql
--- Remove old unique constraint that prevents multiple variants
-ALTER TABLE cart_items 
-DROP CONSTRAINT IF EXISTS cart_items_user_id_product_id_key;
-
--- Create new unique constraint that allows different sizes
-CREATE UNIQUE INDEX IF NOT EXISTS cart_items_user_product_size_unique 
-ON cart_items (user_id, product_id, COALESCE(selected_size, ''));
-
--- Clean up any cart items without selected_size for products that have variants
-DELETE FROM cart_items 
-WHERE selected_size IS NULL 
-AND product_id IN (
-  SELECT id FROM products WHERE size_variants IS NOT NULL AND jsonb_array_length(size_variants) > 0
-);
-```
-
-### Шаг 2: Защита в CartContext.tsx
-
-Добавить проверку в `addToCart`:
-
-```typescript
-const addToCart = async (productId: string, quantity: number = 1, selectedSize: string | null = null) => {
-  // ... existing auth check ...
-  
-  // Fetch product to check if it requires size selection
-  const { data: product } = await supabase
-    .from('products')
-    .select('size_variants')
-    .eq('id', productId)
-    .single();
-  
-  // Validate: if product has variants, size must be selected
-  if (product?.size_variants && product.size_variants.length > 0 && !selectedSize) {
-    toast({
-      title: "Ошибка",
-      description: "Пожалуйста, выберите объем товара",
-      variant: "destructive",
-    });
-    return;
-  }
-  
-  // ... rest of the function ...
-};
-```
-
----
-
-## Ожидаемый результат
-
-После исправлений:
-
-1. Товары с разными вариантами можно добавлять в корзину как отдельные позиции
-2. "Краска Радуга-210" с объёмом "1 кг" и "5 кг" будут двумя разными строками в корзине
-3. Каждая строка показывает правильную цену для выбранного объёма
-4. Невозможно добавить товар с вариантами без выбора конкретного объёма
+После реализации:
+- При создании/редактировании баннера появится визуальный выбор позиции
+- Каждый баннер сможет иметь свою уникальную позицию текста
+- Существующие баннеры получат значение по умолчанию `bottom-left` (текущее положение)
