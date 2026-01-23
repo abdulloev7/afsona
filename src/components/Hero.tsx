@@ -19,31 +19,14 @@ interface Banner {
   button_text: string | null;
   button_link: string | null;
   display_order: number;
-  text_position: string | null;
+  text_position_x: number | null;
+  text_position_y: number | null;
 }
 
-const getPositionClasses = (position: string | null): { container: string; text: string } => {
-  switch (position) {
-    case 'top-left':
-      return { container: 'top-16 left-[25%] -translate-x-1/2', text: 'text-left' };
-    case 'top-center':
-      return { container: 'top-16 left-1/2 -translate-x-1/2', text: 'text-center' };
-    case 'top-right':
-      return { container: 'top-16 right-[25%] translate-x-1/2', text: 'text-right' };
-    case 'center-left':
-      return { container: 'top-1/2 left-[25%] -translate-x-1/2 -translate-y-1/2', text: 'text-left' };
-    case 'center':
-      return { container: 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2', text: 'text-center' };
-    case 'center-right':
-      return { container: 'top-1/2 right-[25%] translate-x-1/2 -translate-y-1/2', text: 'text-right' };
-    case 'bottom-left':
-    default:
-      return { container: 'bottom-16 left-[25%] -translate-x-1/2', text: 'text-left' };
-    case 'bottom-center':
-      return { container: 'bottom-16 left-1/2 -translate-x-1/2', text: 'text-center' };
-    case 'bottom-right':
-      return { container: 'bottom-16 right-[25%] translate-x-1/2', text: 'text-right' };
-  }
+const getTextAlign = (x: number): string => {
+  if (x < 35) return 'text-left';
+  if (x > 65) return 'text-right';
+  return 'text-center';
 };
 
 const Hero = () => {
@@ -197,16 +180,23 @@ const Hero = () => {
                 {/* Content - dynamically positioned */}
                 <AnimatePresence mode="wait">
                   {current === index && (banner.title || banner.subtitle || banner.button_text) && (() => {
-                    const positionClasses = getPositionClasses(banner.text_position);
+                    const posX = banner.text_position_x ?? 25;
+                    const posY = banner.text_position_y ?? 85;
+                    const textAlign = getTextAlign(posX);
+                    
                     return (
                       <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
                         transition={{ duration: 0.5, ease: "easeOut" }}
-                        className={`absolute ${positionClasses.container} z-10`}
+                        className="absolute z-10 transform -translate-x-1/2 -translate-y-1/2"
+                        style={{
+                          left: `${posX}%`,
+                          top: `${posY}%`,
+                        }}
                       >
-                        <div className={`max-w-lg ${positionClasses.text}`}>
+                        <div className={`max-w-lg ${textAlign}`}>
                           {banner.title && (
                             <h2
                               className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-2 leading-tight"
