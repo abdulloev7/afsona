@@ -75,7 +75,7 @@ const Contacts = () => {
               
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <button
-                  onClick={() => window.open('https://t.me/abdulloev7', '_blank')}
+                  onClick={() => window.open('https://t.me/+992927557919', '_blank')}
                   className="flex flex-col items-center gap-2 p-3 rounded-xl hover:bg-muted/30 transition-all duration-300 group"
                 >
                   <div className="w-14 h-14 rounded-full bg-[#0088cc] flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-[#0088cc]/30 transition-all duration-300">
