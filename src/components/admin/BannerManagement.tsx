@@ -176,10 +176,10 @@ const BannerManagement = () => {
   };
 
   const handleSubmit = async () => {
-    if (!formData.image_url || !formData.title) {
+    if (!formData.image_url) {
       toast({
         title: 'Ошибка',
-        description: 'Заполните обязательные поля (изображение и заголовок)',
+        description: 'Загрузите изображение для баннера',
         variant: 'destructive',
       });
       return;
@@ -387,12 +387,12 @@ const BannerManagement = () => {
 
               {/* Title */}
               <div className="space-y-2">
-                <Label htmlFor="title">Заголовок *</Label>
+                <Label htmlFor="title">Заголовок</Label>
                 <Input
                   id="title"
                   value={formData.title}
                   onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
-                  placeholder="Главный заголовок баннера"
+                  placeholder="Главный заголовок баннера (необязательно)"
                 />
               </div>
 
