@@ -24,7 +24,7 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Plus, Pencil, Trash2, ArrowUp, ArrowDown, Image as ImageIcon, Eye, EyeOff } from 'lucide-react';
-import BannerPositionPreview from './BannerPositionPreview';
+import BannerPositionPreview, { ElementPositions } from './BannerPositionPreview';
 
 interface Banner {
   id: string;
@@ -35,8 +35,12 @@ interface Banner {
   button_link: string | null;
   is_active: boolean;
   display_order: number;
-  text_position_x: number;
-  text_position_y: number;
+  title_position_x: number | null;
+  title_position_y: number | null;
+  subtitle_position_x: number | null;
+  subtitle_position_y: number | null;
+  button_position_x: number | null;
+  button_position_y: number | null;
   created_at: string;
   updated_at: string;
 }
@@ -48,9 +52,14 @@ interface BannerFormData {
   button_text: string;
   button_link: string;
   is_active: boolean;
-  text_position_x: number;
-  text_position_y: number;
+  positions: ElementPositions;
 }
+
+const DEFAULT_POSITIONS: ElementPositions = {
+  title: { x: 25, y: 70 },
+  subtitle: { x: 25, y: 78 },
+  button: { x: 25, y: 88 },
+};
 
 const BannerManagement = () => {
   const [banners, setBanners] = useState<Banner[]>([]);
@@ -68,8 +77,7 @@ const BannerManagement = () => {
     button_text: '',
     button_link: '',
     is_active: true,
-    text_position_x: 25,
-    text_position_y: 85,
+    positions: { ...DEFAULT_POSITIONS },
   });
 
   const { toast } = useToast();
@@ -163,8 +171,7 @@ const BannerManagement = () => {
       button_text: '',
       button_link: '',
       is_active: true,
-      text_position_x: 25,
-      text_position_y: 85,
+      positions: { ...DEFAULT_POSITIONS },
     });
     setImagePreview(null);
     setEditingBanner(null);
@@ -179,8 +186,20 @@ const BannerManagement = () => {
       button_text: banner.button_text || '',
       button_link: banner.button_link || '',
       is_active: banner.is_active,
-      text_position_x: banner.text_position_x ?? 25,
-      text_position_y: banner.text_position_y ?? 85,
+      positions: {
+        title: { 
+          x: banner.title_position_x ?? DEFAULT_POSITIONS.title.x, 
+          y: banner.title_position_y ?? DEFAULT_POSITIONS.title.y 
+        },
+        subtitle: { 
+          x: banner.subtitle_position_x ?? DEFAULT_POSITIONS.subtitle.x, 
+          y: banner.subtitle_position_y ?? DEFAULT_POSITIONS.subtitle.y 
+        },
+        button: { 
+          x: banner.button_position_x ?? DEFAULT_POSITIONS.button.x, 
+          y: banner.button_position_y ?? DEFAULT_POSITIONS.button.y 
+        },
+      },
     });
     setImagePreview(banner.image_url);
     setDialogOpen(true);
@@ -197,19 +216,25 @@ const BannerManagement = () => {
     }
 
     try {
+      const bannerData = {
+        image_url: formData.image_url,
+        title: formData.title,
+        subtitle: formData.subtitle || null,
+        button_text: formData.button_text || null,
+        button_link: formData.button_link || null,
+        is_active: formData.is_active,
+        title_position_x: formData.positions.title.x,
+        title_position_y: formData.positions.title.y,
+        subtitle_position_x: formData.positions.subtitle.x,
+        subtitle_position_y: formData.positions.subtitle.y,
+        button_position_x: formData.positions.button.x,
+        button_position_y: formData.positions.button.y,
+      };
+
       if (editingBanner) {
         const { error } = await supabase
           .from('hero_banners')
-          .update({
-            image_url: formData.image_url,
-            title: formData.title,
-            subtitle: formData.subtitle || null,
-            button_text: formData.button_text || null,
-            button_link: formData.button_link || null,
-            is_active: formData.is_active,
-            text_position_x: formData.text_position_x,
-            text_position_y: formData.text_position_y,
-          })
+          .update(bannerData)
           .eq('id', editingBanner.id);
 
         if (error) throw error;
@@ -225,14 +250,7 @@ const BannerManagement = () => {
         const { error } = await supabase
           .from('hero_banners')
           .insert({
-            image_url: formData.image_url,
-            title: formData.title,
-            subtitle: formData.subtitle || null,
-            button_text: formData.button_text || null,
-            button_link: formData.button_link || null,
-            is_active: formData.is_active,
-            text_position_x: formData.text_position_x,
-            text_position_y: formData.text_position_y,
+            ...bannerData,
             display_order: maxOrder + 1,
           });
 
@@ -370,7 +388,7 @@ const BannerManagement = () => {
               Добавить баннер
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
                 {editingBanner ? 'Редактировать баннер' : 'Добавить баннер'}
@@ -391,6 +409,53 @@ const BannerManagement = () => {
                 </div>
               </div>
 
+              {/* Text inputs in a grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Title */}
+                <div className="space-y-2">
+                  <Label htmlFor="title">Заголовок</Label>
+                  <Input
+                    id="title"
+                    value={formData.title}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
+                    placeholder="Главный заголовок баннера"
+                  />
+                </div>
+
+                {/* Subtitle */}
+                <div className="space-y-2">
+                  <Label htmlFor="subtitle">Подзаголовок</Label>
+                  <Input
+                    id="subtitle"
+                    value={formData.subtitle}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, subtitle: e.target.value }))}
+                    placeholder="Дополнительный текст"
+                  />
+                </div>
+
+                {/* Button text */}
+                <div className="space-y-2">
+                  <Label htmlFor="button_text">Текст кнопки</Label>
+                  <Input
+                    id="button_text"
+                    value={formData.button_text}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, button_text: e.target.value }))}
+                    placeholder="Например: Смотреть каталог"
+                  />
+                </div>
+
+                {/* Button link */}
+                <div className="space-y-2">
+                  <Label htmlFor="button_link">Ссылка кнопки</Label>
+                  <Input
+                    id="button_link"
+                    value={formData.button_link}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, button_link: e.target.value }))}
+                    placeholder="Например: /#products"
+                  />
+                </div>
+              </div>
+
               {/* Interactive position preview */}
               {imagePreview && (
                 <BannerPositionPreview
@@ -398,59 +463,13 @@ const BannerManagement = () => {
                   title={formData.title}
                   subtitle={formData.subtitle}
                   buttonText={formData.button_text}
-                  positionX={formData.text_position_x}
-                  positionY={formData.text_position_y}
-                  onPositionChange={(x, y) => setFormData((prev) => ({ 
+                  positions={formData.positions}
+                  onPositionsChange={(positions) => setFormData((prev) => ({ 
                     ...prev, 
-                    text_position_x: x,
-                    text_position_y: y 
+                    positions 
                   }))}
                 />
               )}
-
-              {/* Title */}
-              <div className="space-y-2">
-                <Label htmlFor="title">Заголовок</Label>
-                <Input
-                  id="title"
-                  value={formData.title}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
-                  placeholder="Главный заголовок баннера (необязательно)"
-                />
-              </div>
-
-              {/* Subtitle */}
-              <div className="space-y-2">
-                <Label htmlFor="subtitle">Подзаголовок</Label>
-                <Input
-                  id="subtitle"
-                  value={formData.subtitle}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, subtitle: e.target.value }))}
-                  placeholder="Дополнительный текст"
-                />
-              </div>
-
-              {/* Button text */}
-              <div className="space-y-2">
-                <Label htmlFor="button_text">Текст кнопки</Label>
-                <Input
-                  id="button_text"
-                  value={formData.button_text}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, button_text: e.target.value }))}
-                  placeholder="Например: Смотреть каталог"
-                />
-              </div>
-
-              {/* Button link */}
-              <div className="space-y-2">
-                <Label htmlFor="button_link">Ссылка кнопки</Label>
-                <Input
-                  id="button_link"
-                  value={formData.button_link}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, button_link: e.target.value }))}
-                  placeholder="Например: /#products или /category/paints"
-                />
-              </div>
 
               {/* Active toggle */}
               <div className="flex items-center justify-between">
@@ -517,7 +536,7 @@ const BannerManagement = () => {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <h3 className="font-semibold text-lg truncate">{banner.title}</h3>
+                        <h3 className="font-semibold text-lg truncate">{banner.title || '(без заголовка)'}</h3>
                         {banner.subtitle && (
                           <p className="text-sm text-muted-foreground truncate">
                             {banner.subtitle}

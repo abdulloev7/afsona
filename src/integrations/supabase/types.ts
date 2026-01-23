@@ -156,6 +156,8 @@ export type Database = {
       hero_banners: {
         Row: {
           button_link: string | null
+          button_position_x: number | null
+          button_position_y: number | null
           button_text: string | null
           created_at: string
           display_order: number
@@ -163,14 +165,20 @@ export type Database = {
           image_url: string
           is_active: boolean
           subtitle: string | null
+          subtitle_position_x: number | null
+          subtitle_position_y: number | null
           text_position: string | null
           text_position_x: number | null
           text_position_y: number | null
           title: string
+          title_position_x: number | null
+          title_position_y: number | null
           updated_at: string
         }
         Insert: {
           button_link?: string | null
+          button_position_x?: number | null
+          button_position_y?: number | null
           button_text?: string | null
           created_at?: string
           display_order?: number
@@ -178,14 +186,20 @@ export type Database = {
           image_url: string
           is_active?: boolean
           subtitle?: string | null
+          subtitle_position_x?: number | null
+          subtitle_position_y?: number | null
           text_position?: string | null
           text_position_x?: number | null
           text_position_y?: number | null
           title: string
+          title_position_x?: number | null
+          title_position_y?: number | null
           updated_at?: string
         }
         Update: {
           button_link?: string | null
+          button_position_x?: number | null
+          button_position_y?: number | null
           button_text?: string | null
           created_at?: string
           display_order?: number
@@ -193,10 +207,14 @@ export type Database = {
           image_url?: string
           is_active?: boolean
           subtitle?: string | null
+          subtitle_position_x?: number | null
+          subtitle_position_y?: number | null
           text_position?: string | null
           text_position_x?: number | null
           text_position_y?: number | null
           title?: string
+          title_position_x?: number | null
+          title_position_y?: number | null
           updated_at?: string
         }
         Relationships: []
