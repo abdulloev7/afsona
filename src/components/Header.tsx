@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 import { useUserRole } from "@/hooks/useUserRole";
 import { SearchDialog } from "@/components/SearchDialog";
-import afsona_logo from "@/assets/afsona-logo.png";
+import afsona_logo_full from "@/assets/afsona-logo-full.jpg";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -99,16 +99,12 @@ const Header = () => {
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <Link to="/" className="flex items-center space-x-3">
+          <Link to="/" className="flex items-center">
             <img 
-              src={afsona_logo} 
-              alt="AFSONA Logo" 
+              src={afsona_logo_full} 
+              alt="AFSONA - Эко материалы для ремонта" 
               className="h-12 w-auto"
             />
-            <div>
-              <h1 className="text-xl font-bold text-primary">AFSONA</h1>
-              <p className="text-xs text-muted-foreground">Эко материалы для ремонта</p>
-            </div>
           </Link>
           
           <nav className="hidden md:flex items-center space-x-6">
