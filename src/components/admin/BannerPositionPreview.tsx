@@ -227,14 +227,19 @@ const BannerPositionPreview = ({
         )}
       </div>
       
-      {/* Full-size preview matching Hero component (75vh equivalent aspect ratio ~16:9) */}
+      {/* 
+        Preview matching Hero component dimensions exactly:
+        - Hero uses h-[75vh] which creates roughly a 21:9 aspect ratio on most screens
+        - Using 21:9 (2.33:1) to match typical viewport proportions when hero is 75vh
+        - bg-cover ensures the image fills and crops the same way as in Hero
+      */}
       <div
         ref={containerRef}
         className={cn(
           "relative w-full rounded-lg overflow-hidden border-2 border-dashed border-border bg-muted select-none",
           activeElement ? 'cursor-default' : 'cursor-pointer'
         )}
-        style={{ aspectRatio: '16 / 9' }}
+        style={{ aspectRatio: '21 / 9' }}
         onClick={handleContainerClick}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
