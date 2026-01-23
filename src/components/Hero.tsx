@@ -25,6 +25,9 @@ interface Banner {
   subtitle_position_y: number | null;
   button_position_x: number | null;
   button_position_y: number | null;
+  image_position_x: number | null;
+  image_position_y: number | null;
+  image_scale: number | null;
 }
 
 const getTextAlign = (x: number): string => {
@@ -176,14 +179,22 @@ const Hero = () => {
             const subtitleY = banner.subtitle_position_y ?? 78;
             const buttonX = banner.button_position_x ?? 25;
             const buttonY = banner.button_position_y ?? 88;
+            const imageX = banner.image_position_x ?? 50;
+            const imageY = banner.image_position_y ?? 50;
+            const imageScale = banner.image_scale ?? 100;
 
             return (
               <CarouselItem key={banner.id} className="h-full pl-0">
                 <div className="relative w-full h-[75vh]">
-                  {/* Background image */}
+                  {/* Background image with custom position and scale */}
                   <div
-                    className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-                    style={{ backgroundImage: `url(${banner.image_url})` }}
+                    className="absolute inset-0"
+                    style={{ 
+                      backgroundImage: `url(${banner.image_url})`,
+                      backgroundPosition: `${imageX}% ${imageY}%`,
+                      backgroundSize: `${imageScale}%`,
+                      backgroundRepeat: 'no-repeat',
+                    }}
                   />
 
                   {/* Dark gradient overlay */}
