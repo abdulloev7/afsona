@@ -259,16 +259,32 @@ const Cart = () => {
                               Объем: {item.selected_size}
                             </p>
                           )}
-                          <p className="text-lg font-bold">
-                            {(() => {
-                              let itemPrice = item.product.price;
-                              if (item.product.size_variants && item.selected_size) {
-                                const variant = item.product.size_variants.find(v => v.volume === item.selected_size);
-                                if (variant) itemPrice = variant.price;
-                              }
-                              return itemPrice.toLocaleString('ru-RU');
-                            })()} сом.
-                          </p>
+                          {(() => {
+                            let itemPrice = item.product.price;
+                            if (item.product.size_variants && item.selected_size) {
+                              const variant = item.product.size_variants.find(v => v.volume === item.selected_size);
+                              if (variant) itemPrice = variant.price;
+                            }
+                            const totalPrice = itemPrice * item.quantity;
+                            
+                            if (item.quantity > 1) {
+                              return (
+                                <div>
+                                  <p className="text-sm text-muted-foreground">
+                                    {item.quantity}×{itemPrice.toLocaleString('ru-RU')} сом.
+                                  </p>
+                                  <p className="text-lg font-bold">
+                                    {totalPrice.toLocaleString('ru-RU')} сом.
+                                  </p>
+                                </div>
+                              );
+                            }
+                            return (
+                              <p className="text-lg font-bold">
+                                {itemPrice.toLocaleString('ru-RU')} сом.
+                              </p>
+                            );
+                          })()}
                         </div>
                         <div className="flex items-center gap-2">
                           <Button
