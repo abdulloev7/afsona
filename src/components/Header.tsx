@@ -103,7 +103,7 @@ const Header = () => {
             <img 
               src={afsona_logo_full} 
               alt="AFSONA - Эко материалы для ремонта" 
-              className="h-12 w-auto"
+              className="h-16 w-auto"
             />
           </Link>
           
