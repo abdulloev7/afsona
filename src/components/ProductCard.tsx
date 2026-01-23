@@ -40,14 +40,19 @@ export const ProductCard = ({ product }: ProductCardProps) => {
     navigate(`/product/${product.id}`);
   };
 
+  // Check if product has multiple variants requiring selection
+  const productHasVariants = 
+    (product.size_variants && product.size_variants.length > 0) ||
+    (product.sizes && product.sizes.length > 1);
+
   const handleAddToCart = async () => {
     if (!user) {
       navigate('/auth');
       return;
     }
     
-    // Если у товара есть несколько размеров, показать диалог
-    if (product.sizes && product.sizes.length > 1) {
+    // Если у товара есть варианты, показать диалог выбора
+    if (productHasVariants) {
       setShowSizeSelector(true);
       return;
     }
@@ -219,7 +224,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         )}
         
         <div className="mt-auto pt-4">
-          {product.sizes && product.sizes.length > 1 ? (
+          {productHasVariants ? (
             <Button 
               className="w-full" 
               onClick={handleAddToCart}
