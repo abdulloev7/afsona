@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { ShoppingCart, User, LogIn, Shield } from "lucide-react";
+import { IconShoppingBag, IconUser, IconLogin, IconLayoutDashboard } from "@tabler/icons-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -158,15 +158,15 @@ const Header = () => {
               <>
                 {isAdmin && (
                   <Link to="/admin">
-                    <Button variant="ghost" size="sm">
-                      <Shield className="h-4 w-4 mr-1" />
+                    <Button variant="ghost" size="sm" className="hover:bg-primary/10">
+                      <IconLayoutDashboard size={20} stroke={1.5} className="mr-1" />
                       <span className="hidden md:inline">Админ</span>
                     </Button>
                   </Link>
                 )}
                 <Link to="/cart" className="relative">
-                  <Button variant="ghost" size="sm">
-                    <ShoppingCart className="h-4 w-4" />
+                  <Button variant="ghost" size="sm" className="hover:bg-primary/10">
+                    <IconShoppingBag size={20} stroke={1.5} />
                     {cartCount > 0 && (
                       <Badge 
                         variant="destructive" 
@@ -178,8 +178,8 @@ const Header = () => {
                   </Button>
                 </Link>
                 <Link to="/profile?tab=orders" className="relative">
-                  <Button variant="ghost" size="sm">
-                    <User className="h-4 w-4 mr-1" />
+                  <Button variant="ghost" size="sm" className="hover:bg-primary/10">
+                    <IconUser size={20} stroke={1.5} className="mr-1" />
                     Профиль
                     {completedOrdersCount > 0 && (
                       <Badge 
@@ -195,7 +195,7 @@ const Header = () => {
             ) : (
               <Link to="/auth">
                 <Button variant="default" size="sm">
-                  <LogIn className="h-4 w-4 mr-1" />
+                  <IconLogin size={20} stroke={1.5} className="mr-1" />
                   Войти
                 </Button>
               </Link>
