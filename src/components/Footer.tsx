@@ -1,24 +1,13 @@
 import afsona_logo_full from "@/assets/afsona-logo-full.jpg";
 import { MapPin, ExternalLink } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 const Footer = () => {
-  return (
-    <footer className="bg-background text-foreground border-t border-border py-12">
+  return <footer className="bg-background text-foreground border-t border-border py-12">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
             <div className="mb-4">
-              <img 
-                src={afsona_logo_full} 
-                alt="AFSONA - Эко материалы для ремонта" 
-                className="h-16 w-auto"
-              />
+              <img src={afsona_logo_full} alt="AFSONA - Эко материалы для ремонта" className="h-16 w-auto" />
             </div>
             <p className="text-sm opacity-80 leading-relaxed">
               Качественные краски и материалы для профессионального и домашнего ремонта. 
@@ -50,17 +39,11 @@ const Footer = () => {
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="bg-background">
-                  <DropdownMenuItem 
-                    onClick={() => window.open('https://yandex.tj/maps/-/CLCdFG~t', '_blank')}
-                    className="cursor-pointer"
-                  >
+                  <DropdownMenuItem onClick={() => window.open('https://yandex.tj/maps/-/CLCdFG~t', '_blank')} className="cursor-pointer">
                     <MapPin className="w-4 h-4 mr-2" />
                     Открыть в Яндекс.Картах
                   </DropdownMenuItem>
-                  <DropdownMenuItem 
-                    onClick={() => window.open('https://maps.app.goo.gl/MEsrzn3JajJZfYk99', '_blank')}
-                    className="cursor-pointer"
-                  >
+                  <DropdownMenuItem onClick={() => window.open('https://maps.app.goo.gl/MEsrzn3JajJZfYk99', '_blank')} className="cursor-pointer">
                     <MapPin className="w-4 h-4 mr-2" />
                     Открыть в Google Maps
                   </DropdownMenuItem>
@@ -75,13 +58,9 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-border mt-8 pt-8 text-center">
-          <p className="text-sm opacity-75">
-            © 2025 AFSONA. Все права защищены. Эко материалы для ремонта.
-          </p>
+          <p className="text-sm opacity-75">© 2026 AFSONA. Все права защищены. Эко материалы для ремонта.</p>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 };
-
 export default Footer;
