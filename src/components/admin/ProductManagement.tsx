@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Package, Pencil, Upload, Trash2, Plus, X, Archive } from 'lucide-react';
+import { Package, Pencil, Trash2, Plus, X, Archive, Star, Info } from 'lucide-react';
 import { z } from 'zod';
 import { MediaUploader, MediaItem } from './MediaUploader';
 
@@ -27,6 +27,8 @@ interface SizeVariant {
   volume: string;
   price: number;
 }
+
+const AVAILABLE_TAGS = ['Хит', 'Новинка', 'Советуем', 'Акция', 'Эко'] as const;
 
 interface Product {
   id: string;
@@ -48,6 +50,12 @@ interface Product {
   category?: {
     name: string;
   };
+  // New featured products fields
+  is_featured?: boolean;
+  tags?: string[];
+  old_price?: number | null;
+  rating?: number | null;
+  reviews_count?: number | null;
 }
 
 interface Category {
@@ -272,6 +280,12 @@ export function ProductManagement() {
         media: uploadedMedia,
         sizes: null, // Больше не используем старое поле
         size_variants: editingProduct.size_variants ? JSON.parse(JSON.stringify(editingProduct.size_variants)) : null,
+        // Featured products fields
+        is_featured: editingProduct.is_featured || false,
+        tags: editingProduct.tags || [],
+        old_price: editingProduct.old_price || null,
+        rating: editingProduct.rating || null,
+        reviews_count: editingProduct.reviews_count || null,
       };
 
       if (editingProduct.id) {
@@ -392,6 +406,11 @@ export function ProductManagement() {
       sizes: null,
       features: null,
       image_fit: 'cover',
+      is_featured: false,
+      tags: [],
+      old_price: null,
+      rating: null,
+      reviews_count: null,
     });
     
     // Объединяем старое изображение с новыми медиа
@@ -586,6 +605,116 @@ export function ProductManagement() {
                 </div>
               </div>
 
+              {/* Featured Product Section */}
+              <div className="border border-primary/20 rounded-lg p-4 space-y-4 bg-primary/5">
+                <div className="flex items-start gap-2">
+                  <Star className="h-5 w-5 text-primary mt-0.5" />
+                  <div className="flex-1">
+                    <Label className="text-base font-semibold">Лучшее предложение</Label>
+                    <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
+                      <Info className="h-3 w-3" />
+                      Товары с этой галочкой отображаются в блоке на главной
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    id="is_featured"
+                    name="is_featured"
+                    checked={editingProduct?.is_featured || false}
+                    onChange={(e) => setEditingProduct(prev => prev ? { ...prev, is_featured: e.target.checked } : prev)}
+                    className="h-5 w-5 rounded border-border text-primary focus:ring-primary"
+                  />
+                  <Label htmlFor="is_featured" className="cursor-pointer">
+                    Показывать в "Лучших предложениях"
+                  </Label>
+                </div>
+
+                {/* Tags */}
+                <div>
+                  <Label>Теги для бейджей</Label>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {AVAILABLE_TAGS.map((tag) => (
+                      <label
+                        key={tag}
+                        className={`flex items-center gap-2 px-3 py-1.5 rounded-full border cursor-pointer transition-colors ${
+                          editingProduct?.tags?.includes(tag)
+                            ? 'bg-primary text-primary-foreground border-primary'
+                            : 'bg-background border-border hover:border-primary/50'
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={editingProduct?.tags?.includes(tag) || false}
+                          onChange={(e) => {
+                            if (!editingProduct) return;
+                            const newTags = e.target.checked
+                              ? [...(editingProduct.tags || []), tag]
+                              : (editingProduct.tags || []).filter(t => t !== tag);
+                            setEditingProduct({ ...editingProduct, tags: newTags });
+                          }}
+                          className="sr-only"
+                        />
+                        <span className="text-sm font-medium">{tag}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Old Price (for discounts) */}
+                {editingProduct?.tags?.includes('Акция') && (
+                  <div>
+                    <Label htmlFor="old_price">Старая цена (сом)</Label>
+                    <Input
+                      id="old_price"
+                      name="old_price"
+                      type="number"
+                      step="0.01"
+                      placeholder="Укажите старую цену для отображения скидки"
+                      value={editingProduct?.old_price || ''}
+                      onChange={(e) => setEditingProduct(prev => prev ? { ...prev, old_price: e.target.value ? parseFloat(e.target.value) : null } : prev)}
+                    />
+                    {editingProduct?.old_price && editingProduct?.price && editingProduct.old_price > editingProduct.price && (
+                      <p className="text-xs text-primary mt-1">
+                        Скидка: {Math.round(((editingProduct.old_price - editingProduct.price) / editingProduct.old_price) * 100)}%
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* Rating and Reviews */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="rating">Рейтинг (0-5)</Label>
+                    <Input
+                      id="rating"
+                      name="rating"
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      max="5"
+                      placeholder="4.5"
+                      value={editingProduct?.rating || ''}
+                      onChange={(e) => setEditingProduct(prev => prev ? { ...prev, rating: e.target.value ? parseFloat(e.target.value) : null } : prev)}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="reviews_count">Количество отзывов</Label>
+                    <Input
+                      id="reviews_count"
+                      name="reviews_count"
+                      type="number"
+                      min="0"
+                      placeholder="12"
+                      value={editingProduct?.reviews_count || ''}
+                      onChange={(e) => setEditingProduct(prev => prev ? { ...prev, reviews_count: e.target.value ? parseInt(e.target.value) : null } : prev)}
+                    />
+                  </div>
+                </div>
+              </div>
+
               <div>
                 <Label>Варианты объемов с ценами</Label>
                 <div className="space-y-2 mt-2">
@@ -729,13 +858,23 @@ export function ProductManagement() {
                     </div>
                   )}
                   <div className="flex gap-2 flex-wrap">
+                    {product.is_featured && (
+                      <span className="bg-primary text-primary-foreground px-2 py-1 rounded text-xs font-semibold flex items-center gap-1">
+                        <Star className="h-3 w-3" /> Лучшее
+                      </span>
+                    )}
+                    {product.tags?.map((tag) => (
+                      <span key={tag} className="bg-secondary text-secondary-foreground px-2 py-1 rounded text-xs">
+                        {tag}
+                      </span>
+                    ))}
                     {product.archived && (
                       <span className="bg-muted text-muted-foreground px-2 py-1 rounded text-xs font-semibold">
                         АРХИВ
                       </span>
                     )}
                     {product.eco && (
-                      <span className="bg-green-500/10 text-green-500 px-2 py-1 rounded text-xs">
+                      <span className="bg-primary/10 text-primary px-2 py-1 rounded text-xs">
                         ЭКО
                       </span>
                     )}

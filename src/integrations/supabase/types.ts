@@ -377,11 +377,16 @@ export type Database = {
           image: string | null
           image_fit: string | null
           in_stock: boolean | null
+          is_featured: boolean | null
           media: Json | null
           name: string
+          old_price: number | null
           price: number
+          rating: number | null
+          reviews_count: number | null
           size_variants: Json | null
           sizes: string[] | null
+          tags: string[] | null
           updated_at: string
         }
         Insert: {
@@ -397,11 +402,16 @@ export type Database = {
           image?: string | null
           image_fit?: string | null
           in_stock?: boolean | null
+          is_featured?: boolean | null
           media?: Json | null
           name: string
+          old_price?: number | null
           price: number
+          rating?: number | null
+          reviews_count?: number | null
           size_variants?: Json | null
           sizes?: string[] | null
+          tags?: string[] | null
           updated_at?: string
         }
         Update: {
@@ -417,11 +427,16 @@ export type Database = {
           image?: string | null
           image_fit?: string | null
           in_stock?: boolean | null
+          is_featured?: boolean | null
           media?: Json | null
           name?: string
+          old_price?: number | null
           price?: number
+          rating?: number | null
+          reviews_count?: number | null
           size_variants?: Json | null
           sizes?: string[] | null
+          tags?: string[] | null
           updated_at?: string
         }
         Relationships: [

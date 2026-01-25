@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
+import { FeaturedProducts } from "@/components/FeaturedProducts";
 import Brands from "@/components/Brands";
 import Tinting from "@/components/Tinting";
 import Products from "@/components/Products";
@@ -47,6 +48,7 @@ const Index = () => {
       <main>
         <Hero />
         <div className="bg-background/95 backdrop-blur-sm">
+          <FeaturedProducts />
           <Brands />
           <Tinting />
           <Products />
