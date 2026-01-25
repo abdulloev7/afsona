@@ -142,8 +142,8 @@ export function FeaturedProductCard({ product }: FeaturedProductCardProps) {
             )}
           </div>
 
-          {/* Name - fixed height for consistency */}
-          <h3 className="font-medium text-foreground line-clamp-2 h-[2.5rem] mb-2 group-hover:text-primary transition-colors">
+          {/* Name - allow 3 lines for full visibility */}
+          <h3 className="font-medium text-foreground line-clamp-3 min-h-[3.75rem] mb-2 group-hover:text-primary transition-colors">
             {product.name}
           </h3>
 
