@@ -6,6 +6,13 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 const AVAILABLE_TAGS = ['Хит', 'Советуем', 'Новинка', 'Акция'] as const;
 
+const TAG_FILTER_STYLES: Record<string, { active: string; inactive: string }> = {
+  'Хит': { active: 'bg-primary text-white', inactive: 'bg-primary/20 text-primary hover:bg-primary/30' },
+  'Советуем': { active: 'bg-orange-500 text-white', inactive: 'bg-orange-100 text-orange-600 hover:bg-orange-200' },
+  'Новинка': { active: 'bg-purple-500 text-white', inactive: 'bg-purple-100 text-purple-600 hover:bg-purple-200' },
+  'Акция': { active: 'bg-yellow-400 text-yellow-900', inactive: 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' },
+};
+
 interface FeaturedProduct {
   id: string;
   name: string;
@@ -16,8 +23,6 @@ interface FeaturedProduct {
   image_fit?: 'cover' | 'contain';
   in_stock: boolean;
   tags: string[] | null;
-  rating: number | null;
-  reviews_count: number | null;
   created_at: string;
   size_variants?: { volume: string; price: number }[] | null;
 }
@@ -30,7 +35,7 @@ export function FeaturedProducts() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('products')
-        .select('id, name, description, price, old_price, image, image_fit, in_stock, tags, rating, reviews_count, created_at, size_variants')
+        .select('id, name, description, price, old_price, image, image_fit, in_stock, tags, created_at, size_variants')
         .eq('is_featured', true)
         .eq('archived', false)
         .order('created_at', { ascending: false });
@@ -91,17 +96,16 @@ export function FeaturedProducts() {
           {AVAILABLE_TAGS.map((tag) => {
             const count = products.filter(p => p.tags?.includes(tag)).length;
             if (count === 0) return null;
+            const styles = TAG_FILTER_STYLES[tag];
             return (
               <button
                 key={tag}
                 onClick={() => setSelectedTag(tag)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  selectedTag === tag
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                  selectedTag === tag ? styles.active : styles.inactive
                 }`}
               >
-                {tag} ({count})
+                {tag}
               </button>
             );
           })}

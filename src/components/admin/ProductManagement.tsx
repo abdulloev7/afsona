@@ -54,8 +54,6 @@ interface Product {
   is_featured?: boolean;
   tags?: string[];
   old_price?: number | null;
-  rating?: number | null;
-  reviews_count?: number | null;
 }
 
 interface Category {
@@ -284,8 +282,6 @@ export function ProductManagement() {
         is_featured: editingProduct.is_featured || false,
         tags: editingProduct.tags || [],
         old_price: editingProduct.old_price || null,
-        rating: editingProduct.rating || null,
-        reviews_count: editingProduct.reviews_count || null,
       };
 
       if (editingProduct.id) {
@@ -409,8 +405,6 @@ export function ProductManagement() {
       is_featured: false,
       tags: [],
       old_price: null,
-      rating: null,
-      reviews_count: null,
     });
     
     // Объединяем старое изображение с новыми медиа
@@ -684,35 +678,6 @@ export function ProductManagement() {
                   </div>
                 )}
 
-                {/* Rating and Reviews */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="rating">Рейтинг (0-5)</Label>
-                    <Input
-                      id="rating"
-                      name="rating"
-                      type="number"
-                      step="0.1"
-                      min="0"
-                      max="5"
-                      placeholder="4.5"
-                      value={editingProduct?.rating || ''}
-                      onChange={(e) => setEditingProduct(prev => prev ? { ...prev, rating: e.target.value ? parseFloat(e.target.value) : null } : prev)}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="reviews_count">Количество отзывов</Label>
-                    <Input
-                      id="reviews_count"
-                      name="reviews_count"
-                      type="number"
-                      min="0"
-                      placeholder="12"
-                      value={editingProduct?.reviews_count || ''}
-                      onChange={(e) => setEditingProduct(prev => prev ? { ...prev, reviews_count: e.target.value ? parseInt(e.target.value) : null } : prev)}
-                    />
-                  </div>
-                </div>
               </div>
 
               <div>
