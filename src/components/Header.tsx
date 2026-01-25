@@ -99,11 +99,11 @@ const Header = () => {
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <Link to="/" className="flex items-center h-full py-1">
+          <Link to="/" className="flex items-center h-16">
             <img 
               src={afsona_logo_new} 
               alt="AFSONA - Эко материалы для ремонта" 
-              className="h-full w-auto max-h-14"
+              className="h-16 w-auto object-contain"
             />
           </Link>
           
