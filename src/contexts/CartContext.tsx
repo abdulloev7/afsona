@@ -164,12 +164,18 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const updateQuantity = async (itemId: string, quantity: number) => {
     if (!user) return;
 
-    try {
-      if (quantity <= 0) {
-        await removeFromCart(itemId);
-        return;
-      }
+    if (quantity <= 0) {
+      await removeFromCart(itemId);
+      return;
+    }
 
+    // Optimistic update - update local state immediately
+    const previousItems = [...items];
+    setItems(prev => prev.map(item => 
+      item.id === itemId ? { ...item, quantity } : item
+    ));
+
+    try {
       const { error } = await supabase
         .from('cart_items')
         .update({ quantity })
@@ -177,9 +183,11 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .eq('user_id', user.id);
 
       if (error) throw error;
-      await fetchCartItems();
+      // No need to refetch - we already updated optimistically
     } catch (error) {
       console.error('Error updating quantity:', error);
+      // Revert to previous state on error
+      setItems(previousItems);
       toast({
         title: "Ошибка",
         description: "Не удалось обновить количество",
@@ -191,6 +199,10 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const removeFromCart = async (itemId: string) => {
     if (!user) return;
 
+    // Optimistic update - remove from local state immediately
+    const previousItems = [...items];
+    setItems(prev => prev.filter(item => item.id !== itemId));
+
     try {
       const { error } = await supabase
         .from('cart_items')
@@ -199,7 +211,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .eq('user_id', user.id);
 
       if (error) throw error;
-      await fetchCartItems();
       
       toast({
         title: "Товар удален",
@@ -207,6 +218,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
     } catch (error) {
       console.error('Error removing from cart:', error);
+      // Revert to previous state on error
+      setItems(previousItems);
       toast({
         title: "Ошибка",
         description: "Не удалось удалить товар из корзины",
