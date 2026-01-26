@@ -363,6 +363,60 @@ export type Database = {
         }
         Relationships: []
       }
+      portfolio: {
+        Row: {
+          author_id: string
+          completion_date: string | null
+          content: string
+          created_at: string
+          description: string | null
+          id: string
+          image: string | null
+          image_fit: string | null
+          location: string | null
+          media: Json | null
+          products_used: string[] | null
+          published: boolean
+          slug: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          completion_date?: string | null
+          content: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image?: string | null
+          image_fit?: string | null
+          location?: string | null
+          media?: Json | null
+          products_used?: string[] | null
+          published?: boolean
+          slug: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          completion_date?: string | null
+          content?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image?: string | null
+          image_fit?: string | null
+          location?: string | null
+          media?: Json | null
+          products_used?: string[] | null
+          published?: boolean
+          slug?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           archived: boolean
