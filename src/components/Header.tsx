@@ -132,7 +132,15 @@ const Header = () => {
             >
               Новости
             </Link>
-            <button 
+            {isAdmin && (
+              <Link 
+                to="/portfolio"
+                className="text-foreground hover:text-primary transition-colors"
+              >
+                Портфолио
+              </Link>
+            )}
+            <button
               onClick={() => scrollToSection('tinting')}
               className="text-foreground hover:text-primary transition-colors"
             >
