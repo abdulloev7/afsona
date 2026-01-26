@@ -1,134 +1,226 @@
 
-# План изменений в блоке "Лучшие предложения"
 
-## Обзор задач
+# План реализации страницы "Портфолио"
 
-Необходимо внести 4 изменения:
-1. Убрать отзывы (рейтинг/количество отзывов) из карточек и админки
-2. Добавить выбор варианта товара при добавлении в корзину
-3. Сделать карточки одинакового размера (симметричные)
-4. Изменить фильтры тегов: цвет каждого тега + убрать число в скобках
+## Обзор
+
+Создание раздела "Портфолио" для демонстрации объектов и проектов, выполненных с использованием продукции AFSONA. На первом этапе доступ только для администраторов, с возможностью управления через админ-панель.
 
 ---
 
-## Этап 1: Изменения в FeaturedProductCard.tsx
+## Структура данных
 
-### Убрать отзывы
-Удалить блок с рейтингом и количеством отзывов (строки 94-104).
+### Таблица `portfolio`
 
-### Добавить выбор варианта товара
-Добавить логику как в `ProductCard.tsx`:
-- Импортировать `ProductSizeSelector` компонент
-- Добавить состояние `showSizeSelector`
-- При клике на "В корзину" проверять наличие вариантов
-- Если есть варианты - открывать диалог выбора объема и количества
-- Если нет вариантов - добавлять товар сразу
+| Поле | Тип | Описание |
+|------|-----|----------|
+| id | uuid | Первичный ключ |
+| title | text | Название проекта |
+| slug | text | URL-friendly идентификатор |
+| description | text | Краткое описание |
+| content | text | Полный текст (Rich Text) |
+| location | text | Местоположение объекта |
+| completion_date | date | Дата завершения |
+| image | text | Главное изображение |
+| image_fit | text | Режим отображения (cover/contain) |
+| media | jsonb | Галерея медиафайлов |
+| products_used | uuid[] | Связанные товары (опционально) |
+| published | boolean | Статус публикации |
+| author_id | uuid | Автор записи |
+| created_at | timestamp | Дата создания |
+| updated_at | timestamp | Дата обновления |
 
-```typescript
-// Добавить state
-const [showSizeSelector, setShowSizeSelector] = useState(false);
+### RLS-политики
 
-// Проверка на наличие вариантов
-const productHasVariants = product.size_variants && product.size_variants.length > 0;
-
-// Логика добавления в корзину
-const handleAddToCart = (e) => {
-  e.preventDefault();
-  e.stopPropagation();
-  
-  if (!user) {
-    navigate('/auth');
-    return;
-  }
-  
-  if (productHasVariants) {
-    setShowSizeSelector(true);
-    return;
-  }
-  
-  // Добавить товар без вариантов
-  addToCart(product.id, 1, null);
-};
-```
-
-### Сделать карточки одинаковой высоты
-Добавить CSS классы для фиксированной высоты элементов:
-- Контейнер карточки: `flex flex-col h-full`
-- Блок с контентом: `flex-1 flex flex-col`
-- Описание: фиксированная минимальная высота или убрать описание для унификации
+- Админы: полный доступ (SELECT, INSERT, UPDATE, DELETE)
+- Публичные пользователи: только SELECT при `published = true` (на будущее)
 
 ---
 
-## Этап 2: Изменения в FeaturedProducts.tsx
+## Архитектура компонентов
 
-### Изменить фильтры тегов
-Текущий код фильтров:
-```tsx
-<button className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-  selectedTag === tag
-    ? 'bg-primary text-primary-foreground'
-    : 'bg-muted text-muted-foreground hover:bg-muted/80'
-}`}>
-  {tag} ({count})  // <- убрать ({count})
-</button>
-```
-
-Изменить на цветные кнопки без счетчика:
-```tsx
-const TAG_FILTER_STYLES = {
-  'Хит': { active: 'bg-primary text-white', inactive: 'bg-primary/20 text-primary' },
-  'Советуем': { active: 'bg-orange-500 text-white', inactive: 'bg-orange-100 text-orange-600' },
-  'Новинка': { active: 'bg-purple-500 text-white', inactive: 'bg-purple-100 text-purple-600' },
-  'Акция': { active: 'bg-yellow-400 text-yellow-900', inactive: 'bg-yellow-100 text-yellow-700' },
-};
-
-// Рендеринг кнопки
-<button className={`... ${selectedTag === tag ? styles.active : styles.inactive}`}>
-  {tag}  // без ({count})
-</button>
+```text
+src/
+├── pages/
+│   ├── Portfolio.tsx           -- Список проектов (только для админов)
+│   └── PortfolioDetail.tsx     -- Детальная страница проекта
+│
+├── components/
+│   └── admin/
+│       └── PortfolioManagement.tsx  -- Управление в админ-панели
 ```
 
 ---
 
-## Этап 3: Изменения в ProductManagement.tsx (Админка)
+## Этап 1: База данных
 
-### Убрать поля отзывов
-Удалить из формы редактирования товара:
-- Поле "Рейтинг (0-5)" (строки 688-702)
-- Поле "Количество отзывов" (строки 703-714)
+### Миграция
 
-Удалить из интерфейса Product:
-- `rating?: number | null`
-- `reviews_count?: number | null`
+Создание таблицы `portfolio` с полями для хранения информации о проектах и RLS-политиками:
 
-Удалить из объекта по умолчанию:
-- `rating: null`
-- `reviews_count: null`
+- Включение RLS
+- Политика для админов на все операции (используя `has_role`)
+- Политика для публичного просмотра опубликованных записей (изначально отключена)
 
 ---
 
-## Файлы для изменения
+## Этап 2: Обновление типов
 
-| Файл | Изменения |
-|------|-----------|
-| `src/components/FeaturedProductCard.tsx` | Убрать отзывы, добавить выбор вариантов, симметричные карточки |
-| `src/components/FeaturedProducts.tsx` | Цветные фильтры без счетчиков |
-| `src/components/admin/ProductManagement.tsx` | Убрать поля рейтинга и отзывов |
+### `src/integrations/supabase/types.ts`
+
+Добавление интерфейсов Row, Insert, Update для таблицы `portfolio`.
 
 ---
 
-## Визуальный результат
+## Этап 3: Компонент управления портфолио
 
-### Карточки товаров
-- Одинаковая высота всех карточек в ряду
-- При клике "В корзину" открывается диалог выбора объема (если есть варианты)
-- Без блока рейтинга и отзывов
+### `src/components/admin/PortfolioManagement.tsx`
 
-### Фильтры тегов
-- Кнопка "Все" - нейтральный цвет
-- "Хит" - зеленый
-- "Советуем" - оранжевый  
-- "Новинка" - фиолетовый
-- "Акция" - желтый
-- Без цифр в скобках
+Функционал:
+- Список всех проектов с сортировкой по дате
+- Таблица: изображение, название, локация, дата, статус публикации
+- Диалог создания/редактирования:
+  - Заголовок + автоматическая генерация slug
+  - Краткое описание
+  - Rich Text редактор для полного контента
+  - Загрузка главного изображения с выбором fit
+  - Загрузка медиагалереи (переиспользование MediaUploader)
+  - Местоположение объекта
+  - Дата завершения
+  - Чекбокс публикации
+- Удаление с подтверждением
+- Быстрое переключение статуса публикации
+
+Компонент будет построен по аналогии с `NewsManagement.tsx`, используя те же UI-элементы и паттерны.
+
+---
+
+## Этап 4: Страница Portfolio.tsx
+
+### Логика доступа
+
+Проверка роли администратора через `useUserRole()`:
+- Если не админ - редирект на главную с уведомлением
+- Показ loader во время проверки
+
+### UI
+
+- Заголовок "Портфолио проектов"
+- Сетка карточек проектов (3 колонки на десктопе)
+- Каждая карточка:
+  - Изображение
+  - Название
+  - Местоположение
+  - Дата завершения
+  - Кнопка "Подробнее"
+
+---
+
+## Этап 5: Страница PortfolioDetail.tsx
+
+### Содержимое
+
+- Breadcrumbs навигация
+- Главное изображение
+- Заголовок и метаданные (локация, дата)
+- Rich Text контент
+- Медиагалерея
+- Кнопка возврата
+
+### Защита доступа
+
+Аналогичная проверка на роль админа.
+
+---
+
+## Этап 6: Интеграция
+
+### `src/pages/Admin.tsx`
+
+- Добавление новой вкладки "Портфолио" в TabsList
+- Импорт PortfolioManagement
+- Расширение grid-cols с 5 до 6
+
+### `src/App.tsx`
+
+- Добавление маршрутов:
+  - `/portfolio` -> Portfolio
+  - `/portfolio/:slug` -> PortfolioDetail
+
+### `src/components/Header.tsx`
+
+- Добавление ссылки "Портфолио" в навигацию (видна только для админов)
+
+---
+
+## Порядок реализации
+
+1. Создание миграции БД для таблицы `portfolio`
+2. Обновление types.ts
+3. Создание PortfolioManagement.tsx
+4. Создание Portfolio.tsx
+5. Создание PortfolioDetail.tsx
+6. Обновление Admin.tsx (новая вкладка)
+7. Обновление App.tsx (маршруты)
+8. Обновление Header.tsx (ссылка для админов)
+
+---
+
+## Техническая реализация
+
+### Миграция SQL
+
+```sql
+CREATE TABLE public.portfolio (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  title text NOT NULL,
+  slug text NOT NULL UNIQUE,
+  description text,
+  content text NOT NULL,
+  location text,
+  completion_date date,
+  image text,
+  image_fit text DEFAULT 'cover',
+  media jsonb DEFAULT '[]'::jsonb,
+  products_used uuid[] DEFAULT '{}',
+  published boolean NOT NULL DEFAULT false,
+  author_id uuid NOT NULL,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+
+ALTER TABLE public.portfolio ENABLE ROW LEVEL SECURITY;
+
+-- Админы могут просматривать все проекты
+CREATE POLICY "Admins can view all portfolio" 
+ON public.portfolio FOR SELECT 
+USING (has_role(auth.uid(), 'admin'::app_role));
+
+-- Админы могут создавать проекты
+CREATE POLICY "Admins can insert portfolio" 
+ON public.portfolio FOR INSERT 
+WITH CHECK (has_role(auth.uid(), 'admin'::app_role));
+
+-- Админы могут обновлять проекты
+CREATE POLICY "Admins can update portfolio" 
+ON public.portfolio FOR UPDATE 
+USING (has_role(auth.uid(), 'admin'::app_role));
+
+-- Админы могут удалять проекты
+CREATE POLICY "Admins can delete portfolio" 
+ON public.portfolio FOR DELETE 
+USING (has_role(auth.uid(), 'admin'::app_role));
+
+-- Триггер для автообновления updated_at
+CREATE TRIGGER update_portfolio_updated_at
+  BEFORE UPDATE ON public.portfolio
+  FOR EACH ROW
+  EXECUTE FUNCTION update_updated_at_column();
+```
+
+### Примечания
+
+- Используется существующий bucket `product-images` для хранения изображений
+- Переиспользуются компоненты: RichTextEditor, MediaUploader
+- Паттерн защиты аналогичен Admin.tsx
 
