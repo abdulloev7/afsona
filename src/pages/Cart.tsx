@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Separator } from '@/components/ui/separator';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -13,6 +15,7 @@ import Footer from '@/components/Footer';
 import { useToast } from '@/hooks/use-toast';
 import { ShoppingCart, Plus, Minus, Trash2, ArrowLeft } from 'lucide-react';
 import { z } from 'zod';
+import { cn } from '@/lib/utils';
 
 const orderSchema = z.object({
   customerName: z.string().trim().min(1, { message: "Имя обязательно" }),
@@ -32,8 +35,10 @@ const Cart = () => {
   });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
+  const [isInitialized, setIsInitialized] = useState(false);
   
-  const { items, updateQuantity, removeFromCart, clearCart, getCartTotal, loading: cartLoading } = useCart();
+  const { items, updateQuantity, removeFromCart, clearCart, loading: cartLoading } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -42,6 +47,69 @@ const Cart = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  // Select all items on initial load
+  useEffect(() => {
+    if (items.length > 0 && !isInitialized) {
+      setSelectedItems(new Set(items.map(item => item.id)));
+      setIsInitialized(true);
+    }
+  }, [items, isInitialized]);
+
+  // Sync selection when items change (e.g., item removed)
+  useEffect(() => {
+    setSelectedItems(prev => {
+      const itemIds = new Set(items.map(item => item.id));
+      const next = new Set<string>();
+      prev.forEach(id => {
+        if (itemIds.has(id)) next.add(id);
+      });
+      return next;
+    });
+  }, [items]);
+
+  const toggleItem = (itemId: string) => {
+    setSelectedItems(prev => {
+      const next = new Set(prev);
+      if (next.has(itemId)) {
+        next.delete(itemId);
+      } else {
+        next.add(itemId);
+      }
+      return next;
+    });
+  };
+
+  const toggleAll = () => {
+    if (selectedItems.size === items.length) {
+      setSelectedItems(new Set());
+    } else {
+      setSelectedItems(new Set(items.map(item => item.id)));
+    }
+  };
+
+  const removeSelected = async () => {
+    const itemsToRemove = Array.from(selectedItems);
+    for (const itemId of itemsToRemove) {
+      await removeFromCart(itemId);
+    }
+    setSelectedItems(new Set());
+  };
+
+  const getItemPrice = (item: typeof items[0]) => {
+    let itemPrice = item.product.price;
+    if (item.product.size_variants && item.selected_size) {
+      const variant = item.product.size_variants.find(v => v.volume === item.selected_size);
+      if (variant) itemPrice = variant.price;
+    }
+    return itemPrice;
+  };
+
+  const getSelectedTotal = () => {
+    return items
+      .filter(item => selectedItems.has(item.id))
+      .reduce((total, item) => total + (getItemPrice(item) * item.quantity), 0);
+  };
 
   const validateForm = () => {
     try {
@@ -70,10 +138,12 @@ const Cart = () => {
       return;
     }
 
-    if (items.length === 0) {
+    const selectedItemsList = items.filter(item => selectedItems.has(item.id));
+
+    if (selectedItemsList.length === 0) {
       toast({
-        title: "Корзина пуста",
-        description: "Добавьте товары в корзину для оформления заказа",
+        title: "Ничего не выбрано",
+        description: "Выберите хотя бы один товар для оформления заказа",
         variant: "destructive",
       });
       return;
@@ -83,7 +153,7 @@ const Cart = () => {
 
     setLoading(true);
     try {
-      const total = getCartTotal();
+      const total = getSelectedTotal();
       
       // Create order
       const { data: order, error: orderError } = await supabase
@@ -102,25 +172,14 @@ const Cart = () => {
 
       if (orderError) throw orderError;
 
-      // Create order items
-      const orderItems = items.map(item => {
-        // Find correct price from size_variants if available
-        let itemPrice = item.product.price;
-        if (item.product.size_variants && item.selected_size) {
-          const variant = item.product.size_variants.find(v => v.volume === item.selected_size);
-          if (variant) {
-            itemPrice = variant.price;
-          }
-        }
-        
-        return {
-          order_id: order.id,
-          product_id: item.product_id,
-          quantity: item.quantity,
-          price: itemPrice,
-          selected_size: item.selected_size || null,
-        };
-      });
+      // Create order items from selected items only
+      const orderItems = selectedItemsList.map(item => ({
+        order_id: order.id,
+        product_id: item.product_id,
+        quantity: item.quantity,
+        price: getItemPrice(item),
+        selected_size: item.selected_size || null,
+      }));
 
       const { error: itemsError } = await supabase
         .from('order_items')
@@ -130,23 +189,12 @@ const Cart = () => {
 
       // Send order notification email
       try {
-        const orderItemsForEmail = items.map(item => {
-          // Find correct price from size_variants if available
-          let itemPrice = item.product.price;
-          if (item.product.size_variants && item.selected_size) {
-            const variant = item.product.size_variants.find(v => v.volume === item.selected_size);
-            if (variant) {
-              itemPrice = variant.price;
-            }
-          }
-          
-          return {
-            product_name: item.product.name,
-            quantity: item.quantity,
-            price: itemPrice,
-            selected_size: item.selected_size || null,
-          };
-        });
+        const orderItemsForEmail = selectedItemsList.map(item => ({
+          product_name: item.product.name,
+          quantity: item.quantity,
+          price: getItemPrice(item),
+          selected_size: item.selected_size || null,
+        }));
 
         const { data: emailData, error: emailInvokeError } = await supabase.functions.invoke('send-order-notification', {
           body: {
@@ -171,8 +219,11 @@ const Cart = () => {
         // Don't fail the order if email fails
       }
 
-      // Clear cart
-      await clearCart();
+      // Remove only ordered items from cart
+      for (const item of selectedItemsList) {
+        await removeFromCart(item.id);
+      }
+      setSelectedItems(new Set());
 
       toast({
         title: "Заказ оформлен!",
@@ -191,6 +242,9 @@ const Cart = () => {
       setLoading(false);
     }
   };
+
+  const isAllSelected = items.length > 0 && selectedItems.size === items.length;
+  const isPartiallySelected = selectedItems.size > 0 && selectedItems.size < items.length;
 
   if (!user) {
     return (
@@ -246,79 +300,119 @@ const Cart = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Cart Items */}
               <div className="lg:col-span-2 space-y-4">
-                {items.map((item) => (
-                  <Card key={item.id}>
-                    <CardContent className="p-4">
-                      <div className="flex items-center gap-4">
-                        {item.product.image && (
-                          <img 
-                            src={item.product.image} 
-                            alt={item.product.name}
-                            className="w-16 h-16 object-cover rounded"
+                {/* Selection Header */}
+                <div className="flex items-center justify-between p-4 bg-card rounded-lg border">
+                  <div className="flex items-center gap-3">
+                    <Checkbox
+                      checked={isAllSelected}
+                      ref={(el) => {
+                        if (el) {
+                          const input = el.querySelector('button');
+                          if (input) {
+                            (input as any).indeterminate = isPartiallySelected;
+                          }
+                        }
+                      }}
+                      onCheckedChange={toggleAll}
+                      id="select-all"
+                    />
+                    <Label htmlFor="select-all" className="cursor-pointer text-sm font-medium">
+                      Выбрать все ({selectedItems.size} из {items.length})
+                    </Label>
+                  </div>
+                  
+                  {selectedItems.size > 0 && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={removeSelected}
+                      className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Удалить ({selectedItems.size})
+                    </Button>
+                  )}
+                </div>
+
+                {/* Cart Item Cards */}
+                {items.map((item) => {
+                  const itemPrice = getItemPrice(item);
+                  const totalPrice = itemPrice * item.quantity;
+                  const isSelected = selectedItems.has(item.id);
+
+                  return (
+                    <Card 
+                      key={item.id} 
+                      className={cn(
+                        "transition-all duration-200",
+                        isSelected && "ring-2 ring-primary/30 bg-primary/5"
+                      )}
+                    >
+                      <CardContent className="p-4">
+                        <div className="flex items-center gap-4">
+                          <Checkbox
+                            checked={isSelected}
+                            onCheckedChange={() => toggleItem(item.id)}
                           />
-                        )}
-                         <div className="flex-1">
-                          <h3 className="font-semibold">{item.product.name}</h3>
-                          {item.selected_size && (
-                            <p className="text-sm text-muted-foreground">
-                              Объем: {item.selected_size}
-                            </p>
+                          {item.product.image && (
+                            <img 
+                              src={item.product.image} 
+                              alt={item.product.name}
+                              className="w-16 h-16 object-cover rounded"
+                            />
                           )}
-                          {(() => {
-                            let itemPrice = item.product.price;
-                            if (item.product.size_variants && item.selected_size) {
-                              const variant = item.product.size_variants.find(v => v.volume === item.selected_size);
-                              if (variant) itemPrice = variant.price;
-                            }
-                            const totalPrice = itemPrice * item.quantity;
-                            
-                            if (item.quantity > 1) {
-                              return (
-                                <div>
-                                  <p className="text-sm text-muted-foreground">
-                                    {item.quantity}×{itemPrice.toLocaleString('ru-RU')} сом.
-                                  </p>
-                                  <p className="text-lg font-bold">
-                                    {totalPrice.toLocaleString('ru-RU')} сом.
-                                  </p>
-                                </div>
-                              );
-                            }
-                            return (
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-semibold truncate">{item.product.name}</h3>
+                            {item.selected_size && (
+                              <p className="text-sm text-muted-foreground">
+                                Объем: {item.selected_size}
+                              </p>
+                            )}
+                            {item.quantity > 1 ? (
+                              <div>
+                                <p className="text-sm text-muted-foreground">
+                                  {item.quantity} × {itemPrice.toLocaleString('ru-RU')} сом.
+                                </p>
+                                <p className="text-lg font-bold">
+                                  {totalPrice.toLocaleString('ru-RU')} сом.
+                                </p>
+                              </div>
+                            ) : (
                               <p className="text-lg font-bold">
                                 {itemPrice.toLocaleString('ru-RU')} сом.
                               </p>
-                            );
-                          })()}
-                        </div>
-                        <div className="flex items-center gap-2">
+                            )}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                            >
+                              <Minus className="h-4 w-4" />
+                            </Button>
+                            <span className="w-8 text-center font-medium">{item.quantity}</span>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                            >
+                              <Plus className="h-4 w-4" />
+                            </Button>
+                          </div>
                           <Button
-                            variant="outline"
+                            variant="ghost"
                             size="sm"
-                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                            onClick={() => removeFromCart(item.id)}
+                            className="text-muted-foreground hover:text-destructive"
                           >
-                            <Minus className="h-4 w-4" />
-                          </Button>
-                          <span className="w-8 text-center">{item.quantity}</span>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                          >
-                            <Plus className="h-4 w-4" />
+                            <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={() => removeFromCart(item.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                      </CardContent>
+                    </Card>
+                  );
+                })}
               </div>
 
               {/* Order Form */}
@@ -327,9 +421,19 @@ const Cart = () => {
                   <CardHeader>
                     <CardTitle>Итого</CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">
-                      {getCartTotal().toLocaleString('ru-RU')} сом.
+                  <CardContent className="space-y-3">
+                    <div className="flex justify-between text-sm text-muted-foreground">
+                      <span>Товаров в корзине:</span>
+                      <span>{items.length}</span>
+                    </div>
+                    <div className="flex justify-between text-sm text-muted-foreground">
+                      <span>Выбрано для заказа:</span>
+                      <span>{selectedItems.size}</span>
+                    </div>
+                    <Separator />
+                    <div className="flex justify-between text-2xl font-bold">
+                      <span>Сумма:</span>
+                      <span>{getSelectedTotal().toLocaleString('ru-RU')} сом.</span>
                     </div>
                   </CardContent>
                 </Card>
@@ -405,8 +509,17 @@ const Cart = () => {
                         />
                       </div>
 
-                      <Button type="submit" className="w-full" disabled={loading}>
-                        {loading ? 'Оформляем заказ...' : 'Оформить заказ'}
+                      <Button 
+                        type="submit" 
+                        className="w-full" 
+                        disabled={loading || selectedItems.size === 0}
+                      >
+                        {loading 
+                          ? 'Оформляем заказ...' 
+                          : selectedItems.size === 0 
+                            ? 'Выберите товары' 
+                            : `Оформить заказ (${selectedItems.size})`
+                        }
                       </Button>
                     </form>
                   </CardContent>
