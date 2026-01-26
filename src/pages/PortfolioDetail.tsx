@@ -15,6 +15,7 @@ interface MediaItem {
   type: 'image' | 'video';
   url: string;
   caption?: string;
+  fit?: 'cover' | 'contain';
 }
 
 interface PortfolioItem {
@@ -223,13 +224,17 @@ const PortfolioDetail = () => {
                         <video
                           src={mediaItem.url}
                           controls
-                          className="w-full aspect-video"
+                          className={`w-full aspect-video ${
+                            mediaItem.fit === 'contain' ? 'object-contain' : 'object-cover'
+                          }`}
                         />
                       ) : (
                         <img
                           src={mediaItem.url}
                           alt={mediaItem.caption || `Изображение ${index + 1}`}
-                          className="w-full aspect-video object-cover"
+                          className={`w-full aspect-video ${
+                            mediaItem.fit === 'contain' ? 'object-contain' : 'object-cover'
+                          }`}
                         />
                       )}
                       {mediaItem.caption && (
