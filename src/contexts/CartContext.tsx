@@ -3,11 +3,12 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './AuthContext';
 import { useToast } from '@/hooks/use-toast';
 
-interface CartItem {
+export interface CartItem {
   id: string;
   product_id: string;
   quantity: number;
   selected_size?: string | null;
+  created_at: string;
   product: {
     id: string;
     name: string;
@@ -15,8 +16,26 @@ interface CartItem {
     image?: string;
     sizes?: string[] | null;
     size_variants?: { volume: string; price: number }[] | null;
+    category_id?: string;
+    brand_id?: string | null;
+    category?: { id: string; name: string; slug: string } | null;
+    brand?: { id: string; name: string } | null;
   };
 }
+
+// Category groups for visual separation
+export const CATEGORY_GROUPS: Record<string, { label: string; order: number }> = {
+  'paints-and-coatings': { label: 'Краски и покрытия', order: 1 },
+  'decorative-coatings': { label: 'Декоративные покрытия', order: 2 },
+  'primers-preparatory': { label: 'Подготовка поверхности', order: 3 },
+  'putties-leveling': { label: 'Шпатлевки и выравнивание', order: 4 },
+  'waterproofing': { label: 'Гидроизоляция', order: 5 },
+  'adhesives-sealants': { label: 'Клеи и герметики', order: 6 },
+  'tints-thinners': { label: 'Колеры и разбавители', order: 7 },
+  'brushes-tools': { label: 'Инструменты', order: 8 },
+  'rollers': { label: 'Валики', order: 8 },
+  'spatulas-accessories': { label: 'Инструменты', order: 8 },
+};
 
 interface CartContextType {
   items: CartItem[];
@@ -60,18 +79,33 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           product_id,
           quantity,
           selected_size,
-          product:products(id, name, price, image, sizes, size_variants)
+          created_at,
+          product:products(
+            id, 
+            name, 
+            price, 
+            image, 
+            sizes, 
+            size_variants,
+            category_id,
+            brand_id,
+            category:categories(id, name, slug),
+            brand:brands(id, name)
+          )
         `)
-        .eq('user_id', user.id);
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false }); // LIFO - newest first
 
       if (error) throw error;
       
-      // Cast size_variants from Json to proper type
+      // Cast and transform data
       const typedData = (data as any[])?.map(item => ({
         ...item,
         product: {
           ...item.product,
-          size_variants: item.product?.size_variants as { volume: string; price: number }[] | null
+          size_variants: item.product?.size_variants as { volume: string; price: number }[] | null,
+          category: item.product?.category,
+          brand: item.product?.brand,
         }
       })) || [];
       

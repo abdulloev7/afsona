@@ -7,15 +7,15 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
-import { useCart } from '@/contexts/CartContext';
+import { useCart, type CartItem } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useToast } from '@/hooks/use-toast';
-import { ShoppingCart, Plus, Minus, Trash2, ArrowLeft } from 'lucide-react';
+import { ShoppingCart, Trash2, ArrowLeft } from 'lucide-react';
 import { z } from 'zod';
-import { cn } from '@/lib/utils';
+import { GroupedCartItems } from '@/components/cart/GroupedCartItems';
 
 const orderSchema = z.object({
   customerName: z.string().trim().min(1, { message: "Имя обязательно" }),
@@ -96,7 +96,7 @@ const Cart = () => {
     setSelectedItems(new Set());
   };
 
-  const getItemPrice = (item: typeof items[0]) => {
+  const getItemPrice = (item: CartItem) => {
     let itemPrice = item.product.price;
     if (item.product.size_variants && item.selected_size) {
       const variant = item.product.size_variants.find(v => v.volume === item.selected_size);
@@ -334,85 +334,15 @@ const Cart = () => {
                   )}
                 </div>
 
-                {/* Cart Item Cards */}
-                {items.map((item) => {
-                  const itemPrice = getItemPrice(item);
-                  const totalPrice = itemPrice * item.quantity;
-                  const isSelected = selectedItems.has(item.id);
-
-                  return (
-                    <Card 
-                      key={item.id} 
-                      className={cn(
-                        "transition-all duration-200",
-                        isSelected && "ring-2 ring-primary/30 bg-primary/5"
-                      )}
-                    >
-                      <CardContent className="p-4">
-                        <div className="flex items-center gap-4">
-                          <Checkbox
-                            checked={isSelected}
-                            onCheckedChange={() => toggleItem(item.id)}
-                          />
-                          {item.product.image && (
-                            <img 
-                              src={item.product.image} 
-                              alt={item.product.name}
-                              className="w-16 h-16 object-cover rounded"
-                            />
-                          )}
-                          <div className="flex-1 min-w-0">
-                            <h3 className="font-semibold truncate">{item.product.name}</h3>
-                            {item.selected_size && (
-                              <p className="text-sm text-muted-foreground">
-                                Объем: {item.selected_size}
-                              </p>
-                            )}
-                            {item.quantity > 1 ? (
-                              <div>
-                                <p className="text-sm text-muted-foreground">
-                                  {item.quantity} × {itemPrice.toLocaleString('ru-RU')} сом.
-                                </p>
-                                <p className="text-lg font-bold">
-                                  {totalPrice.toLocaleString('ru-RU')} сом.
-                                </p>
-                              </div>
-                            ) : (
-                              <p className="text-lg font-bold">
-                                {itemPrice.toLocaleString('ru-RU')} сом.
-                              </p>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                            >
-                              <Minus className="h-4 w-4" />
-                            </Button>
-                            <span className="w-8 text-center font-medium">{item.quantity}</span>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                            >
-                              <Plus className="h-4 w-4" />
-                            </Button>
-                          </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => removeFromCart(item.id)}
-                            className="text-muted-foreground hover:text-destructive"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
+                {/* Cart Items - Grouped when > 5 items */}
+                <GroupedCartItems
+                  items={items}
+                  selectedItems={selectedItems}
+                  onToggleItem={toggleItem}
+                  onUpdateQuantity={updateQuantity}
+                  onRemoveItem={removeFromCart}
+                  getItemPrice={getItemPrice}
+                />
               </div>
 
               {/* Order Form */}
