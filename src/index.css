@@ -8,22 +8,22 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 53 58% 94%;
+    --background: 50 100% 95%;
     --foreground: 155 45% 18%;
 
-    --card: 53 50% 96%;
+    --card: 50 80% 97%;
     --card-foreground: 155 45% 18%;
 
-    --popover: 53 50% 96%;
+    --popover: 50 80% 97%;
     --popover-foreground: 155 45% 18%;
 
     --primary: 149 43% 28%;
-    --primary-foreground: 45 30% 96%;
+    --primary-foreground: 50 100% 95%;
 
-    --secondary: 53 45% 90%;
+    --secondary: 50 60% 91%;
     --secondary-foreground: 149 43% 28%;
 
-    --muted: 53 40% 88%;
+    --muted: 50 50% 89%;
     --muted-foreground: 155 30% 40%;
 
     --accent: 149 43% 28%;
@@ -32,16 +32,16 @@ All colors MUST be HSL.
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 53 35% 84%;
-    --input: 53 45% 90%;
+    --border: 50 45% 85%;
+    --input: 50 60% 91%;
     --ring: 149 43% 28%;
 
     /* Custom AFSONA Brand Colors - Eco Green Theme */
     --brand-green: 149 43% 28%;
     --brand-green-light: 149 43% 28%;
     --brand-green-dark: 149 43% 28%;
-    --brand-cream: 53 58% 94%;
-    --brand-cream-light: 53 50% 96%;
+    --brand-cream: 50 100% 95%;
+    --brand-cream-light: 50 80% 97%;
     
     /* Gradients */
     --gradient-primary: linear-gradient(135deg, hsl(var(--brand-green)), hsl(var(--brand-green-light)));
