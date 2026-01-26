@@ -43,6 +43,7 @@ interface MediaItem {
   type: 'image' | 'video';
   url: string;
   caption?: string;
+  fit?: 'cover' | 'contain';
   file?: File;
 }
 
@@ -66,7 +67,7 @@ interface Portfolio {
 const portfolioSchema = z.object({
   title: z.string().min(3, "Название должно содержать минимум 3 символа").max(200, "Название не должно превышать 200 символов"),
   slug: z.string().min(1, "Slug обязателен").regex(/^[a-z0-9-]+$/, "Slug должен содержать только латинские буквы, цифры и дефисы"),
-  content: z.string().min(20, "Описание должно содержать минимум 20 символов"),
+  content: z.string().min(1, "Описание обязательно"),
   description: z.string().max(500, "Краткое описание не должно превышать 500 символов").optional(),
   published: z.boolean(),
 });
@@ -189,12 +190,14 @@ const PortfolioManagement = () => {
             type: item.type,
             url,
             caption: item.caption,
+            fit: item.fit || 'cover',
           });
         } else {
           uploadedMedia.push({
             type: item.type,
             url: item.url,
             caption: item.caption,
+            fit: item.fit || 'cover',
           });
         }
       }
