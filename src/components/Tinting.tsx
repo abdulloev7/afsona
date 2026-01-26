@@ -1,7 +1,17 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Palette, MonitorCheck, Clock, Repeat, Droplets, Users, Target } from "lucide-react";
+import { 
+  IconColorSwatch, 
+  IconDeviceDesktopAnalytics, 
+  IconRefresh, 
+  IconClock2, 
+  IconBucket, 
+  IconUserCheck, 
+  IconFocusCentered,
+  IconPalette,
+  IconMessageChatbot
+} from "@tabler/icons-react";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 
 const Tinting = () => {
@@ -14,37 +24,37 @@ const Tinting = () => {
 
   const advantages = [
     {
-      icon: Palette,
+      icon: IconColorSwatch,
       title: "Более 2000 оттенков",
       description: "Огромный выбор из различных цветовых систем",
     },
     {
-      icon: MonitorCheck,
+      icon: IconDeviceDesktopAnalytics,
       title: "Компьютерная точность",
       description: "Гарантируем идеальное смешивание цветов",
     },
     {
-      icon: Repeat,
+      icon: IconRefresh,
       title: "Повторяемость результата",
       description: "Сохраняем формулу для повторных заказов",
     },
     {
-      icon: Clock,
+      icon: IconClock2,
       title: "Быстрая колеровка",
       description: "Готовая краска за 5-10 минут",
     },
     {
-      icon: Droplets,
+      icon: IconBucket,
       title: "Любой объём",
       description: "От 1 литра до промышленных партий",
     },
     {
-      icon: Users,
+      icon: IconUserCheck,
       title: "Профессиональные консультации",
       description: "Поможем выбрать идеальный цвет",
     },
     {
-      icon: Target,
+      icon: IconFocusCentered,
       title: "Точность попадания",
       description: "Можем заколеровать под ваш образец",
     },
@@ -123,10 +133,10 @@ const Tinting = () => {
           {/* Карточка 1: О оборудовании */}
           <Card className="border-2 border-primary/20">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <MonitorCheck className="w-5 h-5 text-primary" />
-                Наше оборудование
-              </CardTitle>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <IconDeviceDesktopAnalytics className="w-5 h-5 text-primary" stroke={1.5} />
+              Наше оборудование
+            </CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground mb-4">
@@ -148,7 +158,7 @@ const Tinting = () => {
               <div className="space-y-3">
                 {advantages.slice(0, 4).map((advantage, index) => (
                   <div key={index} className="flex items-start gap-2">
-                    <advantage.icon className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                    <advantage.icon className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" stroke={1.5} />
                     <div>
                       <h4 className="font-semibold text-sm">{advantage.title}</h4>
                     </div>
@@ -183,10 +193,10 @@ const Tinting = () => {
           <h3 className="text-2xl font-bold text-center mb-8">Почему выбирают нас</h3>
           <div className="flex flex-wrap justify-center gap-6">
             {advantages.map((advantage, index) => (
-              <Card key={index} className="text-center hover:shadow-lg transition-shadow basis-[280px]">
+                <Card key={index} className="text-center hover:shadow-lg transition-shadow basis-[280px]">
                 <CardHeader>
                   <div className="mx-auto mb-2 p-3 rounded-full bg-primary/10 w-fit">
-                    <advantage.icon className="w-6 h-6 text-primary" />
+                    <advantage.icon className="w-6 h-6 text-primary" stroke={1.5} />
                   </div>
                   <CardTitle className="text-base">{advantage.title}</CardTitle>
                 </CardHeader>
@@ -215,7 +225,7 @@ const Tinting = () => {
                   element?.scrollIntoView({ behavior: "smooth" });
                 }}
               >
-                <Palette className="w-5 h-5" />
+                <IconPalette className="w-5 h-5" stroke={1.5} />
                 Заказать колеровку
               </Button>
               <Button
@@ -227,7 +237,7 @@ const Tinting = () => {
                   element?.scrollIntoView({ behavior: "smooth" });
                 }}
               >
-                <Users className="w-5 h-5" />
+                <IconMessageChatbot className="w-5 h-5" stroke={1.5} />
                 Получить консультацию
               </Button>
             </div>
