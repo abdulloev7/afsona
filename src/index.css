@@ -114,6 +114,10 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
+  html {
+    font-family: 'Montserrat', sans-serif;
+  }
+
   body {
     @apply bg-background text-foreground;
     font-family: 'Montserrat', sans-serif;
@@ -121,6 +125,10 @@ All colors MUST be HSL.
 
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Cormorant Garamond', serif;
+  }
+
+  button, input, select, textarea, label, span, p, div, a, li, td, th {
+    font-family: inherit;
   }
 }
 
