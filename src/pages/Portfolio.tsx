@@ -10,6 +10,13 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
 import { MapPin, Calendar, ArrowRight, Briefcase } from "lucide-react";
 
+interface MediaItem {
+  type: 'image' | 'video';
+  url: string;
+  caption?: string;
+  fit?: string;
+}
+
 interface PortfolioItem {
   id: string;
   title: string;
@@ -19,6 +26,7 @@ interface PortfolioItem {
   completion_date: string | null;
   image: string | null;
   image_fit: string | null;
+  media: MediaItem[] | null;
   published: boolean;
 }
 
@@ -49,12 +57,19 @@ const Portfolio = () => {
     try {
       const { data, error } = await supabase
         .from("portfolio")
-        .select("id, title, slug, description, location, completion_date, image, image_fit, published")
+        .select("id, title, slug, description, location, completion_date, image, image_fit, media, published")
         .order("completion_date", { ascending: false });
 
       if (error) throw error;
-      setPortfolio(data || []);
-    } catch (error: any) {
+      
+      // Map media from Json to MediaItem[]
+      const mappedData: PortfolioItem[] = (data || []).map(item => ({
+        ...item,
+        media: (item.media as unknown as MediaItem[]) || null,
+      }));
+      
+      setPortfolio(mappedData);
+    } catch {
       toast({
         title: "Ошибка",
         description: "Не удалось загрузить портфолио",
@@ -111,15 +126,20 @@ const Portfolio = () => {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {portfolio.map((item) => (
+                {portfolio.map((item) => {
+                  // Get preview image: use main image, or first media item
+                  const previewImage = item.image || (item.media && item.media.length > 0 ? item.media[0].url : null);
+                  const previewFit = item.image ? item.image_fit : (item.media && item.media.length > 0 ? item.media[0].fit : 'cover');
+                  
+                  return (
                   <Card key={item.id} className="overflow-hidden group hover:shadow-lg transition-shadow">
                     <div className="aspect-video relative overflow-hidden bg-muted">
-                      {item.image ? (
+                      {previewImage ? (
                         <img
-                          src={item.image}
+                          src={previewImage}
                           alt={item.title}
                           className={`w-full h-full transition-transform duration-300 group-hover:scale-105 ${
-                            item.image_fit === 'contain' ? 'object-contain' : 'object-cover'
+                            previewFit === 'contain' ? 'object-contain' : 'object-cover'
                           }`}
                         />
                       ) : (
@@ -172,7 +192,8 @@ const Portfolio = () => {
                       </Link>
                     </CardContent>
                   </Card>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
