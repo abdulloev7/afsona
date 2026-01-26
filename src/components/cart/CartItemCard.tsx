@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -24,6 +25,7 @@ export const CartItemCard = ({
 }: CartItemCardProps) => {
   const itemPrice = getItemPrice(item);
   const totalPrice = itemPrice * item.quantity;
+  const productUrl = `/product/${item.product_id}`;
 
   return (
     <Card 
@@ -39,14 +41,18 @@ export const CartItemCard = ({
             onCheckedChange={onToggleSelect}
           />
           {item.product.image && (
-            <img 
-              src={item.product.image} 
-              alt={item.product.name}
-              className="w-16 h-16 object-cover rounded"
-            />
+            <Link to={productUrl} className="shrink-0">
+              <img 
+                src={item.product.image} 
+                alt={item.product.name}
+                className="w-16 h-16 object-cover rounded hover:opacity-80 transition-opacity cursor-pointer"
+              />
+            </Link>
           )}
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold truncate">{item.product.name}</h3>
+            <Link to={productUrl} className="hover:text-primary transition-colors">
+              <h3 className="font-semibold truncate">{item.product.name}</h3>
+            </Link>
             {item.selected_size && (
               <p className="text-sm text-muted-foreground">
                 Объем: {item.selected_size}
