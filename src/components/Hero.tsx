@@ -100,7 +100,7 @@ const Hero = () => {
   // Fallback content when no banners exist
   if (!loading && banners.length === 0) {
     return (
-      <section className="h-[75vh] flex items-center justify-center bg-background">
+      <section className="h-[50vh] sm:h-[60vh] md:h-[65vh] lg:h-[75vh] flex items-center justify-center bg-background">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -144,14 +144,14 @@ const Hero = () => {
 
   if (loading) {
     return (
-      <section className="h-[75vh] flex items-center justify-center bg-background">
+      <section className="h-[50vh] sm:h-[60vh] md:h-[65vh] lg:h-[75vh] flex items-center justify-center bg-background">
         <div className="animate-pulse text-muted-foreground">Загрузка...</div>
       </section>
     );
   }
 
   return (
-    <section className="relative h-[75vh] w-full overflow-hidden">
+    <section className="relative h-[50vh] sm:h-[60vh] md:h-[65vh] lg:h-[75vh] w-full overflow-hidden">
       <Carousel
         setApi={setApi}
         opts={{
@@ -179,7 +179,7 @@ const Hero = () => {
 
             return (
               <CarouselItem key={banner.id} className="h-full pl-0">
-                <div className="relative w-full h-[75vh]">
+                <div className="relative w-full h-full">
                   {/* Background image */}
                   <div
                     className="absolute inset-0 bg-cover bg-center bg-no-repeat"
