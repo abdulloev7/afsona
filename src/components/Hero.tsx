@@ -166,9 +166,9 @@ const Hero = () => {
             playOnInit: true,
           }),
         ]}
-        className="w-full h-full"
+        className="w-full h-full [&>div]:h-full"
       >
-        <CarouselContent className="h-full -ml-0">
+        <CarouselContent className="h-full -ml-0 [&>div]:h-full">
           {banners.map((banner, index) => {
             const titleX = banner.title_position_x ?? 25;
             const titleY = banner.title_position_y ?? 70;
