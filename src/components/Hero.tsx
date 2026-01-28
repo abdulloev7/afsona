@@ -286,7 +286,7 @@ const Hero = () => {
 
         {/* Navigation - dots and arrows together in bottom right */}
         {banners.length > 1 && (
-          <div className="absolute bottom-0 right-4 mb-1 flex items-center gap-3 z-10">
+          <div className="absolute bottom-3 right-6 flex items-center gap-4 z-10">
             {/* Dot indicators */}
             <div className="flex items-center gap-2">
               {banners.map((_, index) => (
@@ -309,18 +309,18 @@ const Hero = () => {
                 variant="secondary"
                 size="icon"
                 onClick={scrollPrev}
-                className="h-9 w-9 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 border-0"
+                className="h-9 w-9 rounded-full bg-white/90 hover:bg-white border border-border shadow-sm"
               >
-                <ArrowLeft className="h-4 w-4 text-white" />
+                <ArrowLeft className="h-4 w-4 text-foreground" />
                 <span className="sr-only">Previous slide</span>
               </Button>
               <Button
                 variant="secondary"
                 size="icon"
                 onClick={scrollNext}
-                className="h-9 w-9 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 border-0"
+                className="h-9 w-9 rounded-full bg-white/90 hover:bg-white border border-border shadow-sm"
               >
-                <ArrowRight className="h-4 w-4 text-white" />
+                <ArrowRight className="h-4 w-4 text-foreground" />
                 <span className="sr-only">Next slide</span>
               </Button>
             </div>
