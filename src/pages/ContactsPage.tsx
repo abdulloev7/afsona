@@ -12,11 +12,11 @@ import {
   Phone, 
   Clock, 
   Mail, 
-  ExternalLink, 
-  MessageCircle, 
-  Instagram,
-  Send
+  ExternalLink,
+  Send,
+  Loader2
 } from "lucide-react";
+import { FaTelegram, FaWhatsapp, FaInstagram } from "react-icons/fa";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,18 +32,65 @@ const ContactsPage = () => {
     email: "",
     message: ""
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "Сообщение отправлено",
-      description: "Мы свяжемся с вами в ближайшее время!",
-    });
-    setFormData({ name: "", phone: "", email: "", message: "" });
+    
+    // Basic validation
+    if (!formData.name.trim() || !formData.phone.trim() || !formData.message.trim()) {
+      toast({
+        title: "Ошибка",
+        description: "Заполните все обязательные поля",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch(
+        'https://pbdmochmasoylofhasrk.supabase.co/functions/v1/send-contact-message',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: formData.name.trim(),
+            phone: formData.phone.trim(),
+            email: formData.email.trim() || undefined,
+            message: formData.message.trim(),
+          }),
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Ошибка отправки');
+      }
+
+      toast({
+        title: "Сообщение отправлено!",
+        description: "Мы свяжемся с вами в ближайшее время.",
+      });
+      setFormData({ name: "", phone: "", email: "", message: "" });
+    } catch (error) {
+      console.error('Error sending contact message:', error);
+      toast({
+        title: "Ошибка отправки",
+        description: "Не удалось отправить сообщение. Попробуйте позже или позвоните нам.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -157,7 +204,7 @@ const ContactsPage = () => {
                   className="flex flex-col items-center gap-2 p-4 rounded-xl hover:bg-muted/30 transition-all duration-300 group"
                 >
                   <div className="w-16 h-16 rounded-full bg-[#0088cc] flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                    <MessageCircle className="w-8 h-8 text-white" />
+                    <FaTelegram className="w-8 h-8 text-white" />
                   </div>
                   <span className="font-medium">Telegram</span>
                 </button>
@@ -167,7 +214,7 @@ const ContactsPage = () => {
                   className="flex flex-col items-center gap-2 p-4 rounded-xl hover:bg-muted/30 transition-all duration-300 group"
                 >
                   <div className="w-16 h-16 rounded-full bg-[#25D366] flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                    <Phone className="w-8 h-8 text-white" />
+                    <FaWhatsapp className="w-8 h-8 text-white" />
                   </div>
                   <span className="font-medium">WhatsApp</span>
                 </button>
@@ -177,7 +224,7 @@ const ContactsPage = () => {
                   className="flex flex-col items-center gap-2 p-4 rounded-xl opacity-50 cursor-not-allowed"
                 >
                   <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-[#f09433] via-[#e6683c] to-[#dc2743] flex items-center justify-center shadow-lg">
-                    <Instagram className="w-8 h-8 text-white" />
+                    <FaInstagram className="w-8 h-8 text-white" />
                   </div>
                   <span className="font-medium">Instagram</span>
                   <span className="text-xs text-muted-foreground">Скоро</span>
@@ -282,9 +329,18 @@ const ContactsPage = () => {
                       required
                     />
                   </div>
-                  <Button type="submit" className="w-full">
-                    <Send className="w-4 h-4 mr-2" />
-                    Отправить сообщение
+                  <Button type="submit" className="w-full" disabled={isSubmitting}>
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Отправка...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-4 h-4 mr-2" />
+                        Отправить сообщение
+                      </>
+                    )}
                   </Button>
                 </form>
               </CardContent>

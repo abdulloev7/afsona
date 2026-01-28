@@ -2,3 +2,6 @@ project_id = "pbdmochmasoylofhasrk"
 
 [functions.send-order-notification]
 verify_jwt = false
+
+[functions.send-contact-message]
+verify_jwt = false
