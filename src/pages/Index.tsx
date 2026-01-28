@@ -1,46 +1,18 @@
-// src/pages/Index.tsx
 import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import { FeaturedProducts } from "@/components/FeaturedProducts";
-import Brands from "@/components/Brands";
-import Tinting from "@/components/Tinting";
-import Products from "@/components/Products";
-import About from "@/components/About";
-import Contacts from "@/components/Contacts";
+import BrandsPreview from "@/components/BrandsPreview";
+import TintingPreview from "@/components/TintingPreview";
+import ProductsPreview from "@/components/ProductsPreview";
+import AboutPreview from "@/components/AboutPreview";
+import ContactsPreview from "@/components/ContactsPreview";
 import Footer from "@/components/Footer";
 
 const Index = () => {
-  const location = useLocation();
-
   useEffect(() => {
-    const hashTarget = location.hash ? location.hash.replace('#', '') : '';
-    const storedTarget = typeof window !== 'undefined'
-      ? sessionStorage.getItem('afsona-scroll-target')
-      : null;
-    const targetId = hashTarget || storedTarget || '';
-
-    const scrollToTarget = () => {
-      if (!targetId) return;
-      const element = document.getElementById(targetId);
-      if (element) {
-        const headerOffset = document.querySelector('header')?.clientHeight ?? 0;
-        const elementTop = element.getBoundingClientRect().top + window.scrollY - headerOffset;
-        window.scrollTo({ top: Math.max(elementTop, 0), behavior: 'smooth' });
-      }
-    };
-
-    if (targetId) {
-      requestAnimationFrame(scrollToTarget);
-      setTimeout(scrollToTarget, 300);
-      if (storedTarget) {
-        sessionStorage.removeItem('afsona-scroll-target');
-      }
-    } else {
-      window.scrollTo({ top: 0, behavior: 'auto' });
-    }
-  }, [location.key]);
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }, []);
 
   return (
     <div className="relative z-10 w-full">
@@ -49,11 +21,11 @@ const Index = () => {
         <Hero />
         <div className="bg-background/95 backdrop-blur-sm">
           <FeaturedProducts />
-          <Brands />
-          <Tinting />
-          <Products />
-          <About />
-          <Contacts />
+          <BrandsPreview />
+          <TintingPreview />
+          <ProductsPreview />
+          <AboutPreview />
+          <ContactsPreview />
         </div>
       </main>
       <Footer />
