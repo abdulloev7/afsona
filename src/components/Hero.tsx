@@ -284,45 +284,46 @@ const Hero = () => {
           })}
         </CarouselContent>
 
-        {/* Navigation arrows - bottom right */}
+        {/* Navigation - dots and arrows together in bottom right */}
         {banners.length > 1 && (
-          <div className="absolute bottom-6 right-6 flex items-center gap-2 z-10">
-            <Button
-              variant="secondary"
-              size="icon"
-              onClick={scrollPrev}
-              className="h-10 w-10 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 border-0"
-            >
-              <ArrowLeft className="h-5 w-5 text-white" />
-              <span className="sr-only">Previous slide</span>
-            </Button>
-            <Button
-              variant="secondary"
-              size="icon"
-              onClick={scrollNext}
-              className="h-10 w-10 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 border-0"
-            >
-              <ArrowRight className="h-5 w-5 text-white" />
-              <span className="sr-only">Next slide</span>
-            </Button>
-          </div>
-        )}
-
-        {/* Dot indicators */}
-        {banners.length > 1 && (
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 z-10">
-            {banners.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => api?.scrollTo(index)}
-                className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-                  current === index
-                    ? "bg-white w-8"
-                    : "bg-white/50 hover:bg-white/75"
-                }`}
-                aria-label={`Go to slide ${index + 1}`}
-              />
-            ))}
+          <div className="absolute bottom-6 right-6 flex items-center gap-3 z-10">
+            {/* Dot indicators */}
+            <div className="flex items-center gap-2">
+              {banners.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => api?.scrollTo(index)}
+                  className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                    current === index
+                      ? "bg-primary w-6"
+                      : "bg-white/50 hover:bg-white/75"
+                  }`}
+                  aria-label={`Go to slide ${index + 1}`}
+                />
+              ))}
+            </div>
+            
+            {/* Navigation arrows */}
+            <div className="flex items-center gap-2">
+              <Button
+                variant="secondary"
+                size="icon"
+                onClick={scrollPrev}
+                className="h-9 w-9 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 border-0"
+              >
+                <ArrowLeft className="h-4 w-4 text-white" />
+                <span className="sr-only">Previous slide</span>
+              </Button>
+              <Button
+                variant="secondary"
+                size="icon"
+                onClick={scrollNext}
+                className="h-9 w-9 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 border-0"
+              >
+                <ArrowRight className="h-4 w-4 text-white" />
+                <span className="sr-only">Next slide</span>
+              </Button>
+            </div>
           </div>
         )}
       </Carousel>
