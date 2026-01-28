@@ -286,7 +286,7 @@ const Hero = () => {
 
         {/* Navigation - dots and arrows together in bottom right */}
         {banners.length > 1 && (
-          <div className="absolute bottom-2 right-4 flex items-center gap-3 z-10">
+          <div className="absolute bottom-0 right-4 mb-1 flex items-center gap-3 z-10">
             {/* Dot indicators */}
             <div className="flex items-center gap-2">
               {banners.map((_, index) => (
