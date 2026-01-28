@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MapPin, Phone, Clock, Mail, ExternalLink, MessageCircle, Instagram } from "lucide-react";
+import { MapPin, Phone, Clock, Mail, ExternalLink } from "lucide-react";
+import { FaTelegram, FaWhatsapp, FaInstagram } from "react-icons/fa";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -79,7 +80,7 @@ const Contacts = () => {
                   className="flex flex-col items-center gap-2 p-3 rounded-xl hover:bg-muted/30 transition-all duration-300 group"
                 >
                   <div className="w-14 h-14 rounded-full bg-[#0088cc] flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-[#0088cc]/30 transition-all duration-300">
-                    <MessageCircle className="w-7 h-7 text-white" />
+                    <FaTelegram className="w-7 h-7 text-white" />
                   </div>
                   <span className="text-xs font-medium">Telegram</span>
                 </button>
@@ -89,7 +90,7 @@ const Contacts = () => {
                   className="flex flex-col items-center gap-2 p-3 rounded-xl hover:bg-muted/30 transition-all duration-300 group"
                 >
                   <div className="w-14 h-14 rounded-full bg-[#25D366] flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-[#25D366]/30 transition-all duration-300">
-                    <Phone className="w-7 h-7 text-white" />
+                    <FaWhatsapp className="w-7 h-7 text-white" />
                   </div>
                   <span className="text-xs font-medium">WhatsApp</span>
                 </button>
@@ -99,7 +100,7 @@ const Contacts = () => {
                   className="flex flex-col items-center gap-2 p-3 rounded-xl opacity-50 cursor-not-allowed"
                 >
                   <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#f09433] via-[#e6683c] to-[#dc2743] flex items-center justify-center shadow-lg">
-                    <Instagram className="w-7 h-7 text-white" />
+                    <FaInstagram className="w-7 h-7 text-white" />
                   </div>
                   <span className="text-xs font-medium">Instagram</span>
                   <span className="text-[10px] text-muted-foreground">Скоро</span>
