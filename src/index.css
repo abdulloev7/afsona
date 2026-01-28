@@ -8,8 +8,8 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Light gray background #D3D3D3 */
-    --background: 0 0% 83%;
+    /* Clean white background with subtle warm undertone for green harmony */
+    --background: 0 0% 100%;
     --foreground: 155 45% 18%;
 
     /* Cards with very subtle warmth to soften against pure white */
