@@ -1,0 +1,263 @@
+import { useEffect } from "react";
+import { Link } from "react-router-dom";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { 
+  IconColorSwatch, 
+  IconDeviceDesktopAnalytics, 
+  IconRefresh, 
+  IconClock2, 
+  IconBucket, 
+  IconUserCheck, 
+  IconFocusCentered,
+  IconPalette,
+  IconMessageChatbot
+} from "@tabler/icons-react";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+
+const TintingPage = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  const placeholderImages = [
+    "https://kolerovka.ru/wp-content/uploads/2018/07/Vybor-oborudovanija.jpg?w=800&h=600",
+    "https://sun1-20.userapi.com/c840424/v840424166/8b34b/2QX4c1vnz5k.jpg?w=800&h=600",
+    "https://santint.online/wp-content/uploads/2023/09/semi-automatic-toning-machine-1.png",
+  ];
+
+  const advantages = [
+    {
+      icon: IconColorSwatch,
+      title: "Более 2000 оттенков",
+      description: "Огромный выбор из различных цветовых систем",
+    },
+    {
+      icon: IconDeviceDesktopAnalytics,
+      title: "Компьютерная точность",
+      description: "Гарантируем идеальное смешивание цветов",
+    },
+    {
+      icon: IconRefresh,
+      title: "Повторяемость результата",
+      description: "Сохраняем формулу для повторных заказов",
+    },
+    {
+      icon: IconClock2,
+      title: "Быстрая колеровка",
+      description: "Готовая краска за 5-10 минут",
+    },
+    {
+      icon: IconBucket,
+      title: "Любой объём",
+      description: "От 1 литра до промышленных партий",
+    },
+    {
+      icon: IconUserCheck,
+      title: "Профессиональные консультации",
+      description: "Поможем выбрать идеальный цвет",
+    },
+    {
+      icon: IconFocusCentered,
+      title: "Точность попадания",
+      description: "Можем заколеровать под ваш образец",
+    },
+  ];
+
+  const workProcess = [
+    "Выбор оттенка из палитры или по вашему образцу",
+    "Компьютерный расчет точных пропорций",
+    "Автоматическое смешивание пигментов",
+    "Проверка цвета и выдача готовой краски",
+  ];
+
+  const colorCollections = [
+    { name: "RAL Classic", colors: "213 оттенков" },
+    { name: "NCS System", colors: "1950 оттенков" },
+    { name: "Dulux Colour", colors: "Более 5000 цветов" },
+    { name: "Tikkurila", colors: "Более 20000 оттенков" },
+  ];
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Header />
+      <main className="pt-24 pb-16">
+        <div className="container mx-auto px-4">
+          {/* Hero Section */}
+          <div className="text-center mb-16">
+            <Badge className="mb-4 bg-gradient-to-r from-red-500 via-yellow-500 via-green-500 via-blue-500 to-purple-500 text-white">
+              Профессиональное оборудование
+            </Badge>
+            <h1 className="text-4xl md:text-5xl font-bold mb-6 text-primary">
+              Компьютерная колеровка краски
+            </h1>
+            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+              С помощью современного колеровочного оборудования мы можем подобрать около 2000 оттенков краски под любые
+              ваши потребности. Точность, скорость и гарантия повторяемости результата.
+            </p>
+          </div>
+
+          {/* Media Section */}
+          <div className="grid md:grid-cols-2 gap-6 mb-16">
+            <div className="rounded-xl overflow-hidden shadow-lg">
+              <Carousel className="w-full">
+                <CarouselContent>
+                  {placeholderImages.map((image, index) => (
+                    <CarouselItem key={index}>
+                      <div className="aspect-video bg-muted relative overflow-hidden">
+                        <img
+                          src={image}
+                          alt={`Колеровочное оборудование ${index + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious className="left-4" />
+                <CarouselNext className="right-4" />
+              </Carousel>
+            </div>
+
+            <Card className="overflow-hidden">
+              <div className="aspect-video">
+                <iframe
+                  src="https://www.youtube.com/embed/iF1chlZKQDw"
+                  title="Видео процесса колеровки"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full h-full"
+                />
+              </div>
+            </Card>
+          </div>
+
+          {/* Info Cards */}
+          <div className="grid md:grid-cols-3 gap-6 mb-16">
+            <Card className="border-2 border-primary/20">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <IconDeviceDesktopAnalytics className="w-5 h-5 text-primary" stroke={1.5} />
+                  Наше оборудование
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Мы используем профессиональное колеровочное оборудование последнего поколения, которое обеспечивает
+                  максимальную точность и скорость работы.
+                </p>
+                <div className="bg-muted/50 rounded-lg p-3 italic text-xs">
+                  💡 Точность смешивания до 0.01 грамма пигмента
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Преимущества</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {advantages.slice(0, 4).map((advantage, index) => (
+                    <div key={index} className="flex items-start gap-2">
+                      <advantage.icon className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" stroke={1.5} />
+                      <div>
+                        <h4 className="font-semibold text-sm">{advantage.title}</h4>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-to-br from-primary/5 to-purple-500/5">
+              <CardHeader>
+                <CardTitle className="text-lg">Как это работает</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {workProcess.map((step, index) => (
+                    <div key={index} className="flex items-start gap-2">
+                      <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-xs">
+                        {index + 1}
+                      </div>
+                      <p className="text-sm pt-0.5">{step}</p>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Color Collections */}
+          <div className="mb-16">
+            <h2 className="text-2xl font-bold text-center mb-8">Доступные цветовые системы</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {colorCollections.map((collection, index) => (
+                <Card key={index} className="text-center">
+                  <CardContent className="pt-6">
+                    <h3 className="font-semibold mb-1">{collection.name}</h3>
+                    <p className="text-sm text-muted-foreground">{collection.colors}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+
+          {/* All Advantages */}
+          <div className="mb-16">
+            <h2 className="text-2xl font-bold text-center mb-8">Почему выбирают нас</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {advantages.map((advantage, index) => (
+                <Card key={index} className="text-center hover:shadow-lg transition-shadow">
+                  <CardHeader>
+                    <div className="mx-auto mb-2 p-3 rounded-full bg-primary/10 w-fit">
+                      <advantage.icon className="w-6 h-6 text-primary" stroke={1.5} />
+                    </div>
+                    <CardTitle className="text-base">{advantage.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground">{advantage.description}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+
+          {/* CTA Section */}
+          <Card className="bg-gradient-to-r from-primary/10 via-purple-500/10 to-primary/10 border-2 border-primary/20">
+            <CardContent className="py-12 text-center">
+              <h2 className="text-3xl font-bold mb-4">Готовы подобрать идеальный цвет?</h2>
+              <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
+                Приходите в наш магазин или позвоните нам для консультации. Мы поможем выбрать идеальный оттенок для
+                вашего проекта!
+              </p>
+              <div className="flex flex-wrap gap-4 justify-center">
+                <Link to="/contacts">
+                  <Button size="lg" className="gap-2">
+                    <IconPalette className="w-5 h-5" stroke={1.5} />
+                    Заказать колеровку
+                  </Button>
+                </Link>
+                <Link to="/contacts">
+                  <Button size="lg" variant="outline" className="gap-2">
+                    <IconMessageChatbot className="w-5 h-5" stroke={1.5} />
+                    Получить консультацию
+                  </Button>
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </main>
+      <Footer />
+    </div>
+  );
+};
+
+export default TintingPage;

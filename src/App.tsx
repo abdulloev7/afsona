@@ -8,6 +8,11 @@ import { CartProvider } from "@/contexts/CartContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import BrandPage from "./pages/BrandPage";
+import Catalog from "./pages/Catalog";
+import BrandsPage from "./pages/BrandsPage";
+import AboutPage from "./pages/AboutPage";
+import ContactsPage from "./pages/ContactsPage";
+import TintingPage from "./pages/TintingPage";
 import WallPaints from "./pages/WallPaints";
 import CeilingPaints from "./pages/CeilingPaints";
 import FacadePaints from "./pages/FacadePaints";
@@ -45,6 +50,11 @@ const App = () => (
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
+              <Route path="/catalog" element={<Catalog />} />
+              <Route path="/brands" element={<BrandsPage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/contacts" element={<ContactsPage />} />
+              <Route path="/tinting" element={<TintingPage />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/cart" element={<Cart />} />

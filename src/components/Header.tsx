@@ -108,24 +108,30 @@ const Header = () => {
           </Link>
           
           <nav className="hidden md:flex items-center space-x-6">
-            <button 
-              onClick={() => scrollToSection('home')}
+            <Link 
+              to="/"
               className="text-foreground hover:text-primary transition-colors"
             >
               Главная
-            </button>
-            <button 
-              onClick={() => scrollToSection('brands')}
+            </Link>
+            <Link 
+              to="/catalog"
               className="text-foreground hover:text-primary transition-colors"
             >
-              Наши бренды
-            </button>
-            <button 
-              onClick={() => scrollToSection('products')}
+              Каталог
+            </Link>
+            <Link 
+              to="/brands"
               className="text-foreground hover:text-primary transition-colors"
             >
-              Ассортимент
-            </button>
+              Бренды
+            </Link>
+            <Link 
+              to="/tinting"
+              className="text-foreground hover:text-primary transition-colors"
+            >
+              Колеровка
+            </Link>
             <Link 
               to="/news"
               className="text-foreground hover:text-primary transition-colors"
@@ -140,24 +146,18 @@ const Header = () => {
                 Портфолио
               </Link>
             )}
-            <button
-              onClick={() => scrollToSection('tinting')}
-              className="text-foreground hover:text-primary transition-colors"
-            >
-              Колеровка
-            </button>
-            <button 
-              onClick={() => scrollToSection('about')}
+            <Link 
+              to="/about"
               className="text-foreground hover:text-primary transition-colors"
             >
               О нас
-            </button>
-            <button 
-              onClick={() => scrollToSection('contacts')}
+            </Link>
+            <Link 
+              to="/contacts"
               className="text-foreground hover:text-primary transition-colors"
             >
               Контакты
-            </button>
+            </Link>
           </nav>
 
           <div className="flex items-center space-x-2">

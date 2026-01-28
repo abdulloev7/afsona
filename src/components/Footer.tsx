@@ -1,10 +1,13 @@
+import { Link } from "react-router-dom";
 import afsona_logo_full from "@/assets/afsona-logo-full.jpg";
 import { MapPin, ExternalLink } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+
 const Footer = () => {
-  return <footer className="bg-background text-foreground border-t border-border py-12">
+  return (
+    <footer className="bg-background text-foreground border-t border-border py-12">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <div className="mb-4">
               <img src={afsona_logo_full} alt="AFSONA - Эко материалы для ремонта" className="h-16 w-auto" />
@@ -16,13 +19,49 @@ const Footer = () => {
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4">Наши услуги</h4>
-            <ul className="space-y-2 text-sm opacity-90">
-              <li>• Продажа красок и материалов</li>
-              <li>• Консультации специалистов</li>
-              <li>• Подбор цветов</li>
-              <li>• Доставка по городу</li>
-              <li>• Техническая поддержка</li>
+            <h4 className="font-semibold mb-4">Навигация</h4>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link to="/" className="opacity-90 hover:opacity-100 hover:text-primary transition-colors">
+                  Главная
+                </Link>
+              </li>
+              <li>
+                <Link to="/catalog" className="opacity-90 hover:opacity-100 hover:text-primary transition-colors">
+                  Каталог
+                </Link>
+              </li>
+              <li>
+                <Link to="/brands" className="opacity-90 hover:opacity-100 hover:text-primary transition-colors">
+                  Бренды
+                </Link>
+              </li>
+              <li>
+                <Link to="/tinting" className="opacity-90 hover:opacity-100 hover:text-primary transition-colors">
+                  Колеровка
+                </Link>
+              </li>
+              <li>
+                <Link to="/news" className="opacity-90 hover:opacity-100 hover:text-primary transition-colors">
+                  Новости
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-semibold mb-4">Информация</h4>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link to="/about" className="opacity-90 hover:opacity-100 hover:text-primary transition-colors">
+                  О компании
+                </Link>
+              </li>
+              <li>
+                <Link to="/contacts" className="opacity-90 hover:opacity-100 hover:text-primary transition-colors">
+                  Контакты
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -61,6 +100,8 @@ const Footer = () => {
           <p className="text-sm opacity-75">© 2026 AFSONA. Все права защищены. Эко материалы для ремонта.</p>
         </div>
       </div>
-    </footer>;
+    </footer>
+  );
 };
+
 export default Footer;
