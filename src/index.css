@@ -8,48 +8,57 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 50 100% 95%;
+    /* Clean white background with subtle warm undertone for green harmony */
+    --background: 0 0% 100%;
     --foreground: 155 45% 18%;
 
-    --card: 50 80% 97%;
+    /* Cards with very subtle warmth to soften against pure white */
+    --card: 60 20% 99%;
     --card-foreground: 155 45% 18%;
 
-    --popover: 50 80% 97%;
+    --popover: 0 0% 100%;
     --popover-foreground: 155 45% 18%;
 
+    /* Primary green - your brand color */
     --primary: 149 43% 28%;
-    --primary-foreground: 50 100% 95%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 50 60% 91%;
+    /* Soft neutral secondary */
+    --secondary: 150 8% 95%;
     --secondary-foreground: 149 43% 28%;
 
-    --muted: 50 50% 89%;
-    --muted-foreground: 155 30% 40%;
+    /* Muted tones with green undertone */
+    --muted: 150 10% 94%;
+    --muted-foreground: 155 25% 40%;
 
+    /* Accent matches primary */
     --accent: 149 43% 28%;
-    --accent-foreground: 45 30% 96%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 50 45% 85%;
-    --input: 50 60% 91%;
+    /* Borders and inputs with subtle green-gray */
+    --border: 150 12% 88%;
+    --input: 150 10% 94%;
     --ring: 149 43% 28%;
 
     /* Custom AFSONA Brand Colors - Eco Green Theme */
     --brand-green: 149 43% 28%;
-    --brand-green-light: 149 43% 28%;
-    --brand-green-dark: 149 43% 28%;
-    --brand-cream: 50 100% 95%;
-    --brand-cream-light: 50 80% 97%;
+    --brand-green-light: 149 38% 38%;
+    --brand-green-dark: 149 48% 22%;
+    --brand-cream: 60 20% 98%;
+    --brand-cream-light: 60 15% 99%;
+    --brand-blue: 210 65% 45%;
+    --brand-blue-light: 210 55% 55%;
     
     /* Gradients */
     --gradient-primary: linear-gradient(135deg, hsl(var(--brand-green)), hsl(var(--brand-green-light)));
     --gradient-hero: linear-gradient(135deg, hsl(var(--brand-green)) 0%, hsl(var(--brand-green-dark)) 100%);
     
-    /* Shadows */
-    --shadow-brand: 0 10px 30px -10px hsl(var(--brand-green) / 0.3);
-    --shadow-card: 0 4px 20px -4px hsl(var(--brand-green) / 0.15);
+    /* Shadows with green tint for brand cohesion */
+    --shadow-brand: 0 10px 30px -10px hsl(var(--brand-green) / 0.25);
+    --shadow-card: 0 4px 20px -4px hsl(150 20% 30% / 0.08);
 
     --radius: 0.5rem;
 
