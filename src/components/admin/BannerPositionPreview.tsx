@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { Move, Keyboard } from 'lucide-react';
+import { Slider } from '@/components/ui/slider';
+import { Label } from '@/components/ui/label';
+import { Move, Keyboard, ZoomIn } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export interface ElementPositions {
@@ -9,13 +11,21 @@ export interface ElementPositions {
   button: { x: number; y: number };
 }
 
+export interface ImageSettings {
+  scale: number;
+  positionX: number;
+  positionY: number;
+}
+
 interface BannerPositionPreviewProps {
   imageUrl: string;
   title: string;
   subtitle: string;
   buttonText: string;
   positions: ElementPositions;
+  imageSettings: ImageSettings;
   onPositionsChange: (positions: ElementPositions) => void;
+  onImageSettingsChange: (settings: ImageSettings) => void;
 }
 
 type ElementType = 'title' | 'subtitle' | 'button';
@@ -26,7 +36,9 @@ const BannerPositionPreview = ({
   subtitle,
   buttonText,
   positions,
+  imageSettings,
   onPositionsChange,
+  onImageSettingsChange,
 }: BannerPositionPreviewProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeElement, setActiveElement] = useState<ElementType | null>(null);
@@ -204,7 +216,53 @@ const BannerPositionPreview = ({
   };
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
+      {/* Image scale and position controls */}
+      <div className="p-4 bg-muted/50 rounded-lg space-y-4">
+        <div className="flex items-center gap-2">
+          <ZoomIn className="h-4 w-4 text-muted-foreground" />
+          <Label className="text-sm font-medium">Настройки изображения</Label>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="space-y-2">
+            <Label className="text-xs text-muted-foreground">Масштаб: {imageSettings.scale}%</Label>
+            <Slider
+              value={[imageSettings.scale]}
+              onValueChange={([value]) => onImageSettingsChange({ ...imageSettings, scale: value })}
+              min={100}
+              max={300}
+              step={5}
+              className="w-full"
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label className="text-xs text-muted-foreground">Позиция X: {imageSettings.positionX}%</Label>
+            <Slider
+              value={[imageSettings.positionX]}
+              onValueChange={([value]) => onImageSettingsChange({ ...imageSettings, positionX: value })}
+              min={0}
+              max={100}
+              step={1}
+              className="w-full"
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label className="text-xs text-muted-foreground">Позиция Y: {imageSettings.positionY}%</Label>
+            <Slider
+              value={[imageSettings.positionY]}
+              onValueChange={([value]) => onImageSettingsChange({ ...imageSettings, positionY: value })}
+              min={0}
+              max={100}
+              step={1}
+              className="w-full"
+            />
+          </div>
+        </div>
+      </div>
+
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm font-medium">Превью баннера (полный размер)</p>
@@ -242,10 +300,14 @@ const BannerPositionPreview = ({
         onTouchMove={handleMouseMove}
         onTouchEnd={handleMouseUp}
       >
-        {/* Background image */}
+        {/* Background image with scale and position controls */}
         <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url(${imageUrl})` }}
+          className="absolute inset-0 bg-no-repeat"
+          style={{ 
+            backgroundImage: `url(${imageUrl})`,
+            backgroundSize: `${imageSettings.scale}%`,
+            backgroundPosition: `${imageSettings.positionX}% ${imageSettings.positionY}%`
+          }}
         />
         
         {/* Gradient overlay - matching Hero */}

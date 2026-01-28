@@ -24,7 +24,7 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Plus, Pencil, Trash2, ArrowUp, ArrowDown, Image as ImageIcon, Eye, EyeOff } from 'lucide-react';
-import BannerPositionPreview, { ElementPositions } from './BannerPositionPreview';
+import BannerPositionPreview, { ElementPositions, ImageSettings } from './BannerPositionPreview';
 
 interface Banner {
   id: string;
@@ -41,6 +41,9 @@ interface Banner {
   subtitle_position_y: number | null;
   button_position_x: number | null;
   button_position_y: number | null;
+  image_scale: number | null;
+  image_position_x: number | null;
+  image_position_y: number | null;
   created_at: string;
   updated_at: string;
 }
@@ -53,12 +56,19 @@ interface BannerFormData {
   button_link: string;
   is_active: boolean;
   positions: ElementPositions;
+  imageSettings: ImageSettings;
 }
 
 const DEFAULT_POSITIONS: ElementPositions = {
   title: { x: 25, y: 70 },
   subtitle: { x: 25, y: 78 },
   button: { x: 25, y: 88 },
+};
+
+const DEFAULT_IMAGE_SETTINGS: ImageSettings = {
+  scale: 100,
+  positionX: 50,
+  positionY: 50,
 };
 
 const BannerManagement = () => {
@@ -78,6 +88,7 @@ const BannerManagement = () => {
     button_link: '',
     is_active: true,
     positions: { ...DEFAULT_POSITIONS },
+    imageSettings: { ...DEFAULT_IMAGE_SETTINGS },
   });
 
   const { toast } = useToast();
@@ -172,6 +183,7 @@ const BannerManagement = () => {
       button_link: '',
       is_active: true,
       positions: { ...DEFAULT_POSITIONS },
+      imageSettings: { ...DEFAULT_IMAGE_SETTINGS },
     });
     setImagePreview(null);
     setEditingBanner(null);
@@ -199,6 +211,11 @@ const BannerManagement = () => {
           x: banner.button_position_x ?? DEFAULT_POSITIONS.button.x, 
           y: banner.button_position_y ?? DEFAULT_POSITIONS.button.y 
         },
+      },
+      imageSettings: {
+        scale: banner.image_scale ?? DEFAULT_IMAGE_SETTINGS.scale,
+        positionX: banner.image_position_x ?? DEFAULT_IMAGE_SETTINGS.positionX,
+        positionY: banner.image_position_y ?? DEFAULT_IMAGE_SETTINGS.positionY,
       },
     });
     setImagePreview(banner.image_url);
@@ -229,6 +246,9 @@ const BannerManagement = () => {
         subtitle_position_y: formData.positions.subtitle.y,
         button_position_x: formData.positions.button.x,
         button_position_y: formData.positions.button.y,
+        image_scale: formData.imageSettings.scale,
+        image_position_x: formData.imageSettings.positionX,
+        image_position_y: formData.imageSettings.positionY,
       };
 
       if (editingBanner) {
@@ -464,9 +484,14 @@ const BannerManagement = () => {
                   subtitle={formData.subtitle}
                   buttonText={formData.button_text}
                   positions={formData.positions}
+                  imageSettings={formData.imageSettings}
                   onPositionsChange={(positions) => setFormData((prev) => ({ 
                     ...prev, 
                     positions 
+                  }))}
+                  onImageSettingsChange={(imageSettings) => setFormData((prev) => ({
+                    ...prev,
+                    imageSettings
                   }))}
                 />
               )}
