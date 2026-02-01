@@ -1,150 +1,145 @@
 
-# Аудит сайта AFSONA и план улучшений
+# Plan: Refactor Hero Slider Implementation
 
-## Текущая архитектура
+## Overview
+Refactor the Hero banner slider to fix layout shift issues, improve element positioning accuracy, and update navigation placement.
 
-Сайт реализован как **гибридная структура**:
-- **Главная страница (`/`)** — классический лендинг со всеми секциями (Hero, Featured Products, Brands, Tinting, Products, About, Contacts)
-- **Отдельные страницы категорий** — `/paints-coatings`, `/primers`, `/rollers` и др.
-- **Страницы товаров** — `/product/:id`
-- **Новости и Портфолио** — `/news`, `/portfolio`
+## Changes Summary
 
-### Проблема: Лендинг-поведение навигации
+### 1. Fix Layout Shift (Image Stability)
+**Problem**: Banner images "jump" after loading due to Framer Motion hydration delay.
 
-Навигация в Header работает через **scroll-to-section**:
+**Solution**:
+- Remove `backgroundImage` CSS approach
+- Use a proper `<img>` tag with `object-cover`
+- Apply `transform: scale() translate()` directly via inline styles (instant, no animation library)
+- Wrap image in a container with `overflow-hidden`
+
+```text
+Before: backgroundImage + backgroundSize + backgroundPosition (CSS)
+After:  <img> with transform: scale(X) translate(X%, Y%) (inline style)
 ```
-Ассортимент → scrollToSection('products') → скролл до низа страницы
-Наши бренды → scrollToSection('brands') → скролл к секции брендов
-О нас → scrollToSection('about') → скролл к секции
+
+### 2. Smart Element Positioning (BannerElement Component)
+**Problem**: Text and buttons don't anchor correctly at different screen sizes.
+
+**Solution**: Create a `BannerElement` helper component with smart anchor logic:
+
+```text
+┌─────────────────────────────────────────────────────────────┐
+│  x < 35%           │   35% ≤ x ≤ 65%   │      x > 65%       │
+│  LEFT ANCHOR       │   CENTER ANCHOR   │   RIGHT ANCHOR     │
+│  translate(0, -50%)│translate(-50%,-50%)│translate(-100%,-50%)│
+│  text-left         │   text-center     │    text-right      │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-Это создаёт ощущение "недоделанного" сайта — пользователь ожидает перехода на отдельную страницу.
+This ensures elements stay visually anchored to their intended position regardless of content width.
+
+### 3. Navigation Controls Update
+**Current**: `bottom-3 right-6`
+**New**: `bottom-8 right-8` with updated styling (backdrop-blur, rounded-full buttons)
+
+Order: `[Prev Arrow] [Dots] [Next Arrow]`
+
+### 4. Remove Unnecessary Framer Motion
+- Remove `AnimatePresence` and `motion.div` wrappers for static positioning
+- Keep Framer Motion only for optional entry animations (can be added later if desired)
+- This eliminates FOUC (Flash of Unstyled Content)
 
 ---
 
-## План улучшений
+## Technical Details
 
-### 1. Создать отдельную страницу "Каталог" (`/catalog`)
+### File to Modify
+`src/components/Hero.tsx`
 
-**Что будет на странице:**
-- Все категории с иконками и количеством товаров
-- Фильтры по брендам
-- Возможность перейти в любую категорию
-- Поисковая строка
+### Key Code Changes
 
-**Навигация:**
-- Кнопка "Ассортимент" в Header → ведёт на `/catalog`
-- Секция Products на главной остаётся как **превью** с кнопкой "Смотреть весь каталог"
+**A. New BannerElement Helper Component:**
+```tsx
+interface BannerElementProps {
+  x: number;
+  y: number;
+  children: React.ReactNode;
+  className?: string;
+}
 
-### 2. Создать отдельную страницу "Бренды" (`/brands`)
+const BannerElement = ({ x, y, children, className = "" }: BannerElementProps) => {
+  let translateX = "-50%";
+  let textAlign = "text-center";
+  
+  if (x < 35) {
+    translateX = "0%";
+    textAlign = "text-left";
+  } else if (x > 65) {
+    translateX = "-100%";
+    textAlign = "text-right";
+  }
 
-**Что будет на странице:**
-- Все бренды с логотипами и описаниями
-- Количество товаров каждого бренда
-- Переход на страницу бренда `/brands/:slug`
-
-**Навигация:**
-- Кнопка "Наши бренды" в Header → ведёт на `/brands`
-- Секция Brands на главной остаётся как превью
-
-### 3. Создать отдельную страницу "О компании" (`/about`)
-
-**Что будет на странице:**
-- Расширенная информация о компании
-- История
-- Миссия и ценности
-- Команда (опционально)
-
-### 4. Создать отдельную страницу "Контакты" (`/contacts`)
-
-**Что будет на странице:**
-- Полная контактная информация
-- Большая интерактивная карта
-- Форма обратной связи
-- Часы работы
-
-### 5. Создать отдельную страницу "Колеровка" (`/tinting`)
-
-**Что будет на странице:**
-- Подробное описание услуги
-- Галерея оборудования
-- Цветовые палитры
-- Калькулятор расхода (опционально)
-
-### 6. Обновить навигацию в Header
-
-**Изменения:**
-```
-Было (scroll):                    Станет (Link):
-─────────────────────────────────────────────────────
-Главная → scroll to top          Главная → /
-Наши бренды → scroll #brands     Наши бренды → /brands
-Ассортимент → scroll #products   Каталог → /catalog
-Новости → /news                  Новости → /news (без изменений)
-Колеровка → scroll #tinting      Колеровка → /tinting
-О нас → scroll #about            О компании → /about
-Контакты → scroll #contacts      Контакты → /contacts
+  return (
+    <div
+      className={`absolute z-10 w-auto max-w-[90%] ${textAlign} ${className}`}
+      style={{
+        left: `${x}%`,
+        top: `${y}%`,
+        transform: `translate(${translateX}, -50%)`,
+      }}
+    >
+      {children}
+    </div>
+  );
+};
 ```
 
-### 7. Обновить главную страницу
+**B. Image Transform (Instant, No Animation):**
+```tsx
+<div 
+  className="absolute inset-0 w-full h-full overflow-hidden"
+  style={{
+    transform: `scale(${imageScale / 100}) translate(${imagePositionX - 50}%, ${imagePositionY - 50}%)`
+  }}
+>
+  <img
+    src={banner.image_url}
+    alt={banner.title || "Banner"}
+    className="w-full h-full object-cover"
+    loading="eager"
+  />
+</div>
+```
 
-Главная станет настоящим **лендингом-витриной**:
-- Hero баннеры
-- Featured Products (топ товары)
-- **Компактная секция категорий** (3-4 категории + кнопка "Весь каталог")
-- **Компактная секция брендов** (логотипы + кнопка "Все бренды")
-- **Краткое описание колеровки** с кнопкой "Подробнее"
-- **Краткий блок О нас** с кнопкой "Подробнее"
-- **Краткие контакты** с кнопкой "Все контакты"
-
----
-
-## Порядок реализации
-
-### Фаза 1: Новые страницы
-1. Создать `/catalog` — страница со всеми категориями
-2. Создать `/brands` — страница со всеми брендами
-3. Создать `/about` — расширенная страница о компании
-4. Создать `/contacts` — полная страница контактов
-5. Создать `/tinting` — страница услуги колеровки
-
-### Фаза 2: Обновление навигации
-6. Обновить Header — заменить scroll-навигацию на Link
-7. Обновить Footer — добавить ссылки на новые страницы
-
-### Фаза 3: Рефакторинг главной
-8. Упростить секции на главной — сделать их компактными превью
-9. Добавить CTA-кнопки для перехода на полные страницы
-
----
-
-## Технические детали
-
-### Новые файлы:
-- `src/pages/Catalog.tsx` — страница каталога
-- `src/pages/BrandsPage.tsx` — страница всех брендов
-- `src/pages/AboutPage.tsx` — страница о компании
-- `src/pages/ContactsPage.tsx` — страница контактов
-- `src/pages/TintingPage.tsx` — страница колеровки
-
-### Изменяемые файлы:
-- `src/App.tsx` — добавить новые маршруты
-- `src/components/Header.tsx` — заменить scroll на Link
-- `src/components/Footer.tsx` — добавить навигационные ссылки
-- `src/pages/Index.tsx` — возможно убрать/упростить секции
-- `src/components/Products.tsx` — сделать компактнее
-- `src/components/Brands.tsx` — сделать компактнее
-- `src/components/About.tsx` — сделать компактнее
-- `src/components/Contacts.tsx` — сделать компактнее
-- `src/components/Tinting.tsx` — сделать компактнее
+**C. Navigation Styling:**
+```tsx
+<div className="absolute bottom-8 right-8 z-20 flex items-center gap-4">
+  <button className="p-2 bg-white/10 hover:bg-white/20 backdrop-blur rounded-full text-white">
+    <ArrowLeft />
+  </button>
+  <div className="flex gap-2">{/* dots */}</div>
+  <button className="p-2 bg-white/10 hover:bg-white/20 backdrop-blur rounded-full text-white">
+    <ArrowRight />
+  </button>
+</div>
+```
 
 ---
 
-## Результат
+## Removed Dependencies (in this component)
+- `AnimatePresence` - no longer needed for element positioning
+- `motion` wrappers - replaced with static positioning
 
-После реализации сайт станет **полноценным многостраничным интернет-магазином**:
-- Профессиональная структура
-- Удобная навигация
-- Каждый раздел на своей странице
-- Главная как витрина с превью всех разделов
-- Улучшенный SEO (отдельные URL для каждого раздела)
+## Preserved Functionality
+- Embla Carousel with autoplay (5 second interval)
+- Pause on hover
+- Loop behavior
+- All admin-configurable positioning values
+
+---
+
+## Testing Checklist
+After implementation:
+1. Verify no layout shift on page load
+2. Test element positioning at different X values (left/center/right zones)
+3. Confirm navigation works (dots, arrows)
+4. Check responsive behavior across breakpoints
+5. Verify admin panel coordinates match frontend display
