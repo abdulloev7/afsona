@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Carousel,
@@ -30,10 +29,38 @@ interface Banner {
   image_position_y: number | null;
 }
 
-const getTextAlign = (x: number): string => {
-  if (x < 35) return 'text-left';
-  if (x > 65) return 'text-right';
-  return 'text-center';
+// Smart positioning component with anchor logic based on X position
+interface BannerElementProps {
+  x: number;
+  y: number;
+  children: React.ReactNode;
+  className?: string;
+}
+
+const BannerElement = ({ x, y, children, className = "" }: BannerElementProps) => {
+  let translateX = "-50%";
+  let textAlign = "text-center";
+  
+  if (x < 35) {
+    translateX = "0%";
+    textAlign = "text-left";
+  } else if (x > 65) {
+    translateX = "-100%";
+    textAlign = "text-right";
+  }
+
+  return (
+    <div
+      className={`absolute z-10 w-auto max-w-[90%] ${textAlign} ${className}`}
+      style={{
+        left: `${x}%`,
+        top: `${y}%`,
+        transform: `translate(${translateX}, -50%)`,
+      }}
+    >
+      {children}
+    </div>
+  );
 };
 
 const Hero = () => {
@@ -104,12 +131,7 @@ const Hero = () => {
   if (!loading && banners.length === 0) {
     return (
       <section className="h-[50vh] sm:h-[60vh] md:h-[65vh] lg:h-[75vh] flex items-center justify-center bg-background">
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.8, ease: "easeInOut" }}
-          className="container mx-auto px-4 text-center"
-        >
+        <div className="container mx-auto px-4 text-center">
           <div className="max-w-4xl mx-auto">
             <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight text-foreground">
               AFSONA
@@ -140,7 +162,7 @@ const Hero = () => {
               </Button>
             </div>
           </div>
-        </motion.div>
+        </div>
       </section>
     );
   }
@@ -172,102 +194,67 @@ const Hero = () => {
         className="w-full h-full [&>div]:h-full"
       >
         <CarouselContent className="h-full -ml-0 [&>div]:h-full">
-          {banners.map((banner, index) => {
+          {banners.map((banner) => {
             const titleX = banner.title_position_x ?? 25;
             const titleY = banner.title_position_y ?? 70;
             const subtitleX = banner.subtitle_position_x ?? 25;
             const subtitleY = banner.subtitle_position_y ?? 78;
             const buttonX = banner.button_position_x ?? 25;
             const buttonY = banner.button_position_y ?? 88;
-            const imageScale = banner.image_scale ?? 100;
-            const imagePositionX = banner.image_position_x ?? 50;
-            const imagePositionY = banner.image_position_y ?? 50;
+            const imageScale = (banner.image_scale ?? 100) / 100;
+            const imagePositionX = (banner.image_position_x ?? 50) - 50;
+            const imagePositionY = (banner.image_position_y ?? 50) - 50;
 
             return (
               <CarouselItem key={banner.id} className="h-full pl-0">
-                <div className="relative w-full h-full">
-                  {/* Background image with scale and position */}
-                  <div
-                    className="absolute inset-0 bg-no-repeat"
-                    style={{ 
-                      backgroundImage: `url(${banner.image_url})`,
-                      backgroundSize: `${imageScale}%`,
-                      backgroundPosition: `${imagePositionX}% ${imagePositionY}%`
+                <div className="relative w-full h-full overflow-hidden">
+                  {/* Background image with instant transform (no animation delay) */}
+                  <div 
+                    className="absolute inset-0 w-full h-full"
+                    style={{
+                      transform: `scale(${imageScale}) translate(${imagePositionX}%, ${imagePositionY}%)`
                     }}
-                  />
+                  >
+                    <img
+                      src={banner.image_url}
+                      alt={banner.title || "Banner"}
+                      className="w-full h-full object-cover"
+                      loading="eager"
+                    />
+                  </div>
 
                   {/* Dark gradient overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
 
-                  {/* Title - independently positioned */}
-                  <AnimatePresence mode="wait">
-                    {current === index && banner.title && (
-                      <motion.div
-                        key={`title-${banner.id}`}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.5, ease: "easeOut" }}
-                        className="absolute z-10 transform -translate-x-1/2 -translate-y-1/2"
-                        style={{
-                          left: `${titleX}%`,
-                          top: `${titleY}%`,
-                        }}
-                      >
+                  {/* Content Container */}
+                  <div className="relative w-full h-full">
+                    {/* Title - smart anchor positioning */}
+                    {banner.title && (
+                      <BannerElement x={titleX} y={titleY}>
                         <h2
-                          className={`text-2xl md:text-3xl lg:text-4xl font-bold text-white leading-tight whitespace-nowrap ${getTextAlign(titleX)}`}
-                          style={{
-                            textShadow: "0 2px 8px rgba(0,0,0,0.5)",
-                          }}
+                          className="text-2xl md:text-3xl lg:text-4xl font-bold text-white leading-tight whitespace-nowrap"
+                          style={{ textShadow: "0 2px 8px rgba(0,0,0,0.5)" }}
                         >
                           {banner.title}
                         </h2>
-                      </motion.div>
+                      </BannerElement>
                     )}
-                  </AnimatePresence>
 
-                  {/* Subtitle - independently positioned */}
-                  <AnimatePresence mode="wait">
-                    {current === index && banner.subtitle && (
-                      <motion.div
-                        key={`subtitle-${banner.id}`}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.5, ease: "easeOut", delay: 0.1 }}
-                        className="absolute z-10 transform -translate-x-1/2 -translate-y-1/2"
-                        style={{
-                          left: `${subtitleX}%`,
-                          top: `${subtitleY}%`,
-                        }}
-                      >
+                    {/* Subtitle - smart anchor positioning */}
+                    {banner.subtitle && (
+                      <BannerElement x={subtitleX} y={subtitleY}>
                         <p
-                          className={`text-sm md:text-base lg:text-lg text-white/90 whitespace-nowrap ${getTextAlign(subtitleX)}`}
-                          style={{
-                            textShadow: "0 1px 4px rgba(0,0,0,0.5)",
-                          }}
+                          className="text-sm md:text-base lg:text-lg text-white/90 whitespace-nowrap"
+                          style={{ textShadow: "0 1px 4px rgba(0,0,0,0.5)" }}
                         >
                           {banner.subtitle}
                         </p>
-                      </motion.div>
+                      </BannerElement>
                     )}
-                  </AnimatePresence>
 
-                  {/* Button - independently positioned */}
-                  <AnimatePresence mode="wait">
-                    {current === index && banner.button_text && (
-                      <motion.div
-                        key={`button-${banner.id}`}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.5, ease: "easeOut", delay: 0.2 }}
-                        className="absolute z-10 transform -translate-x-1/2 -translate-y-1/2"
-                        style={{
-                          left: `${buttonX}%`,
-                          top: `${buttonY}%`,
-                        }}
-                      >
+                    {/* Button - smart anchor positioning */}
+                    {banner.button_text && (
+                      <BannerElement x={buttonX} y={buttonY}>
                         <Button
                           size="default"
                           onClick={() => handleButtonClick(banner.button_link)}
@@ -275,18 +262,27 @@ const Hero = () => {
                         >
                           {banner.button_text}
                         </Button>
-                      </motion.div>
+                      </BannerElement>
                     )}
-                  </AnimatePresence>
+                  </div>
                 </div>
               </CarouselItem>
             );
           })}
         </CarouselContent>
 
-        {/* Navigation - dots and arrows together in bottom right */}
+        {/* Navigation - bottom-right with backdrop blur styling */}
         {banners.length > 1 && (
-          <div className="absolute bottom-3 right-6 flex items-center gap-4 z-10">
+          <div className="absolute bottom-8 right-8 z-20 flex items-center gap-4">
+            {/* Previous arrow */}
+            <button
+              onClick={scrollPrev}
+              className="p-2 bg-white/10 hover:bg-white/20 backdrop-blur rounded-full text-white transition"
+              aria-label="Previous slide"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </button>
+            
             {/* Dot indicators */}
             <div className="flex items-center gap-2">
               {banners.map((_, index) => (
@@ -295,35 +291,22 @@ const Hero = () => {
                   onClick={() => api?.scrollTo(index)}
                   className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
                     current === index
-                      ? "bg-primary w-6"
+                      ? "bg-white w-6"
                       : "bg-white/50 hover:bg-white/75"
                   }`}
                   aria-label={`Go to slide ${index + 1}`}
                 />
               ))}
             </div>
-            
-            {/* Navigation arrows */}
-            <div className="flex items-center gap-2">
-              <Button
-                variant="secondary"
-                size="icon"
-                onClick={scrollPrev}
-                className="h-9 w-9 rounded-full bg-white/90 hover:bg-white border border-border shadow-sm"
-              >
-                <ArrowLeft className="h-4 w-4 text-foreground" />
-                <span className="sr-only">Previous slide</span>
-              </Button>
-              <Button
-                variant="secondary"
-                size="icon"
-                onClick={scrollNext}
-                className="h-9 w-9 rounded-full bg-white/90 hover:bg-white border border-border shadow-sm"
-              >
-                <ArrowRight className="h-4 w-4 text-foreground" />
-                <span className="sr-only">Next slide</span>
-              </Button>
-            </div>
+
+            {/* Next arrow */}
+            <button
+              onClick={scrollNext}
+              className="p-2 bg-white/10 hover:bg-white/20 backdrop-blur rounded-full text-white transition"
+              aria-label="Next slide"
+            >
+              <ArrowRight className="h-5 w-5" />
+            </button>
           </div>
         )}
       </Carousel>
