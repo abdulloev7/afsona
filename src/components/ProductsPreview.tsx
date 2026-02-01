@@ -135,7 +135,7 @@ const ProductsPreview = () => {
                   <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-3 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
                     {getCategoryIcon(category.slug)}
                   </div>
-                  <h3 className="font-semibold text-sm mb-1 line-clamp-2">{category.name}</h3>
+                  <h3 className="font-semibold text-base mb-1 line-clamp-2">{category.name}</h3>
                   <p className="text-xs text-muted-foreground">
                     {category.productCount} товаров
                   </p>
