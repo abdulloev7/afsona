@@ -98,11 +98,10 @@ const ContactsPreview = () => {
                   </button>
 
                   <button
-                    disabled
-                    className="flex flex-col items-center gap-1.5 p-2 rounded-lg opacity-50 cursor-not-allowed"
-                    title="Скоро"
+                    onClick={() => window.open('https://www.instagram.com/afsona.build/', '_blank')}
+                    className="flex flex-col items-center gap-1.5 p-2 rounded-lg hover:bg-muted/30 transition-all duration-300 group"
                   >
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#f09433] via-[#e6683c] to-[#dc2743] flex items-center justify-center shadow-md">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#f09433] via-[#e6683c] to-[#dc2743] flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
                       <FaInstagram className="w-5 h-5 text-white" />
                     </div>
                   </button>

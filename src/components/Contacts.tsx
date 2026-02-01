@@ -96,14 +96,13 @@ const Contacts = () => {
                 </button>
 
                 <button
-                  disabled
-                  className="flex flex-col items-center gap-2 p-3 rounded-xl opacity-50 cursor-not-allowed"
+                  onClick={() => window.open('https://www.instagram.com/afsona.build/', '_blank')}
+                  className="flex flex-col items-center gap-2 p-3 rounded-xl hover:bg-muted/30 transition-all duration-300 group"
                 >
-                  <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#f09433] via-[#e6683c] to-[#dc2743] flex items-center justify-center shadow-lg">
+                  <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#f09433] via-[#e6683c] to-[#dc2743] flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-[#dc2743]/30 transition-all duration-300">
                     <FaInstagram className="w-7 h-7 text-white" />
                   </div>
                   <span className="text-xs font-medium">Instagram</span>
-                  <span className="text-[10px] text-muted-foreground">Скоро</span>
                 </button>
 
                 <button
