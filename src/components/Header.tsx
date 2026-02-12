@@ -192,7 +192,7 @@ const Header = () => {
                     )}
                   </Button>
                 </Link>
-                <Link to="/profile?tab=orders" className="relative">
+                <Link to="/profile?tab=orders" className="relative hidden md:inline-flex">
                   <Button variant="ghost" size="sm" className="hover:bg-primary/10">
                     <IconUser size={20} stroke={1.5} className="mr-1" />
                     Профиль
@@ -208,13 +208,70 @@ const Header = () => {
                 </Link>
               </>
             ) : (
-              <Link to="/auth">
+              <Link to="/auth" className="hidden md:inline-flex">
                 <Button variant="default" size="sm">
                   <IconLogin size={20} stroke={1.5} className="mr-1" />
                   Войти
                 </Button>
               </Link>
             )}
+
+            {/* Mobile burger */}
+            <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="md:hidden">
+                  <IconMenu2 size={24} stroke={1.5} />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-72 p-0">
+                <SheetTitle className="sr-only">Меню навигации</SheetTitle>
+                <nav className="flex flex-col py-6">
+                  {[
+                    { to: "/", label: "Главная" },
+                    { to: "/catalog", label: "Каталог" },
+                    { to: "/brands", label: "Бренды" },
+                    { to: "/tinting", label: "Колеровка" },
+                    { to: "/news", label: "Новости" },
+                    ...(isAdmin ? [{ to: "/portfolio", label: "Портфолио" }] : []),
+                    { to: "/about", label: "О нас" },
+                    { to: "/contacts", label: "Контакты" },
+                  ].map((item) => (
+                    <Link
+                      key={item.to}
+                      to={item.to}
+                      className={`px-6 py-3 text-base transition-colors hover:bg-accent ${
+                        location.pathname === item.to ? "text-primary font-semibold bg-accent/50" : "text-foreground"
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+
+                  <div className="border-t border-border mt-4 pt-4 px-6 flex flex-col gap-2">
+                    {user ? (
+                      <Link to="/profile?tab=orders">
+                        <Button variant="outline" className="w-full justify-start relative">
+                          <IconUser size={18} stroke={1.5} className="mr-2" />
+                          Профиль
+                          {completedOrdersCount > 0 && (
+                            <Badge variant="destructive" className="ml-auto h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs">
+                              {completedOrdersCount}
+                            </Badge>
+                          )}
+                        </Button>
+                      </Link>
+                    ) : (
+                      <Link to="/auth">
+                        <Button variant="default" className="w-full">
+                          <IconLogin size={18} stroke={1.5} className="mr-2" />
+                          Войти
+                        </Button>
+                      </Link>
+                    )}
+                  </div>
+                </nav>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
       </div>
