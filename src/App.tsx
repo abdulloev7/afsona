@@ -13,20 +13,6 @@ import BrandsPage from "./pages/BrandsPage";
 import AboutPage from "./pages/AboutPage";
 import ContactsPage from "./pages/ContactsPage";
 import TintingPage from "./pages/TintingPage";
-import WallPaints from "./pages/WallPaints";
-import CeilingPaints from "./pages/CeilingPaints";
-import FacadePaints from "./pages/FacadePaints";
-import Primers from "./pages/Primers";
-import DecorativeCoatings from "./pages/DecorativeCoatings";
-import Tools from "./pages/Tools";
-import Rollers from "./pages/Rollers";
-import BrushesTools from "./pages/BrushesTools";
-import SpatulasAccessories from "./pages/SpatulasAccessories";
-import AdhesivesSealants from "./pages/AdhesivesSealants";
-import PuttiesLeveling from "./pages/PuttiesLeveling";
-import TintsThinners from "./pages/TintsThinners";
-import PaintsCoatings from "./pages/PaintsCoatings";
-import Waterproofing from "./pages/Waterproofing";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
 import Cart from "./pages/Cart";
@@ -37,6 +23,7 @@ import News from "./pages/News";
 import NewsDetail from "./pages/NewsDetail";
 import Portfolio from "./pages/Portfolio";
 import PortfolioDetail from "./pages/PortfolioDetail";
+import CategoryPage from "./pages/CategoryPage";
 
 const queryClient = new QueryClient();
 
