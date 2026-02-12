@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { IconShoppingBag, IconUser, IconLogin, IconLayoutDashboard } from "@tabler/icons-react";
+import { IconShoppingBag, IconUser, IconLogin, IconLayoutDashboard, IconMenu2 } from "@tabler/icons-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 import { useUserRole } from "@/hooks/useUserRole";
 import { SearchDialog } from "@/components/SearchDialog";
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import afsona_logo_new from "@/assets/afsona-logo-new.jpg";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
