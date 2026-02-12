@@ -70,7 +70,6 @@ const CategoryPage = () => {
 
   // Support both /catalog/:slug and legacy routes like /paints-coatings
   const routeSlug = paramSlug || location.pathname.replace(/^\//, '');
-  const { toast } = useToast();
 
   const [category, setCategory] = useState<Category | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
