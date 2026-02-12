@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ShoppingCart, Leaf, ShoppingBag } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
-import { useAuth } from '@/contexts/AuthContext';
+
 import { useToast } from '@/hooks/use-toast';
 import { ProductSizeSelector } from './ProductSizeSelector';
 
