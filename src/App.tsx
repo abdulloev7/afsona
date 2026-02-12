@@ -49,20 +49,20 @@ const App = () => (
               <Route path="/orders" element={<Orders />} />
               <Route path="/product/:id" element={<Product />} />
               <Route path="/brands/:slug" element={<BrandPage />} />
-              <Route path="/paints-coatings" element={<PaintsCoatings />} />
-              <Route path="/wall-paints" element={<WallPaints />} />
-              <Route path="/ceiling-paints" element={<CeilingPaints />} />
-              <Route path="/facade-paints" element={<FacadePaints />} />
-              <Route path="/primers" element={<Primers />} />
-              <Route path="/decorative-coatings" element={<DecorativeCoatings />} />
-              <Route path="/waterproofing" element={<Waterproofing />} />
-              <Route path="/adhesives-sealants" element={<AdhesivesSealants />} />
-              <Route path="/putties-leveling" element={<PuttiesLeveling />} />
-              <Route path="/tints-thinners" element={<TintsThinners />} />
-              <Route path="/brushes-tools" element={<BrushesTools />} />
-              <Route path="/rollers" element={<Rollers />} />
-              <Route path="/spatulas-accessories" element={<SpatulasAccessories />} />
-              <Route path="/tools" element={<Tools />} />
+              <Route path="/paints-coatings" element={<CategoryPage />} />
+              <Route path="/wall-paints" element={<CategoryPage />} />
+              <Route path="/ceiling-paints" element={<CategoryPage />} />
+              <Route path="/facade-paints" element={<CategoryPage />} />
+              <Route path="/primers" element={<CategoryPage />} />
+              <Route path="/decorative-coatings" element={<CategoryPage />} />
+              <Route path="/waterproofing" element={<CategoryPage />} />
+              <Route path="/adhesives-sealants" element={<CategoryPage />} />
+              <Route path="/putties-leveling" element={<CategoryPage />} />
+              <Route path="/tints-thinners" element={<CategoryPage />} />
+              <Route path="/brushes-tools" element={<CategoryPage />} />
+              <Route path="/rollers" element={<CategoryPage />} />
+              <Route path="/spatulas-accessories" element={<CategoryPage />} />
+              <Route path="/tools" element={<CategoryPage />} />
               <Route path="/news" element={<News />} />
               <Route path="/news/:slug" element={<NewsDetail />} />
               <Route path="/portfolio" element={<Portfolio />} />
