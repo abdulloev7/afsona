@@ -50,12 +50,7 @@ export function FeaturedProductCard({ product }: FeaturedProductCardProps) {
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
-    if (!user) {
-      navigate('/auth');
-      return;
-    }
-    
+
     // If product has variants, show selector dialog
     if (productHasVariants) {
       setShowSizeSelector(true);

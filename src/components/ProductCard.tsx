@@ -46,11 +46,6 @@ export const ProductCard = ({ product }: ProductCardProps) => {
     (product.sizes && product.sizes.length > 1);
 
   const handleAddToCart = async () => {
-    if (!user) {
-      navigate('/auth');
-      return;
-    }
-    
     // Если у товара есть варианты, показать диалог выбора
     if (productHasVariants) {
       setShowSizeSelector(true);
