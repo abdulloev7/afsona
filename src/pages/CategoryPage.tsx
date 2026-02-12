@@ -18,7 +18,7 @@ interface Product {
   description: string | null;
   price: number;
   image: string | null;
-  image_fit?: string | null;
+  image_fit?: 'cover' | 'contain' | null;
   features: string[] | null;
   eco: boolean | null;
   brand: string | null;
