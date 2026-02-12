@@ -83,7 +83,7 @@ const CategoryPage = () => {
   const [sortBy, setSortBy] = useState<SortOption>('default');
   const [showFilters, setShowFilters] = useState(false);
 
-  const dbSlug = slug ? (ROUTE_TO_DB_SLUG[slug] || slug) : '';
+  const dbSlug = routeSlug ? (ROUTE_TO_DB_SLUG[routeSlug] || routeSlug) : '';
 
   useEffect(() => {
     window.scrollTo(0, 0);
