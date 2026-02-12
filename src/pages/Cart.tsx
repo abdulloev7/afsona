@@ -134,6 +134,10 @@ const Cart = () => {
     e.preventDefault();
     
     if (!user) {
+      toast({
+        title: "Необходима авторизация",
+        description: "Для оформления заказа войдите в систему или зарегистрируйтесь",
+      });
       navigate('/auth');
       return;
     }
