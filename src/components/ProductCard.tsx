@@ -160,11 +160,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         </div>
       </CardHeader>
       <CardContent className="flex-1 flex flex-col">
-        {product.description && (
-          <p className="text-muted-foreground mb-4">{product.description}</p>
-        )}
-        
-        <div className="text-2xl font-bold mb-4 text-primary">
+        <div className="text-2xl font-bold mb-2 text-primary">
           {product.size_variants && product.size_variants.length > 0 ? (
             (() => {
               const prices = product.size_variants.map(v => v.price);
@@ -172,7 +168,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
               const maxPrice = Math.max(...prices);
               return minPrice === maxPrice 
                 ? `${minPrice.toLocaleString('ru-RU')} сом.`
-                : `от ${minPrice.toLocaleString('ru-RU')} до ${maxPrice.toLocaleString('ru-RU')} сом.`;
+                : `от ${minPrice.toLocaleString('ru-RU')} сом.`;
             })()
           ) : (
             `${product.price.toLocaleString('ru-RU')} сом.`
@@ -181,46 +177,8 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         
         {product.brand && (
           <p className="text-sm text-muted-foreground mb-2">
-            <strong>Бренд:</strong> {product.brand}
+            {product.brand}
           </p>
-        )}
-        
-        {product.features && product.features.length > 0 && (
-          <div className="mb-4">
-            <h4 className="font-semibold mb-2">Особенности:</h4>
-            <ul className="space-y-1">
-              {product.features.map((feature, index) => (
-                <li key={index} className="flex items-center text-sm">
-                  <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                  {feature}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        {(product.size_variants && product.size_variants.length > 0) ? (
-          <div className="mb-4">
-            <h4 className="font-semibold mb-2">Доступные объемы:</h4>
-            <div className="flex flex-wrap gap-2">
-              {product.size_variants.map((variant, index) => (
-                <Badge key={index} variant="outline" className="text-xs">
-                  {variant.volume} - {variant.price} сом
-                </Badge>
-              ))}
-            </div>
-          </div>
-        ) : product.sizes && product.sizes.length > 0 && (
-          <div className="mb-4">
-            <h4 className="font-semibold mb-2">Доступные объемы:</h4>
-            <div className="flex flex-wrap gap-1">
-              {product.sizes.map((size, index) => (
-                <Badge key={index} variant="outline" className="text-xs">
-                  {size}
-                </Badge>
-              ))}
-            </div>
-          </div>
         )}
         
         <div className="mt-auto pt-4">
