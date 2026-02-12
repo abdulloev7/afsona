@@ -134,6 +134,10 @@ const Cart = () => {
     e.preventDefault();
     
     if (!user) {
+      toast({
+        title: "Необходима авторизация",
+        description: "Для оформления заказа войдите в систему или зарегистрируйтесь",
+      });
       navigate('/auth');
       return;
     }
@@ -245,27 +249,6 @@ const Cart = () => {
 
   const isAllSelected = items.length > 0 && selectedItems.size === items.length;
   const isPartiallySelected = selectedItems.size > 0 && selectedItems.size < items.length;
-
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        <main className="flex-1 py-16">
-          <div className="container mx-auto px-4 max-w-2xl text-center">
-            <ShoppingCart className="h-16 w-16 mx-auto mb-4 opacity-50" />
-            <h1 className="text-2xl font-bold mb-4">Войдите для просмотра корзины</h1>
-            <p className="text-muted-foreground mb-8">
-              Для добавления товаров в корзину и оформления заказов необходимо войти в систему
-            </p>
-            <Button onClick={() => navigate('/auth')}>
-              Войти в систему
-            </Button>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-background">

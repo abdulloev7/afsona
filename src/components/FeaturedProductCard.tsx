@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ShoppingCart, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/contexts/CartContext';
-import { useAuth } from '@/contexts/AuthContext';
+
 import { useToast } from '@/hooks/use-toast';
 import { ProductSizeSelector } from './ProductSizeSelector';
 
@@ -36,7 +36,7 @@ export function FeaturedProductCard({ product }: FeaturedProductCardProps) {
   const [showSizeSelector, setShowSizeSelector] = useState(false);
   const navigate = useNavigate();
   const { addToCart } = useCart();
-  const { user } = useAuth();
+  
   const { toast } = useToast();
   
   const displayPrice = product.size_variants?.[0]?.price ?? product.price;
@@ -50,12 +50,7 @@ export function FeaturedProductCard({ product }: FeaturedProductCardProps) {
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
-    if (!user) {
-      navigate('/auth');
-      return;
-    }
-    
+
     // If product has variants, show selector dialog
     if (productHasVariants) {
       setShowSizeSelector(true);

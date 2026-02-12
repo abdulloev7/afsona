@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ShoppingCart, Leaf, ShoppingBag } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
-import { useAuth } from '@/contexts/AuthContext';
+
 import { useToast } from '@/hooks/use-toast';
 import { ProductSizeSelector } from './ProductSizeSelector';
 
@@ -33,7 +33,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   const [showSizeSelector, setShowSizeSelector] = useState(false);
   const navigate = useNavigate();
   const { addToCart } = useCart();
-  const { user } = useAuth();
+  
   const { toast } = useToast();
 
   const handleImageClick = () => {
@@ -46,11 +46,6 @@ export const ProductCard = ({ product }: ProductCardProps) => {
     (product.sizes && product.sizes.length > 1);
 
   const handleAddToCart = async () => {
-    if (!user) {
-      navigate('/auth');
-      return;
-    }
-    
     // Если у товара есть варианты, показать диалог выбора
     if (productHasVariants) {
       setShowSizeSelector(true);
