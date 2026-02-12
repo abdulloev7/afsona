@@ -63,8 +63,13 @@ const ROUTE_TO_DB_SLUG: Record<string, string> = {
 type SortOption = 'default' | 'price-asc' | 'price-desc' | 'name-asc' | 'newest';
 
 const CategoryPage = () => {
-  const { slug } = useParams<{ slug: string }>();
+  const { slug: paramSlug } = useParams<{ slug: string }>();
+  const location = useLocation();
   const navigate = useNavigate();
+  const { toast } = useToast();
+
+  // Support both /catalog/:slug and legacy routes like /paints-coatings
+  const routeSlug = paramSlug || location.pathname.replace(/^\//, '');
   const { toast } = useToast();
 
   const [category, setCategory] = useState<Category | null>(null);
