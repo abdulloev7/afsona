@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import afsona_logo_full from "@/assets/afsona-logo-full.jpg";
 import { MapPin, ExternalLink } from "lucide-react";
+import { FaTelegram, FaWhatsapp, FaInstagram } from "react-icons/fa";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 const Footer = () => {
@@ -92,6 +93,17 @@ const Footer = () => {
               <p>✉️ info@afsona.com.tj</p>
               <p>🕒 Пн-Сб: 08:00-12:00, 13:00-18:00</p>
               <p>🕒 Воскресенье: Выходной</p>
+            </div>
+            <div className="flex items-center gap-3 mt-4">
+              <a href="https://www.instagram.com/afsona.build/" target="_blank" rel="noopener noreferrer" className="text-foreground/70 hover:text-primary transition-colors" aria-label="Instagram">
+                <FaInstagram size={22} />
+              </a>
+              <a href="https://t.me/+992927557919" target="_blank" rel="noopener noreferrer" className="text-foreground/70 hover:text-primary transition-colors" aria-label="Telegram">
+                <FaTelegram size={22} />
+              </a>
+              <a href="https://wa.me/992927557919" target="_blank" rel="noopener noreferrer" className="text-foreground/70 hover:text-primary transition-colors" aria-label="WhatsApp">
+                <FaWhatsapp size={22} />
+              </a>
             </div>
           </div>
         </div>
