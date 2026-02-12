@@ -18,6 +18,12 @@ const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [completedOrdersCount, setCompletedOrdersCount] = useState(0);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [location.pathname]);
   
   const storeScrollTarget = (sectionId: string) => {
     if (typeof window !== 'undefined') {
