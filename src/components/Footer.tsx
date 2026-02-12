@@ -3,7 +3,6 @@ import afsona_logo_full from "@/assets/afsona-logo-full.jpg";
 import { MapPin, ExternalLink } from "lucide-react";
 import { FaTelegram, FaWhatsapp, FaInstagram } from "react-icons/fa";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 const Footer = () => {
   return (
