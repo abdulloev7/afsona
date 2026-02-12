@@ -36,7 +36,7 @@ export function FeaturedProductCard({ product }: FeaturedProductCardProps) {
   const [showSizeSelector, setShowSizeSelector] = useState(false);
   const navigate = useNavigate();
   const { addToCart } = useCart();
-  const { user } = useAuth();
+  
   const { toast } = useToast();
   
   const displayPrice = product.size_variants?.[0]?.price ?? product.price;

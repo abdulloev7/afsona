@@ -33,7 +33,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   const [showSizeSelector, setShowSizeSelector] = useState(false);
   const navigate = useNavigate();
   const { addToCart } = useCart();
-  const { user } = useAuth();
+  
   const { toast } = useToast();
 
   const handleImageClick = () => {
