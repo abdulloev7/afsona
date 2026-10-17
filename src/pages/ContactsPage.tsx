@@ -23,8 +23,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useSeo } from "@/hooks/useSeo";
 
 const ContactsPage = () => {
+  useSeo({
+    title: 'Контакты',
+    description: 'Контакты магазина AFSONA в Душанбе: телефон +992 927 55 79 19, адрес и время работы. Звоните или пишите, поможем подобрать краску.',
+  });
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: "",

@@ -12,6 +12,8 @@ import Footer from "@/components/Footer";
 import { ProductSizeSelector } from "@/components/ProductSizeSelector";
 import { ProductMediaCarousel } from "@/components/ProductMediaCarousel";
 import NotFound from "./NotFound";
+import { useSeo } from "@/hooks/useSeo";
+import { SITE_URL, toDescription } from "@/lib/seo";
 
 interface ProductData {
   id: string;
@@ -59,6 +61,40 @@ export default function Product() {
   const navigate = useNavigate();
   const [product, setProduct] = useState<ProductData | null>(null);
   const [loading, setLoading] = useState(true);
+  const productImage = product?.image || product?.media?.find((m) => m.type === 'image')?.url || null;
+  useSeo({
+    title: product ? `${product.name} — купить в Душанбе` : !loading ? 'Страница не найдена' : undefined,
+    description: product
+      ? toDescription(
+          product.description,
+          `${product.name}${product.brand_info?.name ? ` от ${product.brand_info.name}` : ''} в магазине AFSONA. Цена ${product.price} сом., доставка по Душанбе.`
+        )
+      : undefined,
+    image: productImage,
+    type: 'product',
+    noindex: !loading && !product,
+    jsonLd: product
+      ? {
+          '@context': 'https://schema.org',
+          '@type': 'Product',
+          name: product.name,
+          description: toDescription(product.description, product.name),
+          image: productImage || undefined,
+          brand: product.brand_info?.name || product.brand
+            ? { '@type': 'Brand', name: product.brand_info?.name || product.brand }
+            : undefined,
+          offers: {
+            '@type': 'Offer',
+            price: product.price,
+            priceCurrency: 'TJS',
+            availability: product.in_stock === false
+              ? 'https://schema.org/OutOfStock'
+              : 'https://schema.org/InStock',
+            url: `${SITE_URL}/product/${product.id}`,
+          },
+        }
+      : null,
+  });
   const [isInCart, setIsInCart] = useState(false);
   const [showSizeSelector, setShowSizeSelector] = useState(false);
   const { addToCart, items } = useCart();

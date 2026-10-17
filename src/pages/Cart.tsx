@@ -16,6 +16,7 @@ import { useToast } from '@/hooks/use-toast';
 import { ShoppingCart, Trash2, ArrowLeft } from 'lucide-react';
 import { z } from 'zod';
 import { GroupedCartItems } from '@/components/cart/GroupedCartItems';
+import { useSeo } from "@/hooks/useSeo";
 
 const orderSchema = z.object({
   customerName: z.string().trim().min(1, { message: "Имя обязательно" }),
@@ -26,6 +27,7 @@ const orderSchema = z.object({
 });
 
 const Cart = () => {
+  useSeo({ title: 'Корзина', noindex: true });
   const [orderForm, setOrderForm] = useState({
     customerName: '',
     customerPhone: '',

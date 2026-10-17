@@ -9,6 +9,8 @@ import { formatNewsDate } from "@/lib/utils";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { Calendar, ArrowLeft, Home, Image as ImageIcon, Video } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { useSeo } from "@/hooks/useSeo";
+import { toDescription } from "@/lib/seo";
 interface MediaItem {
   type: 'image' | 'video';
   url: string;
@@ -32,6 +34,13 @@ const NewsDetail = () => {
   const navigate = useNavigate();
   const [news, setNews] = useState<NewsItem | null>(null);
   const [loading, setLoading] = useState(true);
+  useSeo({
+    title: news?.title,
+    description: news ? toDescription(news.excerpt || news.content) : undefined,
+    image: news?.image,
+    type: 'article',
+    noindex: !loading && !news,
+  });
   const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
@@ -39,15 +48,6 @@ const NewsDetail = () => {
       fetchNews();
     }
   }, [slug]);
-
-  useEffect(() => {
-    if (news) {
-      document.title = `${news.title} - AFSONA`;
-    }
-    return () => {
-      document.title = "AFSONA";
-    };
-  }, [news]);
 
   const fetchNews = async () => {
     try {

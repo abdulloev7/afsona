@@ -23,6 +23,7 @@ import BannerManagement from '@/components/admin/BannerManagement';
 import PortfolioManagement from '@/components/admin/PortfolioManagement';
 import { useToast } from '@/hooks/use-toast';
 import { Package, Clock, CheckCircle, XCircle, Bell, ArrowLeft } from 'lucide-react';
+import { useSeo } from "@/hooks/useSeo";
 
 interface Order {
   id: string;
@@ -45,6 +46,7 @@ interface Order {
 }
 
 const Admin = () => {
+  useSeo({ title: 'Админ-панель', noindex: true });
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [newOrdersCount, setNewOrdersCount] = useState(0);

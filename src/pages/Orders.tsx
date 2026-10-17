@@ -9,6 +9,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useToast } from '@/hooks/use-toast';
 import { Package, Clock, CheckCircle, XCircle, ArrowLeft } from 'lucide-react';
+import { useSeo } from "@/hooks/useSeo";
 
 interface Order {
   id: string;
@@ -32,6 +33,7 @@ interface Order {
 }
 
 const Orders = () => {
+  useSeo({ title: 'Мои заказы', noindex: true });
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();

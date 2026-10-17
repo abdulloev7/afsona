@@ -8,8 +8,10 @@ import ProductsPreview from "@/components/ProductsPreview";
 import AboutPreview from "@/components/AboutPreview";
 import ContactsPreview from "@/components/ContactsPreview";
 import Footer from "@/components/Footer";
+import { useSeo } from "@/hooks/useSeo";
 
 const Index = () => {
+  useSeo({});
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'auto' });
   }, []);

@@ -1,3 +1,6 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "rewrites": [
+    { "source": "/sitemap.xml", "destination": "https://pbdmochmasoylofhasrk.supabase.co/functions/v1/sitemap" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }

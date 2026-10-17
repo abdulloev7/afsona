@@ -7,6 +7,8 @@ import { ProductCard } from "@/components/ProductCard";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ExternalLink } from "lucide-react";
+import { useSeo } from "@/hooks/useSeo";
+import { toDescription } from "@/lib/seo";
 
 interface Brand {
   id: string;
@@ -37,6 +39,14 @@ const BrandPage = () => {
   const [brand, setBrand] = useState<Brand | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  useSeo({
+    title: brand ? `${brand.name}: краски и материалы` : undefined,
+    description: brand
+      ? toDescription(brand.description, `Продукция бренда ${brand.name} в магазине AFSONA, Душанбе. Цены, наличие и доставка по городу.`)
+      : undefined,
+    image: brand?.logo,
+    noindex: !loading && !brand,
+  });
 
   useEffect(() => {
     window.scrollTo(0, 0);

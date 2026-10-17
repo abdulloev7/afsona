@@ -11,6 +11,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useToast } from '@/hooks/use-toast';
 import { Package, User, ShoppingBag } from 'lucide-react';
+import { useSeo } from "@/hooks/useSeo";
 
 interface Profile {
   display_name?: string;
@@ -36,6 +37,7 @@ interface Order {
 }
 
 const Profile = () => {
+  useSeo({ title: 'Профиль', noindex: true });
   const [profile, setProfile] = useState<Profile>({});
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(false);

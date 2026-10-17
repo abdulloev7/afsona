@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { formatNewsDate } from "@/lib/utils";
 import { Calendar } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { useSeo } from "@/hooks/useSeo";
 
 interface NewsItem {
   id: string;
@@ -21,6 +22,10 @@ interface NewsItem {
 
 const News = () => {
   const [news, setNews] = useState<NewsItem[]>([]);
+  useSeo({
+    title: 'Новости',
+    description: 'Новости магазина AFSONA: новые поступления, акции и советы по ремонту и выбору красок.',
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

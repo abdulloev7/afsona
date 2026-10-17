@@ -3,8 +3,10 @@ import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { useSeo } from "@/hooks/useSeo";
 
 const NotFound = () => {
+  useSeo({ title: 'Страница не найдена', noindex: true });
   const location = useLocation();
 
   useEffect(() => {
