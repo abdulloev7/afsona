@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -10,37 +11,28 @@ import {
   type CarouselApi,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
+import { cn } from "@/lib/utils";
+import HeroBannerImage from "@/components/HeroBannerImage";
+import {
+  DEFAULT_POSITIONS,
+  allHaveMobileImages,
+  getTextAlign,
+  type HeroBanner,
+} from "@/lib/heroBanner";
 
-interface Banner {
-  id: string;
-  image_url: string;
-  title: string;
-  subtitle: string | null;
-  button_text: string | null;
-  button_link: string | null;
-  display_order: number;
-  title_position_x: number | null;
-  title_position_y: number | null;
-  subtitle_position_x: number | null;
-  subtitle_position_y: number | null;
-  button_position_x: number | null;
-  button_position_y: number | null;
-  image_scale: number | null;
-  image_position_x: number | null;
-  image_position_y: number | null;
-}
-
-const getTextAlign = (x: number): string => {
-  if (x < 35) return 'text-left';
-  if (x > 65) return 'text-right';
-  return 'text-center';
-};
+const fadeUp = (delay = 0) => ({
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -10 },
+  transition: { duration: 0.5, ease: "easeOut" as const, delay },
+});
 
 const Hero = () => {
-  const [banners, setBanners] = useState<Banner[]>([]);
+  const [banners, setBanners] = useState<HeroBanner[]>([]);
   const [loading, setLoading] = useState(true);
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
+  const navigate = useNavigate();
 
   const fetchBanners = async () => {
     try {
@@ -51,7 +43,7 @@ const Hero = () => {
         .order("display_order", { ascending: true });
 
       if (error) throw error;
-      setBanners(data || []);
+      setBanners((data as HeroBanner[]) || []);
     } catch (error) {
       console.error("Error fetching banners:", error);
     } finally {
@@ -82,19 +74,19 @@ const Hero = () => {
 
   const handleButtonClick = (link: string | null) => {
     if (!link) return;
-    
+
     if (link.startsWith("/#")) {
       const id = link.replace("/#", "");
       const el = document.getElementById(id);
       if (el) {
         el.scrollIntoView({ behavior: "smooth" });
       } else {
-        window.location.href = link;
+        navigate(link);
       }
     } else if (link.startsWith("/")) {
-      window.location.href = link;
+      navigate(link);
     } else if (link.startsWith("http")) {
-      window.open(link, "_blank");
+      window.open(link, "_blank", "noopener,noreferrer");
     } else {
       window.location.href = link;
     }
@@ -147,14 +139,15 @@ const Hero = () => {
 
   if (loading) {
     return (
-      <section className="h-[50vh] sm:h-[60vh] md:h-[65vh] lg:h-[75vh] flex items-center justify-center bg-background">
-        <div className="animate-pulse text-muted-foreground">Загрузка...</div>
-      </section>
+      <section className="w-full aspect-[12/5] bg-muted animate-pulse" aria-busy="true" />
     );
   }
 
+  // Phones get portrait 4:5 slides only when every banner has a phone image
+  const portraitOnPhones = allHaveMobileImages(banners);
+
   return (
-    <section className="relative h-[50vh] sm:h-[60vh] md:h-[65vh] lg:h-[75vh] w-full overflow-hidden">
+    <section className="relative w-full overflow-hidden bg-muted">
       <Carousel
         setApi={setApi}
         opts={{
@@ -166,145 +159,181 @@ const Hero = () => {
             delay: 5000,
             stopOnInteraction: false,
             stopOnMouseEnter: true,
-            playOnInit: true,
           }),
         ]}
-        className="w-full h-full [&>div]:h-full"
+        className="w-full"
       >
-        <CarouselContent className="h-full -ml-0 [&>div]:h-full">
+        <CarouselContent className="ml-0">
           {banners.map((banner, index) => {
-            const titleX = banner.title_position_x ?? 25;
-            const titleY = banner.title_position_y ?? 70;
-            const subtitleX = banner.subtitle_position_x ?? 25;
-            const subtitleY = banner.subtitle_position_y ?? 78;
-            const buttonX = banner.button_position_x ?? 25;
-            const buttonY = banner.button_position_y ?? 88;
-            const imageScale = banner.image_scale ?? 100;
-            const imagePositionX = banner.image_position_x ?? 50;
-            const imagePositionY = banner.image_position_y ?? 50;
+            const title = {
+              x: banner.title_position_x ?? DEFAULT_POSITIONS.title.x,
+              y: banner.title_position_y ?? DEFAULT_POSITIONS.title.y,
+            };
+            const subtitle = {
+              x: banner.subtitle_position_x ?? DEFAULT_POSITIONS.subtitle.x,
+              y: banner.subtitle_position_y ?? DEFAULT_POSITIONS.subtitle.y,
+            };
+            const button = {
+              x: banner.button_position_x ?? DEFAULT_POSITIONS.button.x,
+              y: banner.button_position_y ?? DEFAULT_POSITIONS.button.y,
+            };
+            const isCurrent = current === index;
+            const TitleTag = index === 0 ? "h1" : "h2";
+            const hasText = !!(banner.title || banner.subtitle || banner.button_text);
 
             return (
-              <CarouselItem key={banner.id} className="h-full pl-0">
-                <div className="relative w-full h-full">
-                  {/* Background image with scale and position */}
-                  <div
-                    className="absolute inset-0 bg-no-repeat"
-                    style={{ 
-                      backgroundImage: `url(${banner.image_url})`,
-                      backgroundSize: `${imageScale}%`,
-                      backgroundPosition: `${imagePositionX}% ${imagePositionY}%`
-                    }}
+              <CarouselItem key={banner.id} className="pl-0">
+                <div
+                  className={cn(
+                    "relative w-full overflow-hidden md:max-h-[calc(100vh-4rem)]",
+                    portraitOnPhones ? "aspect-[4/5] md:aspect-[12/5]" : "aspect-[12/5]"
+                  )}
+                >
+                  <HeroBannerImage
+                    src={banner.image_url}
+                    alt={banner.title || "AFSONA"}
+                    positionX={banner.image_position_x ?? 50}
+                    positionY={banner.image_position_y ?? 50}
+                    scale={banner.image_scale ?? 100}
+                    mobileSrc={portraitOnPhones ? banner.mobile_image_url : null}
+                    mobilePositionX={banner.mobile_image_position_x ?? 50}
+                    mobilePositionY={banner.mobile_image_position_y ?? 50}
+                    eager={index === 0}
                   />
 
-                  {/* Dark gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+                  {/* Darken only when there is text to read over the image */}
+                  {(banner.title || banner.subtitle) && (
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                  )}
 
-                  {/* Title - independently positioned */}
-                  <AnimatePresence mode="wait">
-                    {current === index && banner.title && (
-                      <motion.div
-                        key={`title-${banner.id}`}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.5, ease: "easeOut" }}
-                        className="absolute z-10 transform -translate-x-1/2 -translate-y-1/2"
-                        style={{
-                          left: `${titleX}%`,
-                          top: `${titleY}%`,
-                        }}
+                  {/* Text placed where the admin put it (wide layout). The wrapper centres each
+                      element on its point; the inner motion div only animates. */}
+                  <div className={cn("absolute inset-0", portraitOnPhones && "hidden md:block")}>
+                    {banner.title && (
+                      <div
+                        className="absolute z-10 -translate-x-1/2 -translate-y-1/2 w-max max-w-[85%]"
+                        style={{ left: `${title.x}%`, top: `${title.y}%` }}
                       >
-                        <h2
-                          className={`text-2xl md:text-3xl lg:text-4xl font-bold text-white leading-tight whitespace-nowrap ${getTextAlign(titleX)}`}
-                          style={{
-                            textShadow: "0 2px 8px rgba(0,0,0,0.5)",
-                          }}
+                        <AnimatePresence mode="wait">
+                          {isCurrent && (
+                            <motion.div key={`title-${banner.id}`} {...fadeUp()}>
+                              <TitleTag
+                                className={`text-base sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white leading-tight ${getTextAlign(title.x)}`}
+                                style={{ textShadow: "0 2px 8px rgba(0,0,0,0.5)" }}
+                              >
+                                {banner.title}
+                              </TitleTag>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    )}
+
+                    {banner.subtitle && (
+                      <div
+                        className="absolute z-10 -translate-x-1/2 -translate-y-1/2 w-max max-w-[85%]"
+                        style={{ left: `${subtitle.x}%`, top: `${subtitle.y}%` }}
+                      >
+                        <AnimatePresence mode="wait">
+                          {isCurrent && (
+                            <motion.div key={`subtitle-${banner.id}`} {...fadeUp(0.1)}>
+                              <p
+                                className={`text-xs sm:text-base lg:text-lg text-white/90 ${getTextAlign(subtitle.x)}`}
+                                style={{ textShadow: "0 1px 4px rgba(0,0,0,0.5)" }}
+                              >
+                                {banner.subtitle}
+                              </p>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    )}
+
+                    {banner.button_text && (
+                      <div
+                        className="absolute z-10 -translate-x-1/2 -translate-y-1/2"
+                        style={{ left: `${button.x}%`, top: `${button.y}%` }}
+                      >
+                        <AnimatePresence mode="wait">
+                          {isCurrent && (
+                            <motion.div key={`button-${banner.id}`} {...fadeUp(0.2)}>
+                              <Button
+                                onClick={() => handleButtonClick(banner.button_link)}
+                                className="h-7 px-3 text-xs sm:h-9 sm:px-5 sm:text-sm md:h-10 md:px-6 md:text-base whitespace-nowrap"
+                              >
+                                {banner.button_text}
+                              </Button>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Portrait phone layout: text stacked at the bottom, above the dots */}
+                  {portraitOnPhones && hasText && (
+                    <div className="absolute inset-x-0 bottom-0 z-10 flex flex-col items-center gap-2 px-6 pb-12 text-center md:hidden">
+                      {banner.title && (
+                        <TitleTag
+                          className="text-2xl font-bold leading-tight text-white"
+                          style={{ textShadow: "0 2px 8px rgba(0,0,0,0.5)" }}
                         >
                           {banner.title}
-                        </h2>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                  {/* Subtitle - independently positioned */}
-                  <AnimatePresence mode="wait">
-                    {current === index && banner.subtitle && (
-                      <motion.div
-                        key={`subtitle-${banner.id}`}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.5, ease: "easeOut", delay: 0.1 }}
-                        className="absolute z-10 transform -translate-x-1/2 -translate-y-1/2"
-                        style={{
-                          left: `${subtitleX}%`,
-                          top: `${subtitleY}%`,
-                        }}
-                      >
+                        </TitleTag>
+                      )}
+                      {banner.subtitle && (
                         <p
-                          className={`text-sm md:text-base lg:text-lg text-white/90 whitespace-nowrap ${getTextAlign(subtitleX)}`}
-                          style={{
-                            textShadow: "0 1px 4px rgba(0,0,0,0.5)",
-                          }}
+                          className="text-sm text-white/90"
+                          style={{ textShadow: "0 1px 4px rgba(0,0,0,0.5)" }}
                         >
                           {banner.subtitle}
                         </p>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                  {/* Button - independently positioned */}
-                  <AnimatePresence mode="wait">
-                    {current === index && banner.button_text && (
-                      <motion.div
-                        key={`button-${banner.id}`}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.5, ease: "easeOut", delay: 0.2 }}
-                        className="absolute z-10 transform -translate-x-1/2 -translate-y-1/2"
-                        style={{
-                          left: `${buttonX}%`,
-                          top: `${buttonY}%`,
-                        }}
-                      >
+                      )}
+                      {banner.button_text && (
                         <Button
-                          size="default"
                           onClick={() => handleButtonClick(banner.button_link)}
-                          className="text-sm md:text-base px-6 py-2"
+                          className="mt-1"
                         >
                           {banner.button_text}
                         </Button>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                      )}
+                    </div>
+                  )}
                 </div>
               </CarouselItem>
             );
           })}
         </CarouselContent>
 
-        {/* Navigation - dots and arrows together in bottom right */}
+        {/* Navigation: dots centred on phones, dots + arrows bottom right on larger screens */}
         {banners.length > 1 && (
-          <div className="absolute bottom-3 right-6 flex items-center gap-4 z-10">
-            {/* Dot indicators */}
+          <div
+            className={cn(
+              "z-20 flex items-center justify-center gap-4 md:absolute md:bottom-5 md:right-6",
+              portraitOnPhones
+                ? "absolute bottom-3 left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0"
+                : "py-2.5 bg-background md:bg-transparent md:py-0"
+            )}
+          >
             <div className="flex items-center gap-2">
               {banners.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => api?.scrollTo(index)}
-                  className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                  className={`h-2 md:h-2.5 rounded-full transition-all duration-300 ${
                     current === index
-                      ? "bg-primary w-6"
-                      : "bg-white/50 hover:bg-white/75"
+                      ? "bg-primary w-5 md:w-6"
+                      : cn(
+                          "w-2 md:w-2.5 md:bg-white/60 md:hover:bg-white/80",
+                          portraitOnPhones ? "bg-white/60" : "bg-foreground/25"
+                        )
                   }`}
-                  aria-label={`Go to slide ${index + 1}`}
+                  aria-label={`Слайд ${index + 1}`}
                 />
               ))}
             </div>
-            
-            {/* Navigation arrows */}
-            <div className="flex items-center gap-2">
+
+            <div className="hidden md:flex items-center gap-2">
               <Button
                 variant="secondary"
                 size="icon"
@@ -312,7 +341,7 @@ const Hero = () => {
                 className="h-9 w-9 rounded-full bg-white/90 hover:bg-white border border-border shadow-sm"
               >
                 <ArrowLeft className="h-4 w-4 text-foreground" />
-                <span className="sr-only">Previous slide</span>
+                <span className="sr-only">Предыдущий слайд</span>
               </Button>
               <Button
                 variant="secondary"
@@ -321,7 +350,7 @@ const Hero = () => {
                 className="h-9 w-9 rounded-full bg-white/90 hover:bg-white border border-border shadow-sm"
               >
                 <ArrowRight className="h-4 w-4 text-foreground" />
-                <span className="sr-only">Next slide</span>
+                <span className="sr-only">Следующий слайд</span>
               </Button>
             </div>
           </div>

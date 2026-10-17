@@ -23,12 +23,44 @@ import {
 } from '@/components/ui/alert-dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Pencil, Trash2, ArrowUp, ArrowDown, Image as ImageIcon, Eye, EyeOff } from 'lucide-react';
-import BannerPositionPreview, { ElementPositions, ImageSettings } from './BannerPositionPreview';
+import { Plus, Pencil, Trash2, ArrowUp, ArrowDown, Image as ImageIcon, Eye, EyeOff, Smartphone, AlertTriangle, X } from 'lucide-react';
+import BannerPositionPreview, { ElementPositions, FocalPoint, ImageSettings } from './BannerPositionPreview';
+import {
+  DEFAULT_POSITIONS,
+  DESKTOP_ASPECT,
+  DESKTOP_SIZE,
+  MOBILE_ASPECT,
+  MOBILE_SIZE,
+  loadImageSize,
+} from '@/lib/heroBanner';
+
+type ImageKind = 'desktop' | 'mobile';
+
+// Warn when an image is far from the banner proportions: that much would be cropped
+const ASPECT_TOLERANCE = 0.15;
+
+const describeImageFit = (size: { width: number; height: number }, kind: ImageKind) => {
+  const target = kind === 'desktop' ? DESKTOP_SIZE : MOBILE_SIZE;
+  const targetAspect = kind === 'desktop' ? DESKTOP_ASPECT : MOBILE_ASPECT;
+  const aspect = size.width / size.height;
+  const warnings: string[] = [];
+  if (Math.abs(aspect - targetAspect) / targetAspect > ASPECT_TOLERANCE) {
+    warnings.push(
+      aspect > targetAspect
+        ? 'картинка шире нужных пропорций, края по бокам обрежутся'
+        : 'картинка выше нужных пропорций, верх или низ обрежутся'
+    );
+  }
+  if (size.width < target.width * 0.6) {
+    warnings.push('маленькое разрешение, на большом экране будет нечётко');
+  }
+  return warnings;
+};
 
 interface Banner {
   id: string;
   image_url: string;
+  mobile_image_url: string | null;
   title: string;
   subtitle: string | null;
   button_text: string | null;
@@ -44,12 +76,15 @@ interface Banner {
   image_scale: number | null;
   image_position_x: number | null;
   image_position_y: number | null;
+  mobile_image_position_x: number | null;
+  mobile_image_position_y: number | null;
   created_at: string;
   updated_at: string;
 }
 
 interface BannerFormData {
   image_url: string;
+  mobile_image_url: string;
   title: string;
   subtitle: string;
   button_text: string;
@@ -57,13 +92,10 @@ interface BannerFormData {
   is_active: boolean;
   positions: ElementPositions;
   imageSettings: ImageSettings;
+  mobileImageSettings: FocalPoint;
 }
 
-const DEFAULT_POSITIONS: ElementPositions = {
-  title: { x: 25, y: 70 },
-  subtitle: { x: 25, y: 78 },
-  button: { x: 25, y: 88 },
-};
+const DEFAULT_MOBILE_IMAGE_SETTINGS: FocalPoint = { positionX: 50, positionY: 50 };
 
 const DEFAULT_IMAGE_SETTINGS: ImageSettings = {
   scale: 100,
@@ -78,10 +110,11 @@ const BannerManagement = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [bannerToDelete, setBannerToDelete] = useState<string | null>(null);
   const [editingBanner, setEditingBanner] = useState<Banner | null>(null);
-  const [uploading, setUploading] = useState(false);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [uploading, setUploading] = useState<ImageKind | null>(null);
+  const [imageWarnings, setImageWarnings] = useState<Record<ImageKind, string[]>>({ desktop: [], mobile: [] });
   const [formData, setFormData] = useState<BannerFormData>({
     image_url: '',
+    mobile_image_url: '',
     title: '',
     subtitle: '',
     button_text: '',
@@ -89,6 +122,7 @@ const BannerManagement = () => {
     is_active: true,
     positions: { ...DEFAULT_POSITIONS },
     imageSettings: { ...DEFAULT_IMAGE_SETTINGS },
+    mobileImageSettings: { ...DEFAULT_MOBILE_IMAGE_SETTINGS },
   });
 
   const { toast } = useToast();
@@ -118,8 +152,18 @@ const BannerManagement = () => {
     fetchBanners();
   }, []);
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const checkImage = async (url: string, kind: ImageKind) => {
+    try {
+      const size = await loadImageSize(url);
+      setImageWarnings((prev) => ({ ...prev, [kind]: describeImageFit(size, kind) }));
+    } catch {
+      setImageWarnings((prev) => ({ ...prev, [kind]: [] }));
+    }
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, kind: ImageKind) => {
     const file = e.target.files?.[0];
+    e.target.value = '';
     if (!file) return;
 
     if (!file.type.startsWith('image/')) {
@@ -140,7 +184,7 @@ const BannerManagement = () => {
       return;
     }
 
-    setUploading(true);
+    setUploading(kind);
     try {
       const fileExt = file.name.split('.').pop();
       const fileName = `banners/${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
@@ -155,8 +199,12 @@ const BannerManagement = () => {
         .from('product-images')
         .getPublicUrl(fileName);
 
-      setFormData((prev) => ({ ...prev, image_url: urlData.publicUrl }));
-      setImagePreview(urlData.publicUrl);
+      setFormData((prev) =>
+        kind === 'desktop'
+          ? { ...prev, image_url: urlData.publicUrl }
+          : { ...prev, mobile_image_url: urlData.publicUrl, mobileImageSettings: { ...DEFAULT_MOBILE_IMAGE_SETTINGS } }
+      );
+      checkImage(urlData.publicUrl, kind);
 
       toast({
         title: 'Успешно',
@@ -170,13 +218,19 @@ const BannerManagement = () => {
         variant: 'destructive',
       });
     } finally {
-      setUploading(false);
+      setUploading(null);
     }
+  };
+
+  const removeMobileImage = () => {
+    setFormData((prev) => ({ ...prev, mobile_image_url: '' }));
+    setImageWarnings((prev) => ({ ...prev, mobile: [] }));
   };
 
   const resetForm = () => {
     setFormData({
       image_url: '',
+      mobile_image_url: '',
       title: '',
       subtitle: '',
       button_text: '',
@@ -184,8 +238,9 @@ const BannerManagement = () => {
       is_active: true,
       positions: { ...DEFAULT_POSITIONS },
       imageSettings: { ...DEFAULT_IMAGE_SETTINGS },
+      mobileImageSettings: { ...DEFAULT_MOBILE_IMAGE_SETTINGS },
     });
-    setImagePreview(null);
+    setImageWarnings({ desktop: [], mobile: [] });
     setEditingBanner(null);
   };
 
@@ -193,6 +248,7 @@ const BannerManagement = () => {
     setEditingBanner(banner);
     setFormData({
       image_url: banner.image_url,
+      mobile_image_url: banner.mobile_image_url || '',
       title: banner.title,
       subtitle: banner.subtitle || '',
       button_text: banner.button_text || '',
@@ -217,8 +273,14 @@ const BannerManagement = () => {
         positionX: banner.image_position_x ?? DEFAULT_IMAGE_SETTINGS.positionX,
         positionY: banner.image_position_y ?? DEFAULT_IMAGE_SETTINGS.positionY,
       },
+      mobileImageSettings: {
+        positionX: banner.mobile_image_position_x ?? DEFAULT_MOBILE_IMAGE_SETTINGS.positionX,
+        positionY: banner.mobile_image_position_y ?? DEFAULT_MOBILE_IMAGE_SETTINGS.positionY,
+      },
     });
-    setImagePreview(banner.image_url);
+    setImageWarnings({ desktop: [], mobile: [] });
+    checkImage(banner.image_url, 'desktop');
+    if (banner.mobile_image_url) checkImage(banner.mobile_image_url, 'mobile');
     setDialogOpen(true);
   };
 
@@ -235,6 +297,7 @@ const BannerManagement = () => {
     try {
       const bannerData = {
         image_url: formData.image_url,
+        mobile_image_url: formData.mobile_image_url || null,
         title: formData.title,
         subtitle: formData.subtitle || null,
         button_text: formData.button_text || null,
@@ -249,6 +312,8 @@ const BannerManagement = () => {
         image_scale: formData.imageSettings.scale,
         image_position_x: formData.imageSettings.positionX,
         image_position_y: formData.imageSettings.positionY,
+        mobile_image_position_x: formData.mobileImageSettings.positionX,
+        mobile_image_position_y: formData.mobileImageSettings.positionY,
       };
 
       if (editingBanner) {
@@ -415,17 +480,56 @@ const BannerManagement = () => {
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-4 py-4">
-              {/* Image upload */}
-              <div className="space-y-2">
-                <Label>Изображение *</Label>
-                <div className="flex items-center gap-4">
+              {/* Image uploads */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Картинка для компьютера *</Label>
+                  <p className="text-xs text-muted-foreground">
+                    {DESKTOP_SIZE.width} × {DESKTOP_SIZE.height} px (пропорции 12:5), до 5 МБ. Важное держите ближе к центру.
+                  </p>
                   <Input
                     type="file"
                     accept="image/*"
-                    onChange={handleImageUpload}
-                    disabled={uploading}
+                    onChange={(e) => handleImageUpload(e, 'desktop')}
+                    disabled={uploading !== null}
                   />
-                  {uploading && <span className="text-sm text-muted-foreground">Загрузка...</span>}
+                  {uploading === 'desktop' && <span className="text-sm text-muted-foreground">Загрузка...</span>}
+                  {imageWarnings.desktop.length > 0 && (
+                    <p className="flex gap-1.5 text-xs text-amber-600">
+                      <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+                      <span>Обратите внимание: {imageWarnings.desktop.join('; ')}.</span>
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Картинка для телефона (по желанию)</Label>
+                  <p className="text-xs text-muted-foreground">
+                    {MOBILE_SIZE.width} × {MOBILE_SIZE.height} px (вертикальная 4:5). Нижнюю треть оставьте свободной под текст и кнопку.
+                  </p>
+                  {formData.mobile_image_url ? (
+                    <div className="flex items-center gap-3">
+                      <img src={formData.mobile_image_url} alt="" className="h-16 w-[52px] rounded object-cover bg-muted" />
+                      <Button type="button" variant="outline" size="sm" onClick={removeMobileImage}>
+                        <X className="h-4 w-4 mr-1" />
+                        Убрать
+                      </Button>
+                    </div>
+                  ) : (
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleImageUpload(e, 'mobile')}
+                      disabled={uploading !== null}
+                    />
+                  )}
+                  {uploading === 'mobile' && <span className="text-sm text-muted-foreground">Загрузка...</span>}
+                  {imageWarnings.mobile.length > 0 && (
+                    <p className="flex gap-1.5 text-xs text-amber-600">
+                      <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+                      <span>Обратите внимание: {imageWarnings.mobile.join('; ')}.</span>
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -477,9 +581,15 @@ const BannerManagement = () => {
               </div>
 
               {/* Interactive position preview */}
-              {imagePreview && (
+              {formData.image_url && (
                 <BannerPositionPreview
-                  imageUrl={imagePreview}
+                  imageUrl={formData.image_url}
+                  mobileImageUrl={formData.mobile_image_url || null}
+                  mobileImageSettings={formData.mobileImageSettings}
+                  onMobileImageSettingsChange={(mobileImageSettings) => setFormData((prev) => ({
+                    ...prev,
+                    mobileImageSettings
+                  }))}
                   title={formData.title}
                   subtitle={formData.subtitle}
                   buttonText={formData.button_text}
@@ -519,7 +629,7 @@ const BannerManagement = () => {
                 }}>
                   Отмена
                 </Button>
-                <Button onClick={handleSubmit} disabled={uploading}>
+                <Button onClick={handleSubmit} disabled={uploading !== null}>
                   {editingBanner ? 'Сохранить' : 'Добавить'}
                 </Button>
               </div>
@@ -527,6 +637,21 @@ const BannerManagement = () => {
           </DialogContent>
         </Dialog>
       </div>
+
+      {(() => {
+        const active = banners.filter((b) => b.is_active);
+        const missing = active.filter((b) => !b.mobile_image_url).length;
+        if (active.length === 0 || missing === 0 || missing === active.length) return null;
+        return (
+          <div className="flex gap-2 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800 dark:bg-amber-950/30 dark:text-amber-200">
+            <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" />
+            <span>
+              Вертикальные картинки для телефона включатся на сайте, когда они будут у всех активных баннеров.
+              Сейчас не хватает у {missing} из {active.length}, поэтому на телефоне показываются широкие картинки.
+            </span>
+          </div>
+        );
+      })()}
 
       {banners.length === 0 ? (
         <Card>
@@ -549,12 +674,21 @@ const BannerManagement = () => {
               <CardContent className="p-4">
                 <div className="flex gap-4">
                   {/* Thumbnail */}
-                  <div className="w-48 h-28 rounded-lg overflow-hidden bg-muted flex-shrink-0">
+                  <div className="relative w-48 aspect-[12/5] rounded-lg overflow-hidden bg-muted flex-shrink-0">
                     <img
                       src={banner.image_url}
                       alt={banner.title}
                       className="w-full h-full object-cover"
+                      style={{ objectPosition: `${banner.image_position_x ?? 50}% ${banner.image_position_y ?? 50}%` }}
                     />
+                    {banner.mobile_image_url && (
+                      <span
+                        className="absolute bottom-1 right-1 flex items-center gap-1 rounded bg-black/60 px-1.5 py-0.5 text-[10px] text-white"
+                        title="Есть картинка для телефона"
+                      >
+                        <Smartphone className="h-3 w-3" />
+                      </span>
+                    )}
                   </div>
 
                   {/* Content */}
