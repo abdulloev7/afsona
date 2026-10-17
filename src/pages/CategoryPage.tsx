@@ -11,6 +11,8 @@ import { ProductCard } from '@/components/ProductCard';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useToast } from '@/hooks/use-toast';
+import { useSeo } from "@/hooks/useSeo";
+import { toDescription } from "@/lib/seo";
 
 interface Product {
   id: string;
@@ -75,6 +77,12 @@ const CategoryPage = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [loading, setLoading] = useState(true);
+  useSeo({
+    title: category ? `${category.name} — купить в Душанбе` : undefined,
+    description: category
+      ? toDescription(category.description, `${category.name} в магазине AFSONA: цены, наличие, доставка по Душанбе.`)
+      : undefined,
+  });
 
   // Filters
   const [searchQuery, setSearchQuery] = useState('');

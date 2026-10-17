@@ -10,6 +10,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
 import { ArrowLeft, MapPin, Calendar, ChevronRight } from "lucide-react";
 import DOMPurify from "dompurify";
+import { useSeo } from "@/hooks/useSeo";
+import { toDescription } from "@/lib/seo";
 
 interface MediaItem {
   type: 'image' | 'video';
@@ -37,6 +39,13 @@ const PortfolioDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const [item, setItem] = useState<PortfolioItem | null>(null);
   const [loading, setLoading] = useState(true);
+  useSeo({
+    title: item?.title,
+    description: item ? toDescription(item.description, `${item.title}${item.location ? `, ${item.location}` : ''}: работа с материалами AFSONA.`) : undefined,
+    image: item?.image,
+    type: 'article',
+    noindex: !loading && !item,
+  });
   const { isAdmin, loading: roleLoading } = useUserRole();
   const navigate = useNavigate();
 

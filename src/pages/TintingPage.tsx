@@ -17,8 +17,13 @@ import {
   IconMessageChatbot
 } from "@tabler/icons-react";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { useSeo } from "@/hooks/useSeo";
 
 const TintingPage = () => {
+  useSeo({
+    title: 'Компьютерная колеровка красок',
+    description: 'Компьютерная колеровка красок в AFSONA, Душанбе: более 2000 оттенков, точное повторение цвета, готово за 5–10 минут. Формула сохраняется для повторных заказов.',
+  });
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);

@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
 import { MapPin, Calendar, ArrowRight, Briefcase } from "lucide-react";
+import { useSeo } from "@/hooks/useSeo";
 
 interface MediaItem {
   type: 'image' | 'video';
@@ -32,6 +33,10 @@ interface PortfolioItem {
 
 const Portfolio = () => {
   const [portfolio, setPortfolio] = useState<PortfolioItem[]>([]);
+  useSeo({
+    title: 'Наши работы',
+    description: 'Портфолио AFSONA: примеры ремонта и отделки с нашими красками и материалами в Душанбе.',
+  });
   const [loading, setLoading] = useState(true);
   const { isAdmin, loading: roleLoading } = useUserRole();
   const navigate = useNavigate();

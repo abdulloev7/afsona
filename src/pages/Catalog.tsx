@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowRight, Search, Paintbrush, Hammer, Droplets, Palette } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useSeo } from "@/hooks/useSeo";
 
 interface Category {
   id: string;
@@ -27,6 +28,10 @@ interface Brand {
 }
 
 const Catalog = () => {
+  useSeo({
+    title: 'Каталог красок и материалов для ремонта',
+    description: 'Каталог AFSONA: интерьерные и фасадные краски, грунтовки, декоративные штукатурки, клеи, герметики и малярный инструмент. Цены и наличие, доставка по Душанбе.',
+  });
   const [categories, setCategories] = useState<Category[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [loading, setLoading] = useState(true);

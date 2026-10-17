@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { useSeo } from "@/hooks/useSeo";
 
 interface Brand {
   id: string;
@@ -22,6 +23,10 @@ interface Brand {
 }
 
 const BrandsPage = () => {
+  useSeo({
+    title: 'Бренды красок и материалов',
+    description: 'Бренды в магазине AFSONA: Alantex, Raduga, Soudal, San Marito, Decor и другие. Оригинальная продукция производителей с доставкой по Душанбе.',
+  });
   const [brands, setBrands] = useState<Brand[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();

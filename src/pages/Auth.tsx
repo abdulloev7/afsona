@@ -9,6 +9,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { z } from 'zod';
+import { useSeo } from "@/hooks/useSeo";
 
 const authSchema = z.object({
   email: z.string().trim().email({ message: "Введите корректный email" }),
@@ -16,6 +17,7 @@ const authSchema = z.object({
 });
 
 const Auth = () => {
+  useSeo({ title: 'Вход', noindex: true });
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);

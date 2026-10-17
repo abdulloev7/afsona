@@ -15,8 +15,13 @@ import {
   CheckCircle2,
   ArrowRight
 } from "lucide-react";
+import { useSeo } from "@/hooks/useSeo";
 
 const AboutPage = () => {
+  useSeo({
+    title: 'О компании',
+    description: 'AFSONA — магазин экологичных красок и материалов для ремонта в Душанбе. Подбор материалов, компьютерная колеровка и консультации специалистов.',
+  });
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
