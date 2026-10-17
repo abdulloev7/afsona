@@ -333,7 +333,7 @@ export type Database = {
           status: string
           total_amount: number
           updated_at: string
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           created_at?: string
@@ -346,7 +346,7 @@ export type Database = {
           status?: string
           total_amount: number
           updated_at?: string
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           created_at?: string
@@ -359,7 +359,7 @@ export type Database = {
           status?: string
           total_amount?: number
           updated_at?: string
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -572,6 +572,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_order: {
+        Args: {
+          p_customer_name: string
+          p_customer_phone: string
+          p_customer_email: string | null
+          p_delivery_address: string
+          p_notes: string | null
+          p_items: Json
+        }
+        Returns: {
+          order_id: string
+          total_amount: number
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

@@ -169,6 +169,19 @@ const Header = () => {
 
           <div className="flex items-center space-x-2">
             <SearchDialog />
+            <Link to="/cart" className="relative">
+              <Button variant="ghost" size="sm" className="hover:bg-primary/10">
+                <IconShoppingBag size={20} stroke={1.5} />
+                {cartCount > 0 && (
+                  <Badge 
+                    variant="destructive" 
+                    className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
+                  >
+                    {cartCount}
+                  </Badge>
+                )}
+              </Button>
+            </Link>
             {user ? (
               <>
                 {isAdmin && (
@@ -179,19 +192,6 @@ const Header = () => {
                     </Button>
                   </Link>
                 )}
-                <Link to="/cart" className="relative">
-                  <Button variant="ghost" size="sm" className="hover:bg-primary/10">
-                    <IconShoppingBag size={20} stroke={1.5} />
-                    {cartCount > 0 && (
-                      <Badge 
-                        variant="destructive" 
-                        className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
-                      >
-                        {cartCount}
-                      </Badge>
-                    )}
-                  </Button>
-                </Link>
                 <Link to="/profile?tab=orders" className="relative hidden md:inline-flex">
                   <Button variant="ghost" size="sm" className="hover:bg-primary/10">
                     <IconUser size={20} stroke={1.5} className="mr-1" />

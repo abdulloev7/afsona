@@ -132,15 +132,6 @@ const Cart = () => {
 
   const handleSubmitOrder = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!user) {
-      toast({
-        title: "Необходима авторизация",
-        description: "Для оформления заказа войдите в систему или зарегистрируйтесь",
-      });
-      navigate('/auth');
-      return;
-    }
 
     const selectedItemsList = items.filter(item => selectedItems.has(item.id));
 
@@ -157,60 +148,28 @@ const Cart = () => {
 
     setLoading(true);
     try {
-      const total = getSelectedTotal();
-      
-      // Create order
-      const { data: order, error: orderError } = await supabase
-        .from('orders')
-        .insert({
-          user_id: user.id,
-          total_amount: total,
-          customer_name: orderForm.customerName,
-          customer_phone: orderForm.customerPhone,
-          customer_email: orderForm.customerEmail || null,
-          delivery_address: orderForm.deliveryAddress,
-          notes: orderForm.notes || null,
-        })
-        .select()
-        .single();
+      // Works for guests and signed-in users; prices and the total are computed in the database
+      const { data, error: orderError } = await supabase.rpc('create_order', {
+        p_customer_name: orderForm.customerName,
+        p_customer_phone: orderForm.customerPhone,
+        p_customer_email: orderForm.customerEmail || null,
+        p_delivery_address: orderForm.deliveryAddress,
+        p_notes: orderForm.notes || null,
+        p_items: selectedItemsList.map(item => ({
+          product_id: item.product_id,
+          quantity: item.quantity,
+          selected_size: item.selected_size || null,
+        })),
+      });
 
       if (orderError) throw orderError;
-
-      // Create order items from selected items only
-      const orderItems = selectedItemsList.map(item => ({
-        order_id: order.id,
-        product_id: item.product_id,
-        quantity: item.quantity,
-        price: getItemPrice(item),
-        selected_size: item.selected_size || null,
-      }));
-
-      const { error: itemsError } = await supabase
-        .from('order_items')
-        .insert(orderItems);
-
-      if (itemsError) throw itemsError;
+      const order = data?.[0];
+      if (!order) throw new Error('create_order returned no order');
 
       // Send order notification email
       try {
-        const orderItemsForEmail = selectedItemsList.map(item => ({
-          product_name: item.product.name,
-          quantity: item.quantity,
-          price: getItemPrice(item),
-          selected_size: item.selected_size || null,
-        }));
-
         const { data: emailData, error: emailInvokeError } = await supabase.functions.invoke('send-order-notification', {
-          body: {
-            orderId: order.id,
-            customerName: orderForm.customerName,
-            customerPhone: orderForm.customerPhone,
-            customerEmail: orderForm.customerEmail || undefined,
-            deliveryAddress: orderForm.deliveryAddress,
-            notes: orderForm.notes || undefined,
-            totalAmount: total,
-            items: orderItemsForEmail,
-          },
+          body: { orderId: order.order_id },
         });
 
         if (emailInvokeError) {
@@ -231,15 +190,15 @@ const Cart = () => {
 
       toast({
         title: "Заказ оформлен!",
-        description: `Заказ #${order.id.slice(0, 8)} успешно создан. Мы свяжемся с вами в ближайшее время.`,
+        description: `Заказ #${order.order_id.slice(0, 8)} успешно создан. Мы свяжемся с вами в ближайшее время.`,
       });
 
-      navigate('/profile');
+      navigate(user ? '/profile' : '/');
     } catch (error) {
       console.error('Error creating order:', error);
       toast({
         title: "Ошибка",
-        description: "Не удалось оформить заказ. Попробуйте еще раз.",
+        description: "Не удалось оформить заказ. Попробуйте еще раз или позвоните: +992 927 55 79 19",
         variant: "destructive",
       });
     } finally {
