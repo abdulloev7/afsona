@@ -166,6 +166,9 @@ export type Database = {
           image_position_y: number | null
           image_scale: number | null
           image_url: string
+          mobile_image_position_x: number | null
+          mobile_image_position_y: number | null
+          mobile_image_url: string | null
           is_active: boolean
           subtitle: string | null
           subtitle_position_x: number | null
@@ -190,6 +193,9 @@ export type Database = {
           image_position_y?: number | null
           image_scale?: number | null
           image_url: string
+          mobile_image_position_x?: number | null
+          mobile_image_position_y?: number | null
+          mobile_image_url?: string | null
           is_active?: boolean
           subtitle?: string | null
           subtitle_position_x?: number | null
@@ -214,6 +220,9 @@ export type Database = {
           image_position_y?: number | null
           image_scale?: number | null
           image_url?: string
+          mobile_image_position_x?: number | null
+          mobile_image_position_y?: number | null
+          mobile_image_url?: string | null
           is_active?: boolean
           subtitle?: string | null
           subtitle_position_x?: number | null
