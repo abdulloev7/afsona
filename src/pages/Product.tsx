@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/contexts/CartContext";
-import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -63,7 +62,6 @@ export default function Product() {
   const [isInCart, setIsInCart] = useState(false);
   const [showSizeSelector, setShowSizeSelector] = useState(false);
   const { addToCart, items } = useCart();
-  const { user } = useAuth();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -136,16 +134,6 @@ export default function Product() {
   ) : false;
 
   const handleAddToCart = () => {
-    if (!user) {
-      toast({
-        title: "Требуется авторизация",
-        description: "Войдите в систему для добавления товаров в корзину",
-        variant: "destructive",
-      });
-      navigate('/auth');
-      return;
-    }
-
     if (!product) return;
 
     // Если у товара есть варианты, показать диалог выбора

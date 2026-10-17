@@ -10,47 +10,11 @@ interface OrderItem {
   product_name: string;
   quantity: number;
   price: number;
+  selected_size: string | null;
 }
 
-interface OrderNotificationRequest {
-  orderId: string;
-  customerName: string;
-  customerPhone: string;
-  customerEmail?: string;
-  deliveryAddress: string;
-  notes?: string;
-  totalAmount: number;
-  items: OrderItem[];
-}
-
-// Simple input validation
-const validateInput = (data: OrderNotificationRequest): { valid: boolean; error?: string } => {
-  if (!data.orderId || typeof data.orderId !== 'string' || data.orderId.length < 1 || data.orderId.length > 100) {
-    return { valid: false, error: 'Invalid orderId' };
-  }
-  if (!data.customerName || typeof data.customerName !== 'string' || data.customerName.length > 200) {
-    return { valid: false, error: 'Invalid customerName' };
-  }
-  if (!data.customerPhone || typeof data.customerPhone !== 'string' || data.customerPhone.length > 50) {
-    return { valid: false, error: 'Invalid customerPhone' };
-  }
-  if (data.customerEmail && (typeof data.customerEmail !== 'string' || data.customerEmail.length > 255)) {
-    return { valid: false, error: 'Invalid customerEmail' };
-  }
-  if (!data.deliveryAddress || typeof data.deliveryAddress !== 'string' || data.deliveryAddress.length > 500) {
-    return { valid: false, error: 'Invalid deliveryAddress' };
-  }
-  if (data.notes && (typeof data.notes !== 'string' || data.notes.length > 1000)) {
-    return { valid: false, error: 'Invalid notes' };
-  }
-  if (typeof data.totalAmount !== 'number' || data.totalAmount < 0) {
-    return { valid: false, error: 'Invalid totalAmount' };
-  }
-  if (!Array.isArray(data.items) || data.items.length === 0 || data.items.length > 100) {
-    return { valid: false, error: 'Invalid items' };
-  }
-  return { valid: true };
-};
+// Orders older than this can't re-trigger an email (the order id is the only input)
+const MAX_ORDER_AGE_MS = 15 * 60 * 1000;
 
 // Escape HTML to prevent injection in email
 const escapeHtml = (text: string): string => {
@@ -64,6 +28,12 @@ const escapeHtml = (text: string): string => {
   return text.replace(/[&<>"']/g, (m) => map[m]);
 };
 
+const jsonResponse = (body: unknown, status: number) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: { "Content-Type": "application/json", ...corsHeaders },
+  });
+
 const handler = async (req: Request): Promise<Response> => {
   console.log("send-order-notification: Starting request processing");
   
@@ -75,80 +45,45 @@ const handler = async (req: Request): Promise<Response> => {
     // Log environment configuration (without revealing values)
     console.log("BUSINESS_EMAIL configured:", !!Deno.env.get("BUSINESS_EMAIL"));
     console.log("RESEND_API_KEY configured:", !!Deno.env.get("RESEND_API_KEY"));
-    
-    // Verify authentication
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
-      console.error("Missing or invalid Authorization header");
-      return new Response(
-        JSON.stringify({ error: 'Unauthorized' }),
-        { status: 401, headers: { "Content-Type": "application/json", ...corsHeaders } }
-      );
+
+    // Guests can order too, so there is no user session to check. Everything in the
+    // email is read from the database by order id; nothing from the request body is trusted.
+    const { orderId } = await req.json();
+    if (!orderId || typeof orderId !== 'string' || orderId.length > 100) {
+      return jsonResponse({ error: 'Invalid orderId' }, 400);
     }
 
-    // Create Supabase client with user's auth token
-    const supabaseClient = createClient(
+    const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      { global: { headers: { Authorization: authHeader } } }
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
     );
 
-    // Verify user authentication using getUser()
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
-    
-    if (userError || !user) {
-      console.error("Authentication failed:", userError?.message);
-      return new Response(
-        JSON.stringify({ error: 'Unauthorized' }),
-        { status: 401, headers: { "Content-Type": "application/json", ...corsHeaders } }
-      );
-    }
-
-    const userId = user.id;
-    console.log("User authenticated successfully:", userId);
-
-    const requestData: OrderNotificationRequest = await req.json();
-    
-    // Validate input
-    const validation = validateInput(requestData);
-    if (!validation.valid) {
-      return new Response(
-        JSON.stringify({ error: validation.error }),
-        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
-      );
-    }
-
-    const {
-      orderId,
-      customerName,
-      customerPhone,
-      customerEmail,
-      deliveryAddress,
-      notes,
-      totalAmount,
-      items,
-    } = requestData;
-
-    // Verify order exists and belongs to the authenticated user
-    const { data: order, error: orderError } = await supabaseClient
+    const { data: order, error: orderError } = await supabaseAdmin
       .from('orders')
-      .select('user_id, id')
+      .select('id, created_at, customer_name, customer_phone, customer_email, delivery_address, notes, total_amount, order_items(quantity, price, selected_size, product:products(name))')
       .eq('id', orderId)
-      .single();
+      .maybeSingle();
 
     if (orderError || !order) {
-      return new Response(
-        JSON.stringify({ error: 'Order not found' }),
-        { status: 404, headers: { "Content-Type": "application/json", ...corsHeaders } }
-      );
+      return jsonResponse({ error: 'Order not found' }, 404);
     }
 
-    if (order.user_id !== userId) {
-      return new Response(
-        JSON.stringify({ error: 'Forbidden' }),
-        { status: 403, headers: { "Content-Type": "application/json", ...corsHeaders } }
-      );
+    if (Date.now() - new Date(order.created_at).getTime() > MAX_ORDER_AGE_MS) {
+      return jsonResponse({ error: 'Order is too old to notify' }, 409);
     }
+
+    const customerName: string = order.customer_name;
+    const customerPhone: string = order.customer_phone;
+    const customerEmail: string | null = order.customer_email;
+    const deliveryAddress: string = order.delivery_address;
+    const notes: string | null = order.notes;
+    const totalAmount = Number(order.total_amount);
+    const items: OrderItem[] = (order.order_items ?? []).map((item: any) => ({
+      product_name: item.product?.name ?? 'Товар',
+      quantity: item.quantity,
+      price: Number(item.price),
+      selected_size: item.selected_size,
+    }));
 
     console.log("Processing order notification for order:", orderId);
 
@@ -157,7 +92,7 @@ const handler = async (req: Request): Promise<Response> => {
       .map(
         (item) => `
         <tr>
-          <td style="padding: 8px; border-bottom: 1px solid #eee;">${escapeHtml(item.product_name)}</td>
+          <td style="padding: 8px; border-bottom: 1px solid #eee;">${escapeHtml(item.product_name)}${item.selected_size ? ` (${escapeHtml(item.selected_size)})` : ''}</td>
           <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">${item.quantity}</td>
           <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: right;">${item.price.toLocaleString('ru-RU')} сом.</td>
           <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: right;">${(item.price * item.quantity).toLocaleString('ru-RU')} сом.</td>
