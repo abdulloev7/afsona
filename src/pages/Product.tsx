@@ -12,6 +12,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { ProductSizeSelector } from "@/components/ProductSizeSelector";
 import { ProductMediaCarousel } from "@/components/ProductMediaCarousel";
+import NotFound from "./NotFound";
 
 interface ProductData {
   id: string;
@@ -99,12 +100,12 @@ export default function Product() {
           description: "Не удалось загрузить товар",
           variant: "destructive",
         });
-        navigate('/');
+        setLoading(false);
         return;
       }
 
       if (!data) {
-        navigate('/');
+        setLoading(false);
         return;
       }
 
@@ -208,7 +209,7 @@ export default function Product() {
     );
   }
 
-  if (!product) return null;
+  if (!product) return <NotFound />;
 
   return (
     <div className="min-h-screen bg-background">

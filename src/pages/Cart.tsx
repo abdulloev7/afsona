@@ -20,7 +20,7 @@ import { GroupedCartItems } from '@/components/cart/GroupedCartItems';
 const orderSchema = z.object({
   customerName: z.string().trim().min(1, { message: "Имя обязательно" }),
   customerPhone: z.string().trim().min(1, { message: "Телефон обязателен" }),
-  customerEmail: z.string().trim().email({ message: "Некорректный email" }).optional(),
+  customerEmail: z.union([z.literal(""), z.string().trim().email({ message: "Некорректный email" })]).optional(),
   deliveryAddress: z.string().trim().min(1, { message: "Адрес доставки обязателен" }),
   notes: z.string().optional(),
 });
