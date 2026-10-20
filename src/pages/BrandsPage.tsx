@@ -189,30 +189,11 @@ const BrandsPage = () => {
 
           {/* Info Section */}
           <div className="mt-16 bg-card border rounded-lg p-8 max-w-4xl mx-auto text-center">
-            <h2 className="text-2xl font-bold mb-4 text-primary">Партнёрство с лучшими</h2>
-            <p className="text-muted-foreground mb-6">
-              Мы тщательно отбираем каждого партнёра, чтобы предложить вам только проверенные временем 
-              и качеством бренды. Все представленные производители имеют международные сертификаты 
-              и подтверждённую репутацию.
+            <h2 className="text-2xl font-semibold mb-3 text-foreground">Не нашли нужное?</h2>
+            <p className="text-muted-foreground">
+              На сайте показана не вся продукция. Спросите по телефону или в WhatsApp, возможно, товар есть в
+              магазине.
             </p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-              <div className="p-4">
-                <div className="text-3xl font-bold text-accent mb-1">{brands.length}+</div>
-                <div className="text-sm text-muted-foreground">Брендов</div>
-              </div>
-              <div className="p-4">
-                <div className="text-3xl font-bold text-accent mb-1">500+</div>
-                <div className="text-sm text-muted-foreground">Товаров</div>
-              </div>
-              <div className="p-4">
-                <div className="text-3xl font-bold text-accent mb-1">100%</div>
-                <div className="text-sm text-muted-foreground">Качество</div>
-              </div>
-              <div className="p-4">
-                <div className="text-3xl font-bold text-accent mb-1">ECO</div>
-                <div className="text-sm text-muted-foreground">Сертификация</div>
-              </div>
-            </div>
           </div>
         </div>
       </main>

@@ -1,62 +1,43 @@
 import { Link } from "react-router-dom";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Palette, CheckCircle2 } from "lucide-react";
+import { ArrowRight, Palette, Clock } from "lucide-react";
+import tintingMachine from "@/assets/tinting-machine.jpg";
+import { FAN_DECKS, TINT_MACHINE, TINT_TIME } from "@/lib/facts";
 
 const TintingPreview = () => {
-  const features = [
-    "Более 2000 оттенков",
-    "Компьютерная точность",
-    "Готово за 5-10 минут",
-    "Сохранение формулы"
-  ];
-
   return (
-    <section className="py-16 px-4 bg-background" id="tinting">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-10">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-primary">
-            Компьютерная колеровка
-          </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Подберём идеальный оттенок для вашего проекта с гарантией повторяемости результата
-          </p>
+    <section className="py-16 bg-background" id="tinting">
+      <div className="container mx-auto px-4 max-w-5xl">
+        <div className="grid md:grid-cols-2 rounded-lg border border-border bg-card overflow-hidden">
+          <img
+            src={tintingMachine}
+            alt={`Колеровочный аппарат ${TINT_MACHINE} в магазине AFSONA`}
+            className="w-full h-64 md:h-full object-cover"
+            loading="lazy"
+          />
+          <div className="p-6 md:p-10 flex flex-col justify-center">
+            <h2 className="text-3xl md:text-4xl font-semibold mb-3 text-foreground">Колеровка краски</h2>
+            <p className="text-muted-foreground mb-5">
+              Заколеруем краску в нужный цвет на аппарате {TINT_MACHINE} прямо в магазине.
+            </p>
+            <ul className="space-y-2 mb-6 text-sm text-foreground">
+              <li className="flex items-center gap-2">
+                <Palette className="w-4 h-4 text-primary shrink-0" />
+                Веера {FAN_DECKS.join(", ")}
+              </li>
+              <li className="flex items-center gap-2">
+                <Clock className="w-4 h-4 text-primary shrink-0" />
+                Готово за {TINT_TIME}
+              </li>
+            </ul>
+            <Button asChild className="w-full sm:w-auto self-start">
+              <Link to="/tinting">
+                Как это работает
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Link>
+            </Button>
+          </div>
         </div>
-
-        <Card className="mb-8 overflow-hidden">
-          <CardContent className="p-0">
-            <div className="grid md:grid-cols-2">
-              <div className="aspect-video md:aspect-auto">
-                <img
-                  src="https://kolerovka.ru/wp-content/uploads/2018/07/Vybor-oborudovanija.jpg"
-                  alt="Колеровочное оборудование"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="p-6 md:p-8 flex flex-col justify-center">
-                <div className="flex items-center gap-2 mb-4">
-                  <Palette className="w-8 h-8 text-primary" />
-                  <span className="text-2xl font-bold">2000+</span>
-                  <span className="text-muted-foreground">оттенков</span>
-                </div>
-                <div className="space-y-3 mb-6">
-                  {features.map((feature, index) => (
-                    <div key={index} className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-accent flex-shrink-0" />
-                      <span className="text-sm">{feature}</span>
-                    </div>
-                  ))}
-                </div>
-                <Link to="/tinting">
-                  <Button className="w-full md:w-auto">
-                    Подробнее
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </section>
   );

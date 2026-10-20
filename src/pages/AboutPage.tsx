@@ -1,186 +1,113 @@
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-import { 
-  Leaf, 
-  Palette, 
-  Gem, 
-  Users, 
-  Target, 
-  Heart,
-  CheckCircle2,
-  ArrowRight
-} from "lucide-react";
+import { ArrowRight, Store, Package, Palette, Truck, MessageCircle, Leaf } from "lucide-react";
 import { useSeo } from "@/hooks/useSeo";
+import { useStoreStats } from "@/hooks/useStoreStats";
+import { pluralizeProducts } from "@/lib/categories";
+import { STORES } from "@/lib/contacts";
+import { DELIVERY_TEXT, FAN_DECKS, TINT_MACHINE, TINT_TIME } from "@/lib/facts";
+import tintingMachine from "@/assets/tinting-machine.jpg";
 
 const AboutPage = () => {
   useSeo({
-    title: 'О компании',
-    description: 'AFSONA — магазин экологичных красок и материалов для ремонта в Душанбе и Худжанде. Подбор материалов, компьютерная колеровка и консультации специалистов.',
+    title: "О компании",
+    description:
+      "AFSONA — магазины красок и материалов для ремонта в Худжанде и Душанбе. Колеровка краски, консультации, доставка по городу.",
   });
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const values = [
+  const { data: stats } = useStoreStats();
+
+  const facts = [
     {
-      icon: Leaf,
-      title: "Экологичность",
-      description: "Приоритет экологически чистым материалам, безопасным для здоровья вашей семьи и окружающей среды."
+      icon: Store,
+      title: "Два магазина",
+      text: STORES.map((s) => `${s.city}: ${s.address}`).join(". "),
+    },
+    {
+      icon: Package,
+      title: stats ? `${stats.productCount} ${pluralizeProducts(stats.productCount)} в каталоге` : "Каталог",
+      text: stats?.brandNames.length
+        ? `Производители: ${stats.brandNames.join(", ")}.`
+        : "Краски, грунтовки, штукатурки, клеи, гидроизоляция и малярный инструмент.",
     },
     {
       icon: Palette,
-      title: "Широкий выбор",
-      description: "Огромная палитра цветов и текстур для воплощения любых дизайнерских идей и проектов."
+      title: "Колеровка",
+      text: `Аппарат ${TINT_MACHINE}, веера ${FAN_DECKS.join(", ")}. Готово за ${TINT_TIME}.`,
     },
     {
-      icon: Gem,
-      title: "Премиум качество",
-      description: "Работаем только с проверенными брендами высшего качества с международной сертификацией."
+      icon: Truck,
+      title: "Доставка",
+      text: `${DELIVERY_TEXT}.`,
     },
     {
-      icon: Users,
-      title: "Экспертная поддержка",
-      description: "Профессиональные консультации на каждом этапе вашего проекта от опытных специалистов."
-    }
-  ];
-
-  const stats = [
-    { value: "500+", label: "Видов материалов" },
-    { value: "4+", label: "Премиум брендов" },
-    { value: "1000+", label: "Довольных клиентов" },
-    { value: "5", label: "Лет на рынке" }
-  ];
-
-  const features = [
-    "Более 500 видов красок и материалов",
-    "Только проверенные производители",
-    "Экспертные консультации и поддержка",
-    "Быстрая доставка по городу",
-    "Компьютерная колеровка краски",
-    "Гарантия качества на все товары"
+      icon: MessageCircle,
+      title: "Консультация",
+      text: "Подскажем, какая краска подойдёт для стен, потолка или фасада, и посчитаем расход.",
+    },
+    {
+      icon: Leaf,
+      title: "Эко материалы",
+      text: "Экологичные материалы в каталоге отмечены меткой «Эко», их легко найти.",
+    },
   ];
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
       <main className="pt-24 pb-16">
-        <div className="container mx-auto px-4">
-          {/* Hero Section */}
-          <div className="text-center mb-16">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6 text-primary">
-              О компании AFSONA
-            </h1>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              Ваш надежный партнер в мире красок и материалов для ремонта. 
-              Мы предоставляем качественные экологичные материалы для создания уютного и красивого дома.
-            </p>
-          </div>
-
-          {/* Stats Section */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
-            {stats.map((stat, index) => (
-              <Card key={index} className="text-center">
-                <CardContent className="pt-6">
-                  <div className="text-4xl font-bold text-accent mb-2">{stat.value}</div>
-                  <div className="text-muted-foreground">{stat.label}</div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          {/* Mission Section */}
-          <div className="grid lg:grid-cols-2 gap-8 mb-16">
-            <Card className="h-full">
-              <CardHeader>
-                <div className="flex items-center gap-3 mb-2">
-                  <Target className="w-8 h-8 text-primary" />
-                  <CardTitle className="text-2xl">Наша миссия</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <p className="text-muted-foreground leading-relaxed">
-                  AFSONA — это больше чем магазин красок. Мы стремимся предоставить нашим клиентам 
-                  только самые качественные и экологичные материалы для создания уютного и красивого дома.
-                </p>
-                <p className="text-muted-foreground leading-relaxed">
-                  Наша команда экспертов поможет вам выбрать идеальные материалы для любого проекта — 
-                  от небольшого ремонта до масштабной реновации. Мы верим, что каждый дом заслуживает 
-                  лучших материалов.
-                </p>
-                <div className="space-y-3 pt-4">
-                  {features.map((feature, index) => (
-                    <div key={index} className="flex items-center gap-3">
-                      <CheckCircle2 className="w-5 h-5 text-accent flex-shrink-0" />
-                      <span>{feature}</span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="h-full">
-              <CardHeader>
-                <div className="flex items-center gap-3 mb-2">
-                  <Heart className="w-8 h-8 text-primary" />
-                  <CardTitle className="text-2xl">Наши ценности</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-6">
-                  {values.map((value, index) => (
-                    <div key={index} className="flex gap-4">
-                      <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                        <value.icon className="w-6 h-6 text-primary" />
-                      </div>
-                      <div>
-                        <h4 className="font-semibold mb-1">{value.title}</h4>
-                        <p className="text-sm text-muted-foreground">{value.description}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Why Choose Us */}
-          <div className="bg-card border rounded-lg p-8 mb-16">
-            <h2 className="text-3xl font-bold text-center mb-8 text-primary">Почему выбирают нас</h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {values.map((value, index) => (
-                <div key={index} className="text-center p-4">
-                  <div className="mx-auto w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                    <value.icon className="w-8 h-8 text-primary" />
-                  </div>
-                  <h3 className="font-semibold mb-2">{value.title}</h3>
-                  <p className="text-sm text-muted-foreground">{value.description}</p>
-                </div>
-              ))}
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="grid md:grid-cols-[1.2fr_1fr] gap-8 lg:gap-12 items-center mb-16">
+            <div>
+              <h1 className="text-3xl md:text-5xl font-semibold mb-5 text-foreground">О компании AFSONA</h1>
+              <p className="text-lg text-muted-foreground mb-4">
+                AFSONA — магазины красок и материалов для ремонта в Худжанде и Душанбе. К нам приходят и те, кто
+                делает ремонт в своей квартире, и мастера-отделочники.
+              </p>
+              <p className="text-lg text-muted-foreground">
+                Помогаем выбрать материал под задачу, колеруем краску в нужный цвет и привозим заказ по городу.
+              </p>
             </div>
+            <figure className="rounded-lg overflow-hidden border border-border bg-card">
+              <img
+                src={tintingMachine}
+                alt={`Колеровочный аппарат ${TINT_MACHINE} в магазине AFSONA`}
+                className="w-full aspect-[4/3] object-cover"
+              />
+            </figure>
           </div>
 
-          {/* CTA Section */}
-          <div className="bg-secondary rounded-lg p-8 text-center">
-            <h2 className="text-2xl font-bold mb-4">Готовы начать свой проект?</h2>
+          <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-16">
+            {facts.map(({ icon: Icon, title, text }) => (
+              <li key={title} className="rounded-lg border border-border bg-card p-5">
+                <Icon className="w-6 h-6 text-primary mb-3" />
+                <h2 className="text-lg font-semibold mb-1 text-foreground">{title}</h2>
+                <p className="text-sm text-muted-foreground">{text}</p>
+              </li>
+            ))}
+          </ul>
+
+          <div className="rounded-lg bg-secondary p-8 text-center">
+            <h2 className="text-2xl font-semibold mb-3 text-foreground">Подобрать материалы для ремонта</h2>
             <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-              Посетите наш каталог или свяжитесь с нами для получения профессиональной консультации
+              Посмотрите цены в каталоге или приходите в магазин, покажем всё вживую.
             </p>
-            <div className="flex flex-wrap gap-4 justify-center">
-              <Link to="/catalog">
-                <Button size="lg">
+            <div className="flex flex-wrap gap-3 justify-center">
+              <Button asChild size="lg">
+                <Link to="/catalog">
                   Перейти в каталог
                   <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              </Link>
-              <Link to="/contacts">
-                <Button size="lg" variant="outline">
-                  Связаться с нами
-                </Button>
-              </Link>
+                </Link>
+              </Button>
+              <Button asChild size="lg" variant="outline" className="bg-card">
+                <Link to="/contacts">Адреса магазинов</Link>
+              </Button>
             </div>
           </div>
         </div>
