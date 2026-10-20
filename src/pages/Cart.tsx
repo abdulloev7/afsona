@@ -357,7 +357,7 @@ const Cart = () => {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="customerEmail">Email</Label>
+                        <Label htmlFor="customerEmail">Эл. почта</Label>
                         <Input
                           id="customerEmail"
                           autoComplete="email"

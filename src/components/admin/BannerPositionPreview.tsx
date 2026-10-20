@@ -296,7 +296,7 @@ const BannerPositionPreview = ({
           {hasContent && (
             <div className="hidden sm:flex items-center gap-2 text-xs text-muted-foreground">
               <Move className="h-3 w-3" />
-              <span>Drag</span>
+              <span>Перетаскивание</span>
               <Keyboard className="h-3 w-3 ml-1" />
               <span>←↑↓→</span>
             </div>

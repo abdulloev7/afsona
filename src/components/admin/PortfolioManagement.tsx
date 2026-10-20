@@ -39,6 +39,7 @@ import { transliterate } from "@/lib/utils";
 import { z } from "zod";
 import RichTextEditor from "./RichTextEditor";
 import MediaUploader from "./MediaUploader";
+import { errorMessage } from "@/lib/errorMessage";
 
 interface MediaItem {
   type: 'image' | 'video';
@@ -246,7 +247,7 @@ const PortfolioManagement = () => {
       } else {
         toast({
           title: "Ошибка",
-          description: error.message,
+          description: errorMessage(error),
           variant: "destructive",
         });
       }

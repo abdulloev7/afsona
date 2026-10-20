@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Edit, Trash2, Upload, MoveUp, MoveDown } from "lucide-react";
 import { z } from 'zod';
+import { errorMessage } from "@/lib/errorMessage";
 
 const brandSchema = z.object({
   name: z.string().trim().min(1, "Название обязательно").max(100, "Название должно быть короче 100 символов"),
@@ -210,7 +211,7 @@ const BrandManagement = () => {
       console.error('Error saving brand:', error);
       toast({
         title: "Ошибка",
-        description: error.message || "Не удалось сохранить бренд",
+        description: errorMessage(error, "Не удалось сохранить бренд"),
         variant: "destructive",
       });
     }

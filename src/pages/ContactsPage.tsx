@@ -149,7 +149,7 @@ const ContactsPage = () => {
                   <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                     <Mail className="w-8 h-8 text-primary-foreground" />
                   </div>
-                  <span className="font-medium">Email</span>
+                  <span className="font-medium">Почта</span>
                 </button>
               </div>
             </CardContent>
@@ -184,7 +184,7 @@ const ContactsPage = () => {
                   <div>
                     <Input
                       type="email"
-                      placeholder="Email (необязательно)"
+                      placeholder="Эл. почта (необязательно)"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     />
