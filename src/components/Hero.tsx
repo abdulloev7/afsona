@@ -18,7 +18,7 @@ import {
   getTextAlign,
   type HeroBanner,
 } from "@/lib/heroBanner";
-import { t } from "@/i18n";
+import { localized, t } from "@/i18n";
 
 // Banner text slides up when its slide becomes current; skipped for "reduce motion".
 const fadeUp = (delay: "delay-0" | "delay-100" | "delay-200" = "delay-0") =>
@@ -40,7 +40,14 @@ const Hero = () => {
         .order("display_order", { ascending: true });
 
       if (error) throw error;
-      setBanners((data as HeroBanner[]) || []);
+      // On /tg each banner uses its Tajik images, falling back to the Russian ones
+      setBanners(
+        ((data as HeroBanner[]) || []).map((banner) => ({
+          ...banner,
+          image_url: localized(banner, "image_url"),
+          mobile_image_url: localized(banner, "mobile_image_url") || null,
+        }))
+      );
     } catch (error) {
       console.error("Error fetching banners:", error);
     } finally {

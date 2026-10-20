@@ -35,14 +35,26 @@ import {
   loadImageSize,
 } from '@/lib/heroBanner';
 
-type ImageKind = 'desktop' | 'mobile';
+type ImageKind = 'desktop' | 'mobile' | 'desktop_tg' | 'mobile_tg';
+
+// Form field that holds each kind of image
+const IMAGE_FIELD = {
+  desktop: 'image_url',
+  mobile: 'mobile_image_url',
+  desktop_tg: 'image_url_tg',
+  mobile_tg: 'mobile_image_url_tg',
+} as const;
+
+const isDesktopKind = (kind: ImageKind) => kind === 'desktop' || kind === 'desktop_tg';
+
+const NO_WARNINGS: Record<ImageKind, string[]> = { desktop: [], mobile: [], desktop_tg: [], mobile_tg: [] };
 
 // Warn when an image is far from the banner proportions: that much would be cropped
 const ASPECT_TOLERANCE = 0.15;
 
 const describeImageFit = (size: { width: number; height: number }, kind: ImageKind) => {
-  const target = kind === 'desktop' ? DESKTOP_SIZE : MOBILE_SIZE;
-  const targetAspect = kind === 'desktop' ? DESKTOP_ASPECT : MOBILE_ASPECT;
+  const target = isDesktopKind(kind) ? DESKTOP_SIZE : MOBILE_SIZE;
+  const targetAspect = isDesktopKind(kind) ? DESKTOP_ASPECT : MOBILE_ASPECT;
   const aspect = size.width / size.height;
   const warnings: string[] = [];
   if (Math.abs(aspect - targetAspect) / targetAspect > ASPECT_TOLERANCE) {
@@ -62,6 +74,8 @@ interface Banner {
   id: string;
   image_url: string;
   mobile_image_url: string | null;
+  image_url_tg: string | null;
+  mobile_image_url_tg: string | null;
   title: string;
   subtitle: string | null;
   button_text: string | null;
@@ -86,6 +100,8 @@ interface Banner {
 interface BannerFormData {
   image_url: string;
   mobile_image_url: string;
+  image_url_tg: string;
+  mobile_image_url_tg: string;
   title: string;
   subtitle: string;
   button_text: string;
@@ -112,10 +128,12 @@ const BannerManagement = () => {
   const [bannerToDelete, setBannerToDelete] = useState<string | null>(null);
   const [editingBanner, setEditingBanner] = useState<Banner | null>(null);
   const [uploading, setUploading] = useState<ImageKind | null>(null);
-  const [imageWarnings, setImageWarnings] = useState<Record<ImageKind, string[]>>({ desktop: [], mobile: [] });
+  const [imageWarnings, setImageWarnings] = useState<Record<ImageKind, string[]>>(NO_WARNINGS);
   const [formData, setFormData] = useState<BannerFormData>({
     image_url: '',
     mobile_image_url: '',
+    image_url_tg: '',
+    mobile_image_url_tg: '',
     title: '',
     subtitle: '',
     button_text: '',
@@ -202,9 +220,9 @@ const BannerManagement = () => {
         .getPublicUrl(fileName);
 
       setFormData((prev) =>
-        kind === 'desktop'
-          ? { ...prev, image_url: urlData.publicUrl }
-          : { ...prev, mobile_image_url: urlData.publicUrl, mobileImageSettings: { ...DEFAULT_MOBILE_IMAGE_SETTINGS } }
+        kind === 'mobile'
+          ? { ...prev, mobile_image_url: urlData.publicUrl, mobileImageSettings: { ...DEFAULT_MOBILE_IMAGE_SETTINGS } }
+          : { ...prev, [IMAGE_FIELD[kind]]: urlData.publicUrl }
       );
       checkImage(urlData.publicUrl, kind);
 
@@ -224,15 +242,17 @@ const BannerManagement = () => {
     }
   };
 
-  const removeMobileImage = () => {
-    setFormData((prev) => ({ ...prev, mobile_image_url: '' }));
-    setImageWarnings((prev) => ({ ...prev, mobile: [] }));
+  const removeImage = (kind: ImageKind) => {
+    setFormData((prev) => ({ ...prev, [IMAGE_FIELD[kind]]: '' }));
+    setImageWarnings((prev) => ({ ...prev, [kind]: [] }));
   };
 
   const resetForm = () => {
     setFormData({
       image_url: '',
       mobile_image_url: '',
+      image_url_tg: '',
+      mobile_image_url_tg: '',
       title: '',
       subtitle: '',
       button_text: '',
@@ -242,7 +262,7 @@ const BannerManagement = () => {
       imageSettings: { ...DEFAULT_IMAGE_SETTINGS },
       mobileImageSettings: { ...DEFAULT_MOBILE_IMAGE_SETTINGS },
     });
-    setImageWarnings({ desktop: [], mobile: [] });
+    setImageWarnings(NO_WARNINGS);
     setEditingBanner(null);
   };
 
@@ -251,6 +271,8 @@ const BannerManagement = () => {
     setFormData({
       image_url: banner.image_url,
       mobile_image_url: banner.mobile_image_url || '',
+      image_url_tg: banner.image_url_tg || '',
+      mobile_image_url_tg: banner.mobile_image_url_tg || '',
       title: banner.title,
       subtitle: banner.subtitle || '',
       button_text: banner.button_text || '',
@@ -280,9 +302,11 @@ const BannerManagement = () => {
         positionY: banner.mobile_image_position_y ?? DEFAULT_MOBILE_IMAGE_SETTINGS.positionY,
       },
     });
-    setImageWarnings({ desktop: [], mobile: [] });
+    setImageWarnings(NO_WARNINGS);
     checkImage(banner.image_url, 'desktop');
     if (banner.mobile_image_url) checkImage(banner.mobile_image_url, 'mobile');
+    if (banner.image_url_tg) checkImage(banner.image_url_tg, 'desktop_tg');
+    if (banner.mobile_image_url_tg) checkImage(banner.mobile_image_url_tg, 'mobile_tg');
     setDialogOpen(true);
   };
 
@@ -300,6 +324,8 @@ const BannerManagement = () => {
       const bannerData = {
         image_url: formData.image_url,
         mobile_image_url: formData.mobile_image_url || null,
+        image_url_tg: formData.image_url_tg || null,
+        mobile_image_url_tg: formData.mobile_image_url_tg || null,
         title: formData.title,
         subtitle: formData.subtitle || null,
         button_text: formData.button_text || null,
@@ -512,7 +538,7 @@ const BannerManagement = () => {
                   {formData.mobile_image_url ? (
                     <div className="flex items-center gap-3">
                       <img src={formData.mobile_image_url} alt="" className="h-16 w-[52px] rounded object-cover bg-muted" />
-                      <Button type="button" variant="outline" size="sm" onClick={removeMobileImage}>
+                      <Button type="button" variant="outline" size="sm" onClick={() => removeImage('mobile')}>
                         <X className="h-4 w-4 mr-1" />
                         Убрать
                       </Button>
@@ -532,6 +558,52 @@ const BannerManagement = () => {
                       <span>Обратите внимание: {imageWarnings.mobile.join('; ')}.</span>
                     </p>
                   )}
+                </div>
+              </div>
+
+              {/* Tajik versions: shown on /tg, the Russian images are used when empty */}
+              <div className="space-y-3 rounded-lg border border-border p-4">
+                <div>
+                  <Label>Таджикская версия (по желанию)</Label>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Показывается на таджикском сайте (/tg). Если не загрузить, там будут русские картинки. Размеры те же.
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {([
+                    { kind: 'desktop_tg', label: 'Для компьютера', thumb: 'h-16 w-[154px]' },
+                    { kind: 'mobile_tg', label: 'Для телефона', thumb: 'h-16 w-[52px]' },
+                  ] as const).map(({ kind, label, thumb }) => {
+                    const url = formData[IMAGE_FIELD[kind]];
+                    return (
+                      <div key={kind} className="space-y-2">
+                        <p className="text-sm">{label}</p>
+                        {url ? (
+                          <div className="flex items-center gap-3">
+                            <img src={url} alt="" className={`${thumb} rounded object-cover bg-muted`} />
+                            <Button type="button" variant="outline" size="sm" onClick={() => removeImage(kind)}>
+                              <X className="h-4 w-4 mr-1" />
+                              Убрать
+                            </Button>
+                          </div>
+                        ) : (
+                          <Input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => handleImageUpload(e, kind)}
+                            disabled={uploading !== null}
+                          />
+                        )}
+                        {uploading === kind && <span className="text-sm text-muted-foreground">Загрузка...</span>}
+                        {imageWarnings[kind].length > 0 && (
+                          <p className="flex gap-1.5 text-xs text-amber-600">
+                            <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+                            <span>Обратите внимание: {imageWarnings[kind].join('; ')}.</span>
+                          </p>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -683,6 +755,14 @@ const BannerManagement = () => {
                       className="w-full h-full object-cover"
                       style={{ objectPosition: `${banner.image_position_x ?? 50}% ${banner.image_position_y ?? 50}%` }}
                     />
+                    {(banner.image_url_tg || banner.mobile_image_url_tg) && (
+                      <span
+                        className="absolute bottom-1 left-1 rounded bg-black/60 px-1.5 py-0.5 text-[10px] font-semibold text-white"
+                        title="Есть таджикская версия"
+                      >
+                        TJ
+                      </span>
+                    )}
                     {banner.mobile_image_url && (
                       <span
                         className="absolute bottom-1 right-1 flex items-center gap-1 rounded bg-black/60 px-1.5 py-0.5 text-[10px] text-white"

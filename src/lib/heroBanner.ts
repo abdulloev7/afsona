@@ -18,6 +18,8 @@ export interface HeroBanner {
   id: string;
   image_url: string;
   mobile_image_url: string | null;
+  image_url_tg?: string | null;
+  mobile_image_url_tg?: string | null;
   title: string;
   subtitle: string | null;
   button_text: string | null;
