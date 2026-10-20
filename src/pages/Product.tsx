@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/contexts/CartContext";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, ShoppingCart, Leaf, ShoppingBag } from "lucide-react";
+import { ShoppingCart, Leaf, ShoppingBag, ChevronRight, Palette } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { ProductSizeSelector } from "@/components/ProductSizeSelector";
@@ -14,6 +14,12 @@ import { ProductMediaCarousel } from "@/components/ProductMediaCarousel";
 import NotFound from "./NotFound";
 import { useSeo } from "@/hooks/useSeo";
 import { SITE_URL, toDescription } from "@/lib/seo";
+import { getCategoryLink } from "@/lib/categories";
+import ProductStores from "@/components/ProductStores";
+import RelatedProducts from "@/components/RelatedProducts";
+
+// Categories whose products can be tinted in the store.
+const TINTABLE_CATEGORIES = ['paints-and-coatings', 'decorative-coatings'];
 
 interface ProductData {
   id: string;
@@ -24,6 +30,7 @@ interface ProductData {
   image_fit: string | null;
   brand: string | null;
   brand_id: string | null;
+  category_id: string | null;
   sizes: string[] | null;
   size_variants: { volume: string; price: number }[] | null;
   features: string[] | null;
@@ -36,25 +43,9 @@ interface ProductData {
   } | null;
   brand_info: {
     name: string;
+    slug: string;
   } | null;
 }
-
-const categoryRoutes: { [key: string]: string } = {
-  'paints-and-coatings': '/paints-coatings',
-  'decorative-coatings': '/decorative-coatings',
-  'facade-paints': '/facade-paints',
-  'ceiling-paints': '/ceiling-paints',
-  'wall-paints': '/wall-paints',
-  'primers-preparatory': '/primers',
-  'putties-leveling': '/putties-leveling',
-  'waterproofing-materials': '/waterproofing',
-  'adhesives-sealants': '/adhesives-sealants',
-  'tints-thinners': '/tints-thinners',
-  'tools-equipment': '/tools',
-  'brushes-accessories': '/brushes-tools',
-  'rollers-equipment': '/rollers',
-  'spatulas-accessories': '/spatulas-accessories',
-};
 
 export default function Product() {
   const { id } = useParams<{ id: string }>();
@@ -101,6 +92,10 @@ export default function Product() {
   const { toast } = useToast();
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }, [id]);
+
+  useEffect(() => {
     const fetchProduct = async () => {
       if (!id) return;
 
@@ -115,6 +110,7 @@ export default function Product() {
           image_fit,
           brand,
           brand_id,
+          category_id,
           sizes,
           size_variants,
           features,
@@ -122,7 +118,7 @@ export default function Product() {
           in_stock,
           media,
           category:categories(name, slug),
-          brand_info:brands(name)
+          brand_info:brands(name, slug)
         `)
         .eq('id', id)
         .maybeSingle();
@@ -212,20 +208,11 @@ export default function Product() {
     navigate('/cart');
   };
 
-  const handleBackToCategory = () => {
-    if (product?.category?.slug) {
-      const route = categoryRoutes[product.category.slug];
-      navigate(route || '/');
-    } else {
-      navigate('/');
-    }
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 pt-24 pb-8">
           <div className="text-center">Загрузка...</div>
         </div>
         <Footer />
@@ -235,111 +222,145 @@ export default function Product() {
 
   if (!product) return <NotFound />;
 
+  const brandName = product.brand_info?.name || product.brand;
+  const variants = product.size_variants && product.size_variants.length > 0 ? product.size_variants : null;
+  const prices = variants ? variants.map((v) => v.price) : [product.price];
+  const minPrice = Math.min(...prices);
+  const maxPrice = Math.max(...prices);
+  const formatPrice = (n: number) => `${n.toLocaleString('ru-RU')} сом.`;
+  const canTint = !!product.category && TINTABLE_CATEGORIES.includes(product.category.slug);
+
+  const media = [
+    ...(product.image
+      ? [{ type: 'image' as const, url: product.image, fit: (product.image_fit || 'cover') as 'cover' | 'contain' }]
+      : []),
+    ...(product.media || []),
+  ];
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <div className="container mx-auto px-4 py-8">
-        <Button
-          variant="ghost"
-          onClick={handleBackToCategory}
-          className="mb-6"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Назад к категории
-        </Button>
+      <main className="container mx-auto px-4 pt-24 pb-16">
+        <nav aria-label="Навигация" className="mb-6">
+          <ol className="flex flex-wrap items-center gap-1 text-sm text-muted-foreground">
+            <li>
+              <Link to="/catalog" className="hover:text-primary transition-colors">Каталог</Link>
+            </li>
+            {product.category && (
+              <>
+                <li aria-hidden="true"><ChevronRight className="h-3.5 w-3.5" /></li>
+                <li>
+                  <Link to={getCategoryLink(product.category.slug)} className="hover:text-primary transition-colors">
+                    {product.category.name}
+                  </Link>
+                </li>
+              </>
+            )}
+            <li aria-hidden="true"><ChevronRight className="h-3.5 w-3.5" /></li>
+            <li aria-current="page" className="text-foreground line-clamp-1">{product.name}</li>
+          </ol>
+        </nav>
 
-        <div className="grid md:grid-cols-2 gap-8">
-          {/* Product Media Carousel */}
-          <ProductMediaCarousel 
-            media={(() => {
-              const allMedia = [];
-              if (product.image) {
-                allMedia.push({
-                  type: 'image' as const,
-                  url: product.image,
-                  fit: (product.image_fit || 'cover') as 'cover' | 'contain'
-                });
-              }
-              if (product.media) {
-                allMedia.push(...product.media);
-              }
-              return allMedia;
-            })()}
-            productName={product.name}
-          />
+        <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
+          <div className="md:sticky md:top-24 self-start">
+            <ProductMediaCarousel media={media} productName={product.name} />
+          </div>
 
-          {/* Product Info */}
           <div className="space-y-6">
             <div>
-              <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
-              {(product.brand_info?.name || product.brand) && (
-                <p className="text-lg text-muted-foreground">
-                  {product.brand_info?.name || product.brand}
-                </p>
+              <h1 className="text-2xl md:text-3xl font-semibold mb-2">{product.name}</h1>
+              {brandName && (
+                product.brand_info?.slug ? (
+                  <Link
+                    to={`/brands/${product.brand_info.slug}`}
+                    className="text-base text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    {brandName}
+                  </Link>
+                ) : (
+                  <p className="text-base text-muted-foreground">{brandName}</p>
+                )
               )}
             </div>
 
-            <div className="flex items-center gap-2">
-              {product.eco && (
-                <Badge variant="secondary" className="gap-1">
-                  <Leaf className="h-3 w-3" />
-                  Эко
-                </Badge>
-              )}
-              {!product.in_stock && (
-                <Badge variant="destructive">Нет в наличии</Badge>
-              )}
-            </div>
-
-            <div className="text-4xl font-bold text-primary">
-              {product.size_variants && product.size_variants.length > 0 ? (
-                (() => {
-                  const prices = product.size_variants.map(v => v.price);
-                  const minPrice = Math.min(...prices);
-                  const maxPrice = Math.max(...prices);
-                  return minPrice === maxPrice 
-                    ? `${minPrice.toLocaleString('ru-RU')} сом.`
-                    : `от ${minPrice.toLocaleString('ru-RU')} до ${maxPrice.toLocaleString('ru-RU')} сом.`;
-                })()
-              ) : (
-                `${product.price.toLocaleString('ru-RU')} сом.`
-              )}
-            </div>
-
-            {product.description && (
-              <div>
-                <h2 className="text-xl font-semibold mb-2">Описание</h2>
-                <p className="text-muted-foreground">{product.description}</p>
+            {(product.eco || !product.in_stock) && (
+              <div className="flex items-center gap-2">
+                {product.eco && (
+                  <Badge variant="secondary" className="gap-1">
+                    <Leaf className="h-3 w-3" />
+                    Эко
+                  </Badge>
+                )}
+                {!product.in_stock && (
+                  <Badge variant="destructive">Нет в наличии</Badge>
+                )}
               </div>
             )}
 
-            {(product.size_variants && product.size_variants.length > 0) ? (
-              <div>
-                <h2 className="text-xl font-semibold mb-2">Доступные объемы</h2>
-                <div className="flex flex-wrap gap-2">
-                  {product.size_variants.map((variant, index) => (
-                    <Badge key={index} variant="outline" className="text-sm py-1 px-3">
-                      {variant.volume} - {variant.price.toLocaleString('ru-RU')} сом
-                    </Badge>
+            <div>
+              <p className="text-3xl md:text-4xl font-semibold text-primary">
+                {minPrice === maxPrice ? formatPrice(minPrice) : `от ${formatPrice(minPrice)}`}
+              </p>
+              {variants && variants.length > 1 && (
+                <ul className="mt-4 divide-y divide-border rounded-lg border border-border bg-card">
+                  {variants.map((variant, index) => (
+                    <li key={index} className="flex items-center justify-between px-4 py-2.5 text-sm">
+                      <span className="text-foreground">{variant.volume}</span>
+                      <span className="font-semibold text-foreground">{formatPrice(variant.price)}</span>
+                    </li>
                   ))}
-                </div>
-              </div>
-            ) : product.sizes && product.sizes.length > 0 && (
+                </ul>
+              )}
+              {variants && variants.length === 1 && (
+                <p className="mt-2 text-sm text-muted-foreground">Фасовка: {variants[0].volume}</p>
+              )}
+              {!variants && product.sizes && product.sizes.length > 0 && (
+                <p className="mt-2 text-sm text-muted-foreground">Фасовка: {product.sizes.join(', ')}</p>
+              )}
+            </div>
+
+            {productHasVariants || !isInCart ? (
+              <Button
+                onClick={handleAddToCart}
+                disabled={!product.in_stock}
+                size="lg"
+                className="w-full"
+              >
+                <ShoppingCart className="mr-2 h-5 w-5" />
+                {productHasVariants ? 'Выбрать фасовку и добавить в корзину' : 'Добавить в корзину'}
+              </Button>
+            ) : (
+              <Button onClick={handleGoToCart} size="lg" variant="secondary" className="w-full">
+                <ShoppingBag className="mr-2 h-5 w-5" />
+                Перейти к заказу
+              </Button>
+            )}
+
+            {canTint && (
+              <Link
+                to="/tinting"
+                className="flex items-start gap-3 rounded-lg border border-border bg-card p-4 hover:border-primary/50 transition-colors"
+              >
+                <Palette className="h-5 w-5 shrink-0 text-primary mt-0.5" />
+                <span className="text-sm">
+                  <span className="font-medium text-foreground">Нужен свой цвет?</span>{' '}
+                  <span className="text-muted-foreground">Подберём и заколеруем за 5–10 минут. Как это работает</span>
+                </span>
+              </Link>
+            )}
+
+            <ProductStores productName={product.name} />
+
+            {product.description && (
               <div>
-                <h2 className="text-xl font-semibold mb-2">Доступные объемы</h2>
-                <div className="flex flex-wrap gap-2">
-                  {product.sizes.map((size, index) => (
-                    <Badge key={index} variant="outline">
-                      {size}
-                    </Badge>
-                  ))}
-                </div>
+                <h2 className="text-lg font-semibold mb-2">Описание</h2>
+                <p className="text-muted-foreground whitespace-pre-line">{product.description}</p>
               </div>
             )}
 
             {product.features && product.features.length > 0 && (
               <div>
-                <h2 className="text-xl font-semibold mb-2">Особенности</h2>
+                <h2 className="text-lg font-semibold mb-2">Особенности</h2>
                 <ul className="list-disc list-inside space-y-1 text-muted-foreground">
                   {product.features.map((feature, index) => (
                     <li key={index}>{feature}</li>
@@ -347,43 +368,13 @@ export default function Product() {
                 </ul>
               </div>
             )}
-
-            <div className="flex gap-4 pt-4">
-              {productHasVariants ? (
-                <Button
-                  onClick={handleAddToCart}
-                  disabled={!product.in_stock}
-                  size="lg"
-                  className="flex-1"
-                >
-                  <ShoppingCart className="mr-2 h-5 w-5" />
-                  Добавить в корзину
-                </Button>
-              ) : !isInCart ? (
-                <Button
-                  onClick={handleAddToCart}
-                  disabled={!product.in_stock}
-                  size="lg"
-                  className="flex-1"
-                >
-                  <ShoppingCart className="mr-2 h-5 w-5" />
-                  Добавить в корзину
-                </Button>
-              ) : (
-                <Button
-                  onClick={handleGoToCart}
-                  size="lg"
-                  variant="secondary"
-                  className="flex-1"
-                >
-                  <ShoppingBag className="mr-2 h-5 w-5" />
-                  Перейти к заказу
-                </Button>
-              )}
-            </div>
           </div>
         </div>
-      </div>
+
+        {product.category_id && (
+          <RelatedProducts categoryId={product.category_id} productId={product.id} />
+        )}
+      </main>
       <ProductSizeSelector
         product={product}
         isOpen={showSizeSelector}
