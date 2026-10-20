@@ -43,6 +43,12 @@ const CATEGORY_ICONS: Record<string, LucideIcon> = {
   'spatulas-accessories': Hammer,
 };
 
+// Category card pictures live in public/categories/<slug>.webp (960×600).
+const CATEGORY_IMAGES = new Set(Object.keys(CATEGORY_ORDER));
+
+export const getCategoryImage = (slug: string) =>
+  CATEGORY_IMAGES.has(slug) ? `/categories/${slug}.webp` : null;
+
 export const getCategoryLink = (slug: string) => CATEGORY_ROUTES[slug] || '/paints-coatings';
 
 export const getCategoryIcon = (slug: string): LucideIcon => CATEGORY_ICONS[slug] || Paintbrush;
