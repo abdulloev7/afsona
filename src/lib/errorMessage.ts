@@ -1,4 +1,6 @@
-// Supabase and the browser return errors in English. Show the customer Russian text instead.
+import { t } from "@/i18n";
+
+// Supabase and the browser return errors in English. Show the customer our own text instead.
 const KNOWN: [RegExp, string][] = [
   [/invalid login credentials/i, "Неверный email или пароль"],
   [/email not confirmed/i, "Email не подтверждён. Проверьте почту и перейдите по ссылке из письма"],
@@ -18,7 +20,7 @@ const KNOWN: [RegExp, string][] = [
 
 export const errorMessage = (error: unknown, fallback = "Что-то пошло не так. Попробуйте ещё раз") => {
   const text = error instanceof Error ? error.message : typeof error === "object" && error && "message" in error ? String((error as { message: unknown }).message) : "";
-  if (!text) return fallback;
-  if (/[а-яё]/i.test(text)) return text;
-  return KNOWN.find(([re]) => re.test(text))?.[1] ?? fallback;
+  if (!text) return t(fallback);
+  if (/[а-яё]/i.test(text)) return t(text);
+  return t(KNOWN.find(([re]) => re.test(text))?.[1] ?? fallback);
 };

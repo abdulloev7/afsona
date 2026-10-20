@@ -8,6 +8,7 @@ import CategoryTile from "@/components/CategoryTile";
 import { pluralizeProducts, sortCategories } from "@/lib/categories";
 import { useToast } from "@/hooks/use-toast";
 import { useSeo } from "@/hooks/useSeo";
+import { t } from "@/i18n";
 
 interface Category {
   id: string;
@@ -26,8 +27,8 @@ interface Brand {
 
 const Catalog = () => {
   useSeo({
-    title: 'Каталог красок и материалов для ремонта',
-    description: 'Каталог AFSONA: интерьерные и фасадные краски, грунтовки, декоративные штукатурки, клеи, герметики и малярный инструмент. Цены и наличие, магазины в Душанбе и Худжанде.',
+    title: t("Каталог красок и материалов для ремонта"),
+    description: t("Каталог AFSONA: интерьерные и фасадные краски, грунтовки, декоративные штукатурки, клеи, герметики и малярный инструмент. Цены и наличие, магазины в Душанбе и Худжанде."),
   });
   const [categories, setCategories] = useState<Category[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
@@ -78,8 +79,8 @@ const Catalog = () => {
     } catch (error: any) {
       console.error('Error fetching data:', error);
       toast({
-        title: "Ошибка",
-        description: "Не удалось загрузить данные каталога",
+        title: t("Ошибка"),
+        description: t("Не удалось загрузить данные каталога"),
         variant: "destructive",
       });
     } finally {
@@ -115,9 +116,13 @@ const Catalog = () => {
       <main className="pt-24 pb-16">
         <div className="container mx-auto px-4">
           <div className="mb-8">
-            <h1 className="text-3xl md:text-4xl font-semibold text-foreground mb-2">Каталог</h1>
+            <h1 className="text-3xl md:text-4xl font-semibold text-foreground mb-2">{t("Каталог")}</h1>
             <p className="text-muted-foreground">
-              {totalProducts} {pluralizeProducts(totalProducts)} в {categories.length} категориях
+              {t("{count} {products} в {categories} категориях", {
+                count: totalProducts,
+                products: pluralizeProducts(totalProducts),
+                categories: categories.length,
+              })}
             </p>
           </div>
 
@@ -125,7 +130,7 @@ const Catalog = () => {
             {categories.map((category) => (
               <CategoryTile
                 key={category.id}
-                name={category.name}
+                name={t(category.name)}
                 slug={category.slug}
                 productCount={category.productCount}
               />
@@ -134,7 +139,7 @@ const Catalog = () => {
 
           {brands.length > 0 && (
             <div>
-              <h2 className="text-xl font-semibold text-foreground mb-4">Бренды</h2>
+              <h2 className="text-xl font-semibold text-foreground mb-4">{t("Бренды")}</h2>
               <div className="flex flex-wrap gap-2">
                 {brands.map((brand) => (
                   <Link

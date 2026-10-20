@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
 import { MapPin, Calendar, ArrowRight, Briefcase } from "lucide-react";
 import { useSeo } from "@/hooks/useSeo";
+import { formatMonthYear, t } from "@/i18n";
 
 interface MediaItem {
   type: 'image' | 'video';
@@ -34,8 +35,8 @@ interface PortfolioItem {
 const Portfolio = () => {
   const [portfolio, setPortfolio] = useState<PortfolioItem[]>([]);
   useSeo({
-    title: 'Наши работы',
-    description: 'Портфолио AFSONA: примеры ремонта и отделки с нашими красками и материалами.',
+    title: t("Наши работы"),
+    description: t("Портфолио AFSONA: примеры ремонта и отделки с нашими красками и материалами."),
   });
   const [loading, setLoading] = useState(true);
   const { isAdmin, loading: roleLoading } = useUserRole();
@@ -44,8 +45,8 @@ const Portfolio = () => {
   useEffect(() => {
     if (!roleLoading && !isAdmin) {
       toast({
-        title: "Доступ запрещен",
-        description: "Эта страница доступна только администраторам",
+        title: t("Доступ запрещен"),
+        description: t("Эта страница доступна только администраторам"),
         variant: "destructive",
       });
       navigate("/");
@@ -76,8 +77,8 @@ const Portfolio = () => {
       setPortfolio(mappedData);
     } catch {
       toast({
-        title: "Ошибка",
-        description: "Не удалось загрузить портфолио",
+        title: t("Ошибка"),
+        description: t("Не удалось загрузить портфолио"),
         variant: "destructive",
       });
     } finally {
@@ -90,7 +91,7 @@ const Portfolio = () => {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p>Загрузка...</p>
+          <p>{t("Загрузка...")}</p>
         </div>
       </div>
     );
@@ -104,29 +105,29 @@ const Portfolio = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
-              <h1 className="text-4xl font-bold mb-4">Портфолио проектов</h1>
+              <h1 className="text-4xl font-bold mb-4">{t("Портфолио проектов")}</h1>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Объекты и проекты, выполненные с использованием нашей продукции
+                {t("Объекты и проекты, выполненные с использованием нашей продукции")}
               </p>
               <Badge variant="outline" className="mt-4">
-                Только для администраторов
+                {t("Только для администраторов")}
               </Badge>
             </div>
 
             {loading ? (
               <div className="text-center py-16">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-                <p>Загрузка проектов...</p>
+                <p>{t("Загрузка проектов...")}</p>
               </div>
             ) : portfolio.length === 0 ? (
               <div className="text-center py-16">
                 <Briefcase className="h-16 w-16 mx-auto mb-4 opacity-50" />
-                <h2 className="text-2xl font-bold mb-4">Проектов пока нет</h2>
+                <h2 className="text-2xl font-bold mb-4">{t("Проектов пока нет")}</h2>
                 <p className="text-muted-foreground mb-6">
-                  Добавьте первый проект через админ-панель
+                  {t("Добавьте первый проект через админ-панель")}
                 </p>
                 <Button onClick={() => navigate("/admin")}>
-                  Перейти в админ-панель
+                  {t("Перейти в админ-панель")}
                 </Button>
               </div>
             ) : (
@@ -157,7 +158,7 @@ const Portfolio = () => {
                           variant="secondary" 
                           className="absolute top-2 right-2"
                         >
-                          Черновик
+                          {t("Черновик")}
                         </Badge>
                       )}
                     </div>
@@ -181,17 +182,14 @@ const Portfolio = () => {
                           <div className="flex items-center gap-1">
                             <Calendar className="h-4 w-4" />
                             <span>
-                              {new Date(item.completion_date).toLocaleDateString('ru-RU', {
-                                year: 'numeric',
-                                month: 'long',
-                              })}
+                              {formatMonthYear(item.completion_date)}
                             </span>
                           </div>
                         )}
                       </div>
                       <Link to={`/portfolio/${item.slug}`}>
                         <Button variant="outline" className="w-full group/btn">
-                          Подробнее
+                          {t("Подробнее")}
                           <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
                         </Button>
                       </Link>

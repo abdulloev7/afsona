@@ -6,10 +6,10 @@ import Footer from "@/components/Footer";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatNewsDate } from "@/lib/utils";
 import { Calendar } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useSeo } from "@/hooks/useSeo";
+import { formatLongDate, t } from "@/i18n";
 
 interface NewsItem {
   id: string;
@@ -23,8 +23,8 @@ interface NewsItem {
 const News = () => {
   const [news, setNews] = useState<NewsItem[]>([]);
   useSeo({
-    title: 'Новости',
-    description: 'Новости магазина AFSONA: новые поступления, акции и советы по ремонту и выбору красок.',
+    title: t("Новости"),
+    description: t("Новости магазина AFSONA: новые поступления, акции и советы по ремонту и выбору красок."),
   });
   const [loading, setLoading] = useState(true);
 
@@ -44,8 +44,8 @@ const News = () => {
       setNews(data || []);
     } catch (error: any) {
       toast({
-        title: "Ошибка",
-        description: "Не удалось загрузить новости",
+        title: t("Ошибка"),
+        description: t("Не удалось загрузить новости"),
         variant: "destructive",
       });
     } finally {
@@ -57,7 +57,7 @@ const News = () => {
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-1 container mx-auto px-4 pt-24 pb-12">
-        <h1 className="text-4xl font-bold mb-8">Новости</h1>
+        <h1 className="text-4xl font-bold mb-8">{t("Новости")}</h1>
 
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -76,7 +76,7 @@ const News = () => {
           </div>
         ) : news.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-muted-foreground text-lg">Новостей пока нет</p>
+            <p className="text-muted-foreground text-lg">{t("Новостей пока нет")}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -101,7 +101,7 @@ const News = () => {
                 <CardContent className="p-6 flex-1 flex flex-col">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
                     <Calendar className="h-4 w-4" />
-                    <span>{formatNewsDate(item.published_at)}</span>
+                    <span>{formatLongDate(item.published_at)}</span>
                   </div>
                   <h2 className="text-xl font-semibold mb-3 line-clamp-2">
                     {item.title}
@@ -114,7 +114,7 @@ const News = () => {
                 </CardContent>
                 <CardFooter className="p-6 pt-0 mt-auto">
                   <Button asChild variant="default" className="w-full">
-                    <Link to={`/news/${item.slug}`}>Читать далее</Link>
+                    <Link to={`/news/${item.slug}`}>{t("Читать далее")}</Link>
                   </Button>
                 </CardFooter>
               </Card>

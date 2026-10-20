@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Palette, Clock } from "lucide-react";
 import tintingMachine from "@/assets/tinting-machine.jpg";
 import { FAN_DECKS, TINT_MACHINE, TINT_TIME } from "@/lib/facts";
+import { t } from "@/i18n";
 
 const TintingPreview = () => {
   return (
@@ -11,28 +12,28 @@ const TintingPreview = () => {
         <div className="grid md:grid-cols-2 rounded-lg border border-border bg-card overflow-hidden">
           <img
             src={tintingMachine}
-            alt={`Колеровочный аппарат ${TINT_MACHINE} в магазине AFSONA`}
+            alt={t("Колеровочный аппарат {machine} в магазине AFSONA", { machine: TINT_MACHINE })}
             className="w-full h-64 md:h-full object-cover"
             loading="lazy"
           />
           <div className="p-6 md:p-10 flex flex-col justify-center">
-            <h2 className="text-3xl md:text-4xl font-semibold mb-3 text-foreground">Колеровка краски</h2>
+            <h2 className="text-3xl md:text-4xl font-semibold mb-3 text-foreground">{t("Колеровка краски")}</h2>
             <p className="text-muted-foreground mb-5">
-              Заколеруем краску в нужный цвет на аппарате {TINT_MACHINE} прямо в магазине.
+              {t("Заколеруем краску в нужный цвет на аппарате {machine} прямо в магазине.", { machine: TINT_MACHINE })}
             </p>
             <ul className="space-y-2 mb-6 text-sm text-foreground">
               <li className="flex items-center gap-2">
                 <Palette className="w-4 h-4 text-primary shrink-0" />
-                Веера {FAN_DECKS.join(", ")}
+                {t("Веера {decks}", { decks: FAN_DECKS.join(", ") })}
               </li>
               <li className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-primary shrink-0" />
-                Готово за {TINT_TIME}
+                {t("Готово за {time}", { time: TINT_TIME })}
               </li>
             </ul>
             <Button asChild className="w-full sm:w-auto self-start">
               <Link to="/tinting">
-                Как это работает
+                {t("Как это работает")}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Link>
             </Button>

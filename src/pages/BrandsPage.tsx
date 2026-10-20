@@ -8,7 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { pluralizeProducts } from "@/lib/categories";
 import { useSeo } from "@/hooks/useSeo";
+import { localized, t } from "@/i18n";
 
 interface Brand {
   id: string;
@@ -24,8 +26,8 @@ interface Brand {
 
 const BrandsPage = () => {
   useSeo({
-    title: 'Бренды красок и материалов',
-    description: 'Бренды в магазине AFSONA: Alantex, Raduga, Soudal, San Marito, Decor и другие. Оригинальная продукция производителей в магазинах в Душанбе и Худжанде.',
+    title: t("Бренды красок и материалов"),
+    description: t("Бренды в магазине AFSONA: Alantex, Raduga, Soudal, San Marito, Decor и другие. Оригинальная продукция производителей в магазинах в Душанбе и Худжанде."),
   });
   const [brands, setBrands] = useState<Brand[]>([]);
   const [loading, setLoading] = useState(true);
@@ -66,8 +68,8 @@ const BrandsPage = () => {
     } catch (error) {
       console.error('Error fetching brands:', error);
       toast({
-        title: "Ошибка",
-        description: "Не удалось загрузить бренды",
+        title: t("Ошибка"),
+        description: t("Не удалось загрузить бренды"),
         variant: "destructive",
       });
     } finally {
@@ -114,18 +116,17 @@ const BrandsPage = () => {
           {/* Hero Section */}
           <div className="text-center mb-16">
             <h1 className="text-4xl md:text-5xl font-bold mb-4 text-primary">
-              Наши бренды
+              {t("Наши бренды")}
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Мы работаем с ведущими производителями строительных и отделочных материалов. 
-              Каждый бренд в нашем каталоге — это гарантия качества и надёжности.
+              {t("Мы работаем с ведущими производителями строительных и отделочных материалов. Каждый бренд в нашем каталоге — это гарантия качества и надёжности.")}
             </p>
           </div>
 
           {brands.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-muted-foreground text-lg">
-                Бренды пока не добавлены.
+                {t("Бренды пока не добавлены.")}
               </p>
             </div>
           ) : (
@@ -155,12 +156,12 @@ const BrandsPage = () => {
                     <div className="flex items-center justify-between mb-2">
                       <CardTitle as="h2" className="text-xl">{brand.name}</CardTitle>
                       <Badge variant="secondary">
-                        {brand.productCount} {brand.productCount === 1 ? 'товар' : brand.productCount && brand.productCount < 5 ? 'товара' : 'товаров'}
+                        {brand.productCount} {pluralizeProducts(brand.productCount ?? 0)}
                       </Badge>
                     </div>
                     {brand.description && (
                       <CardDescription className="line-clamp-3 mb-3">
-                        {brand.description}
+                        {localized(brand, 'description')}
                       </CardDescription>
                     )}
                     {(brand.country || brand.established_year) && (
@@ -169,7 +170,7 @@ const BrandsPage = () => {
                           <Badge variant="outline">{brand.country}</Badge>
                         )}
                         {brand.established_year && (
-                          <Badge variant="outline">с {brand.established_year} года</Badge>
+                          <Badge variant="outline">{t("с {year} года", { year: brand.established_year })}</Badge>
                         )}
                       </div>
                     )}
@@ -179,7 +180,7 @@ const BrandsPage = () => {
                       variant="outline" 
                       className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
                     >
-                      Смотреть продукцию
+                      {t("Смотреть продукцию")}
                     </Button>
                   </CardFooter>
                 </Card>
@@ -189,10 +190,9 @@ const BrandsPage = () => {
 
           {/* Info Section */}
           <div className="mt-16 bg-card border rounded-lg p-8 max-w-4xl mx-auto text-center">
-            <h2 className="text-2xl font-semibold mb-3 text-foreground">Не нашли нужное?</h2>
+            <h2 className="text-2xl font-semibold mb-3 text-foreground">{t("Не нашли нужное?")}</h2>
             <p className="text-muted-foreground">
-              На сайте показана не вся продукция. Спросите по телефону или в WhatsApp, возможно, товар есть в
-              магазине.
+              {t("На сайте показана не вся продукция. Спросите по телефону или в WhatsApp, возможно, товар есть в магазине.")}
             </p>
           </div>
         </div>

@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { CartProvider } from "@/contexts/CartContext";
 import Index from "./pages/Index";
+import { ROUTER_BASENAME } from "@/i18n";
 
 // Only the home page ships in the main file; every other page loads when first opened.
 const Catalog = lazy(() => import("./pages/Catalog"));
@@ -37,7 +38,7 @@ const App = () => (
         <CartProvider>
           <Toaster />
           <Sonner />
-          <BrowserRouter>
+          <BrowserRouter basename={ROUTER_BASENAME}>
             <Suspense fallback={<div className="min-h-screen bg-background" />}>
             <Routes>
               <Route path="/" element={<Index />} />

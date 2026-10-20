@@ -10,11 +10,12 @@ import { Mail, Send, Loader2 } from "lucide-react";
 import { FaTelegram, FaWhatsapp, FaInstagram } from "react-icons/fa";
 import StoreLocator from "@/components/StoreLocator";
 import { useSeo } from "@/hooks/useSeo";
+import { t } from "@/i18n";
 
 const ContactsPage = () => {
   useSeo({
-    title: 'Контакты',
-    description: 'Магазины AFSONA в Худжанде (Джумъа бозор) и Душанбе (базар Кушониён): адреса, телефоны и время работы. Звоните или пишите, поможем подобрать краску.',
+    title: t("Контакты"),
+    description: t("Магазины AFSONA в Худжанде (Джумъа бозор) и Душанбе (базар Кушониён): адреса, телефоны и время работы. Звоните или пишите, поможем подобрать краску."),
   });
   const { toast } = useToast();
   const [formData, setFormData] = useState({
@@ -35,8 +36,8 @@ const ContactsPage = () => {
     // Basic validation
     if (!formData.name.trim() || !formData.phone.trim() || !formData.message.trim()) {
       toast({
-        title: "Ошибка",
-        description: "Заполните все обязательные поля",
+        title: t("Ошибка"),
+        description: t("Заполните все обязательные поля"),
         variant: "destructive",
       });
       return;
@@ -64,19 +65,19 @@ const ContactsPage = () => {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || 'Ошибка отправки');
+        throw new Error(result.error || t("Ошибка отправки"));
       }
 
       toast({
-        title: "Сообщение отправлено!",
-        description: "Мы свяжемся с вами в ближайшее время.",
+        title: t("Сообщение отправлено!"),
+        description: t("Мы свяжемся с вами в ближайшее время."),
       });
       setFormData({ name: "", phone: "", email: "", message: "" });
     } catch (error) {
       console.error('Error sending contact message:', error);
       toast({
-        title: "Ошибка отправки",
-        description: "Не удалось отправить сообщение. Попробуйте позже или позвоните нам.",
+        title: t("Ошибка отправки"),
+        description: t("Не удалось отправить сообщение. Попробуйте позже или позвоните нам."),
         variant: "destructive",
       });
     } finally {
@@ -92,10 +93,10 @@ const ContactsPage = () => {
           {/* Hero Section */}
           <div className="text-center mb-16">
             <h1 className="text-4xl md:text-5xl font-bold mb-6 text-primary">
-              Свяжитесь с нами
+              {t("Свяжитесь с нами")}
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Мы всегда рады помочь вам с выбором материалов и ответить на любые вопросы
+              {t("Мы всегда рады помочь вам с выбором материалов и ответить на любые вопросы")}
             </p>
           </div>
 
@@ -107,8 +108,8 @@ const ContactsPage = () => {
           {/* Social Links */}
           <Card className="mb-12">
             <CardHeader className="text-center">
-              <CardTitle as="h2" className="text-2xl">Мы в социальных сетях</CardTitle>
-              <p className="text-muted-foreground">Свяжитесь с нами удобным способом</p>
+              <CardTitle as="h2" className="text-2xl">{t("Мы в социальных сетях")}</CardTitle>
+              <p className="text-muted-foreground">{t("Свяжитесь с нами удобным способом")}</p>
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap justify-center gap-6">
@@ -149,7 +150,7 @@ const ContactsPage = () => {
                   <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                     <Mail className="w-8 h-8 text-primary-foreground" />
                   </div>
-                  <span className="font-medium">Почта</span>
+                  <span className="font-medium">{t("Почта")}</span>
                 </button>
               </div>
             </CardContent>
@@ -159,14 +160,14 @@ const ContactsPage = () => {
           <div className="max-w-2xl mx-auto mb-12">
             <Card>
               <CardHeader>
-                <CardTitle as="h2">Напишите нам</CardTitle>
-                <p className="text-muted-foreground">Заполните форму и мы свяжемся с вами</p>
+                <CardTitle as="h2">{t("Напишите нам")}</CardTitle>
+                <p className="text-muted-foreground">{t("Заполните форму и мы свяжемся с вами")}</p>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
                     <Input
-                      placeholder="Ваше имя"
+                      placeholder={t("Ваше имя")}
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       required
@@ -175,7 +176,7 @@ const ContactsPage = () => {
                   <div>
                     <Input
                       type="tel"
-                      placeholder="Телефон"
+                      placeholder={t("Телефон")}
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       required
@@ -184,14 +185,14 @@ const ContactsPage = () => {
                   <div>
                     <Input
                       type="email"
-                      placeholder="Эл. почта (необязательно)"
+                      placeholder={t("Эл. почта (необязательно)")}
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     />
                   </div>
                   <div>
                     <Textarea
-                      placeholder="Ваше сообщение..."
+                      placeholder={t("Ваше сообщение...")}
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                       rows={4}
@@ -202,12 +203,12 @@ const ContactsPage = () => {
                     {isSubmitting ? (
                       <>
                         <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Отправка...
+                        {t("Отправка...")}
                       </>
                     ) : (
                       <>
                         <Send className="w-4 h-4 mr-2" />
-                        Отправить сообщение
+                        {t("Отправить сообщение")}
                       </>
                     )}
                   </Button>
@@ -219,7 +220,7 @@ const ContactsPage = () => {
           {/* Info Banner */}
           <div className="bg-primary/10 rounded-lg p-6 text-center">
             <p className="text-lg">
-              <strong>Бесплатная консультация:</strong> Наши специалисты помогут подобрать материалы для вашего проекта
+              <strong>{t("Бесплатная консультация:")}</strong>{" "}{t("Наши специалисты помогут подобрать материалы для вашего проекта")}
             </p>
           </div>
         </div>

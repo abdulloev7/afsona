@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { DEFAULT_DESCRIPTION, DEFAULT_IMAGE, DEFAULT_TITLE, SITE_NAME, SITE_URL } from '@/lib/seo';
+import { isTajik, lang, pathFor, type Lang } from '@/i18n';
 
 interface SeoOptions {
   // Page title without the site name; the " | AFSONA" suffix is added here
@@ -38,6 +39,20 @@ const setLink = (rel: string, href: string | null) => {
   el.setAttribute('href', href);
 };
 
+// Tells search engines that /x and /tg/x are the same page in two languages.
+const setAlternates = (path: string | null) => {
+  document.head.querySelectorAll('link[rel="alternate"][hreflang]').forEach((el) => el.remove());
+  if (!path) return;
+  const versions: [string, Lang][] = [['ru', 'ru'], ['tg', 'tg'], ['x-default', 'ru']];
+  for (const [hreflang, version] of versions) {
+    const el = document.createElement('link');
+    el.setAttribute('rel', 'alternate');
+    el.setAttribute('hreflang', hreflang);
+    el.setAttribute('href', `${SITE_URL}${pathFor(version, path)}`);
+    document.head.appendChild(el);
+  }
+};
+
 const JSON_LD_ID = 'page-jsonld';
 
 // Sets the title, description, social preview and canonical URL of the current page.
@@ -49,7 +64,9 @@ export const useSeo = ({ title, description, image, type = 'website', noindex = 
     const fullTitle = title ? `${title} | ${SITE_NAME}` : DEFAULT_TITLE;
     const desc = description || DEFAULT_DESCRIPTION;
     const img = image || DEFAULT_IMAGE;
-    const url = `${SITE_URL}${pathname === '/' ? '/' : pathname.replace(/\/$/, '')}`;
+    // pathname comes without the /tg prefix (router basename)
+    const path = pathname === '/' ? '/' : pathname.replace(/\/$/, '');
+    const url = `${SITE_URL}${pathFor(lang, path)}`;
 
     document.title = fullTitle;
     setMeta('name', 'description', desc);
@@ -62,7 +79,9 @@ export const useSeo = ({ title, description, image, type = 'website', noindex = 
     setMeta('name', 'twitter:title', fullTitle);
     setMeta('name', 'twitter:description', desc);
     setMeta('name', 'twitter:image', img);
+    setMeta('property', 'og:locale', isTajik ? 'tg_TJ' : 'ru_RU');
     setLink('canonical', noindex ? null : url);
+    setAlternates(noindex ? null : path);
 
     document.getElementById(JSON_LD_ID)?.remove();
     if (jsonLdText) {

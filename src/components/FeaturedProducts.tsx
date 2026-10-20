@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { FeaturedProductCard } from './FeaturedProductCard';
 import { Skeleton } from '@/components/ui/skeleton';
+import { t } from "@/i18n";
 
 const AVAILABLE_TAGS = ['Хит', 'Советуем', 'Новинка', 'Акция'] as const;
 
@@ -31,13 +32,13 @@ export function FeaturedProducts() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('products')
-        .select('id, name, description, price, old_price, image, image_fit, in_stock, tags, created_at, size_variants')
+        .select('id, name, name_tg, description, description_tg, price, old_price, image, image_fit, in_stock, tags, created_at, size_variants')
         .eq('is_featured', true)
         .eq('archived', false)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return (data || []) as FeaturedProduct[];
+      return (data || []) as unknown as FeaturedProduct[];
     },
   });
 
@@ -70,10 +71,10 @@ export function FeaturedProducts() {
         {/* Header */}
         <div className="text-center mb-8">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-            Лучшие предложения
+            {t("Лучшие предложения")}
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Подборка самых выгодных и популярных товаров AFSONA
+            {t("Подборка самых выгодных и популярных товаров AFSONA")}
           </p>
         </div>
 
@@ -85,7 +86,7 @@ export function FeaturedProducts() {
               selectedTag === null ? TAG_FILTER_ACTIVE : TAG_FILTER_INACTIVE
             }`}
           >
-            Все
+            {t("Все")}
           </button>
           {AVAILABLE_TAGS.map((tag) => {
             const count = products.filter(p => p.tags?.includes(tag)).length;
@@ -98,7 +99,7 @@ export function FeaturedProducts() {
                   selectedTag === tag ? TAG_FILTER_ACTIVE : TAG_FILTER_INACTIVE
                 }`}
               >
-                {tag}
+                {t(tag)}
               </button>
             );
           })}
@@ -128,7 +129,7 @@ export function FeaturedProducts() {
         {!isLoading && filteredProducts.length === 0 && selectedTag && (
           <div className="text-center py-12">
             <p className="text-muted-foreground">
-              Нет товаров с тегом "{selectedTag}"
+              {t("Нет товаров с тегом «{tag}»", { tag: t(selectedTag) })}
             </p>
           </div>
         )}

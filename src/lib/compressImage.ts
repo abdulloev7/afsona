@@ -1,3 +1,5 @@
+import { t } from "@/i18n";
+
 // Shrinks photos in the browser before they go to Supabase Storage.
 // The free plan has no image resizing, so whatever is uploaded is what shoppers download.
 
@@ -14,7 +16,7 @@ const loadImage = (file: File) =>
     };
     img.onerror = () => {
       URL.revokeObjectURL(url);
-      reject(new Error("Не удалось прочитать изображение"));
+      reject(new Error(t("Не удалось прочитать изображение")));
     };
     img.src = url;
   });

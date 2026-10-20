@@ -17,6 +17,7 @@ import { ShoppingCart, Trash2, ArrowLeft } from 'lucide-react';
 import { GroupedCartItems } from '@/components/cart/GroupedCartItems';
 import { DELIVERY_TEXT } from "@/lib/facts";
 import { useSeo } from "@/hooks/useSeo";
+import { formatPrice, t } from "@/i18n";
 
 type OrderForm = {
   customerName: string;
@@ -31,16 +32,16 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const validateOrder = (form: OrderForm) => {
   const errors: { [key: string]: string } = {};
-  if (!form.customerName.trim()) errors.customerName = "Имя обязательно";
-  if (!form.customerPhone.trim()) errors.customerPhone = "Телефон обязателен";
+  if (!form.customerName.trim()) errors.customerName = t("Имя обязательно");
+  if (!form.customerPhone.trim()) errors.customerPhone = t("Телефон обязателен");
   const email = form.customerEmail.trim();
-  if (email && !EMAIL_RE.test(email)) errors.customerEmail = "Некорректный email";
-  if (!form.deliveryAddress.trim()) errors.deliveryAddress = "Адрес доставки обязателен";
+  if (email && !EMAIL_RE.test(email)) errors.customerEmail = t("Некорректный email");
+  if (!form.deliveryAddress.trim()) errors.deliveryAddress = t("Адрес доставки обязателен");
   return errors;
 };
 
 const Cart = () => {
-  useSeo({ title: 'Корзина', noindex: true });
+  useSeo({ title: t("Корзина"), noindex: true });
   const [orderForm, setOrderForm] = useState<OrderForm>({
     customerName: '',
     customerPhone: '',
@@ -141,8 +142,8 @@ const Cart = () => {
 
     if (selectedItemsList.length === 0) {
       toast({
-        title: "Ничего не выбрано",
-        description: "Выберите хотя бы один товар для оформления заказа",
+        title: t("Ничего не выбрано"),
+        description: t("Выберите хотя бы один товар для оформления заказа"),
         variant: "destructive",
       });
       return;
@@ -201,16 +202,16 @@ const Cart = () => {
       setSelectedItems(new Set());
 
       toast({
-        title: "Заказ оформлен!",
-        description: `Заказ #${order.order_id.slice(0, 8)} успешно создан. Мы свяжемся с вами в ближайшее время.`,
+        title: t("Заказ оформлен!"),
+        description: t("Заказ #{number} успешно создан. Мы свяжемся с вами в ближайшее время.", { number: order.order_id.slice(0, 8) }),
       });
 
       navigate(user ? '/profile' : '/');
     } catch (error) {
       console.error('Error creating order:', error);
       toast({
-        title: "Ошибка",
-        description: "Не удалось оформить заказ. Попробуйте еще раз или позвоните: +992 927 55 79 19",
+        title: t("Ошибка"),
+        description: t("Не удалось оформить заказ. Попробуйте еще раз или позвоните: +992 927 55 79 19"),
         variant: "destructive",
       });
     } finally {
@@ -229,32 +230,32 @@ const Cart = () => {
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-8">
             <Button variant="ghost" className="-ml-4" onClick={() => navigate('/')}>
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Назад к покупкам
+              {t("Назад к покупкам")}
             </Button>
             <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-2">
               <ShoppingCart className="h-7 w-7 sm:h-8 sm:w-8" aria-hidden="true" />
-              Корзина ({items.length})
+              {t("Корзина")} ({items.length})
             </h1>
           </div>
 
           {cartLoading ? (
-            <div className="text-center py-8">Загружаем корзину...</div>
+            <div className="text-center py-8">{t("Загружаем корзину...")}</div>
           ) : items.length === 0 ? (
             <div className="text-center py-16">
               <ShoppingCart className="h-16 w-16 mx-auto mb-4 opacity-50" />
-              <h2 className="text-2xl font-bold mb-4">Корзина пуста</h2>
+              <h2 className="text-2xl font-bold mb-4">{t("Корзина пуста")}</h2>
               <p className="text-muted-foreground mb-8">
-                Добавьте товары в корзину, чтобы продолжить покупки
+                {t("Добавьте товары в корзину, чтобы продолжить покупки")}
               </p>
               <Button onClick={() => navigate('/')}>
-                Перейти к покупкам
+                {t("Перейти к покупкам")}
               </Button>
             </div>
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Cart Items */}
               <div className="lg:col-span-2 space-y-4">
-                <h2 className="sr-only">Товары в корзине</h2>
+                <h2 className="sr-only">{t("Товары в корзине")}</h2>
                 {/* Selection Header */}
                 <div className="flex items-center justify-between p-4 bg-card rounded-lg border">
                   <div className="flex items-center gap-3">
@@ -264,7 +265,7 @@ const Cart = () => {
                       id="select-all"
                     />
                     <Label htmlFor="select-all" className="cursor-pointer text-sm font-medium">
-                      Выбрать все ({selectedItems.size} из {items.length})
+                      {t("Выбрать все ({selected} из {total})", { selected: selectedItems.size, total: items.length })}
                     </Label>
                   </div>
                   
@@ -276,7 +277,7 @@ const Cart = () => {
                       className="text-destructive hover:text-destructive hover:bg-destructive/10"
                     >
                       <Trash2 className="h-4 w-4 mr-2" />
-                      Удалить ({selectedItems.size})
+                      {t("Удалить")} ({selectedItems.size})
                     </Button>
                   )}
                 </div>
@@ -296,33 +297,33 @@ const Cart = () => {
               <div className="space-y-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle as="h2">Итого</CardTitle>
+                    <CardTitle as="h2">{t("Итого")}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <div className="flex justify-between text-sm text-muted-foreground">
-                      <span>Товаров в корзине:</span>
+                      <span>{t("Товаров в корзине:")}</span>
                       <span>{items.length}</span>
                     </div>
                     <div className="flex justify-between text-sm text-muted-foreground">
-                      <span>Выбрано для заказа:</span>
+                      <span>{t("Выбрано для заказа:")}</span>
                       <span>{selectedItems.size}</span>
                     </div>
                     <Separator />
                     <div className="flex justify-between text-2xl font-bold">
-                      <span>Сумма:</span>
-                      <span>{getSelectedTotal().toLocaleString('ru-RU')} сом.</span>
+                      <span>{t("Сумма:")}</span>
+                      <span>{formatPrice(getSelectedTotal())}</span>
                     </div>
                   </CardContent>
                 </Card>
 
                 <Card>
                   <CardHeader>
-                    <CardTitle as="h2">Оформление заказа</CardTitle>
+                    <CardTitle as="h2">{t("Оформление заказа")}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <form onSubmit={handleSubmitOrder} className="space-y-4">
                       <div className="space-y-2">
-                        <Label htmlFor="customerName">Имя *</Label>
+                        <Label htmlFor="customerName">{t("Имя *")}</Label>
                         <Input
                           id="customerName"
                           autoComplete="name"
@@ -338,7 +339,7 @@ const Cart = () => {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="customerPhone">Телефон *</Label>
+                        <Label htmlFor="customerPhone">{t("Телефон *")}</Label>
                         <Input
                           id="customerPhone"
                           type="tel"
@@ -357,7 +358,7 @@ const Cart = () => {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="customerEmail">Эл. почта</Label>
+                        <Label htmlFor="customerEmail">{t("Эл. почта")}</Label>
                         <Input
                           id="customerEmail"
                           autoComplete="email"
@@ -374,7 +375,7 @@ const Cart = () => {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="deliveryAddress">Адрес доставки *</Label>
+                        <Label htmlFor="deliveryAddress">{t("Адрес доставки *")}</Label>
                         <Textarea
                           id="deliveryAddress"
                           autoComplete="street-address"
@@ -382,11 +383,11 @@ const Cart = () => {
                           aria-describedby={errors.deliveryAddress ? "deliveryAddress-error" : undefined}
                           value={orderForm.deliveryAddress}
                           onChange={(e) => setOrderForm({ ...orderForm, deliveryAddress: e.target.value })}
-                          placeholder="г. Худжанд, ул. ..."
+                          placeholder={t("г. Худжанд, ул. ...")}
                           required
                         />
                         <p className="text-sm text-muted-foreground">
-                          {DELIVERY_TEXT}. Заказ на меньшую сумму можно забрать в магазине.
+                          {DELIVERY_TEXT}. {t("Заказ на меньшую сумму можно забрать в магазине.")}
                         </p>
                         {errors.deliveryAddress && (
                           <p id="deliveryAddress-error" className="text-sm text-destructive">{errors.deliveryAddress}</p>
@@ -394,12 +395,12 @@ const Cart = () => {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="notes">Комментарий к заказу</Label>
+                        <Label htmlFor="notes">{t("Комментарий к заказу")}</Label>
                         <Textarea
                           id="notes"
                           value={orderForm.notes}
                           onChange={(e) => setOrderForm({ ...orderForm, notes: e.target.value })}
-                          placeholder="Дополнительные пожелания..."
+                          placeholder={t("Дополнительные пожелания...")}
                         />
                       </div>
 
@@ -409,10 +410,10 @@ const Cart = () => {
                         disabled={loading || selectedItems.size === 0}
                       >
                         {loading 
-                          ? 'Оформляем заказ...' 
+                          ? t("Оформляем заказ...") 
                           : selectedItems.size === 0 
-                            ? 'Выберите товары' 
-                            : `Оформить заказ (${selectedItems.size})`
+                            ? t("Выберите товары") 
+                            : `${t("Оформить заказ")} (${selectedItems.size})`
                         }
                       </Button>
                     </form>

@@ -12,6 +12,7 @@ import { ArrowLeft, MapPin, Calendar, ChevronRight } from "lucide-react";
 import DOMPurify from "dompurify";
 import { useSeo } from "@/hooks/useSeo";
 import { toDescription } from "@/lib/seo";
+import { formatLongDate, t } from "@/i18n";
 
 interface MediaItem {
   type: 'image' | 'video';
@@ -41,7 +42,12 @@ const PortfolioDetail = () => {
   const [loading, setLoading] = useState(true);
   useSeo({
     title: item?.title,
-    description: item ? toDescription(item.description, `${item.title}${item.location ? `, ${item.location}` : ''}: работа с материалами AFSONA.`) : undefined,
+    description: item
+      ? toDescription(
+          item.description,
+          t("{title}: работа с материалами AFSONA.", { title: item.location ? `${item.title}, ${item.location}` : item.title }),
+        )
+      : undefined,
     image: item?.image,
     type: 'article',
     noindex: !loading && !item,
@@ -52,8 +58,8 @@ const PortfolioDetail = () => {
   useEffect(() => {
     if (!roleLoading && !isAdmin) {
       toast({
-        title: "Доступ запрещен",
-        description: "Эта страница доступна только администраторам",
+        title: t("Доступ запрещен"),
+        description: t("Эта страница доступна только администраторам"),
         variant: "destructive",
       });
       navigate("/");
@@ -78,8 +84,8 @@ const PortfolioDetail = () => {
       
       if (!data) {
         toast({
-          title: "Не найдено",
-          description: "Проект не найден",
+          title: t("Не найдено"),
+          description: t("Проект не найден"),
           variant: "destructive",
         });
         navigate("/portfolio");
@@ -92,8 +98,8 @@ const PortfolioDetail = () => {
       });
     } catch (error: any) {
       toast({
-        title: "Ошибка",
-        description: "Не удалось загрузить проект",
+        title: t("Ошибка"),
+        description: t("Не удалось загрузить проект"),
         variant: "destructive",
       });
     } finally {
@@ -106,7 +112,7 @@ const PortfolioDetail = () => {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p>Загрузка...</p>
+          <p>{t("Загрузка...")}</p>
         </div>
       </div>
     );
@@ -143,11 +149,11 @@ const PortfolioDetail = () => {
             {/* Breadcrumbs */}
             <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
               <Link to="/" className="hover:text-foreground transition-colors">
-                Главная
+                {t("Главная")}
               </Link>
               <ChevronRight className="h-4 w-4" />
               <Link to="/portfolio" className="hover:text-foreground transition-colors">
-                Портфолио
+                {t("Портфолио")}
               </Link>
               <ChevronRight className="h-4 w-4" />
               <span className="text-foreground">{item.title}</span>
@@ -160,13 +166,13 @@ const PortfolioDetail = () => {
               className="mb-6"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Назад к портфолио
+              {t("Назад к портфолио")}
             </Button>
 
             {/* Status badge */}
             {!item.published && (
               <Badge variant="secondary" className="mb-4">
-                Черновик
+                {t("Черновик")}
               </Badge>
             )}
 
@@ -197,11 +203,7 @@ const PortfolioDetail = () => {
                 <div className="flex items-center gap-2">
                   <Calendar className="h-5 w-5" />
                   <span>
-                    {new Date(item.completion_date).toLocaleDateString('ru-RU', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                    })}
+                    {formatLongDate(item.completion_date)}
                   </span>
                 </div>
               )}
@@ -225,7 +227,7 @@ const PortfolioDetail = () => {
             {/* Media gallery */}
             {item.media && item.media.length > 0 && (
               <div className="space-y-6">
-                <h2 className="text-2xl font-bold">Галерея</h2>
+                <h2 className="text-2xl font-bold">{t("Галерея")}</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {item.media.map((mediaItem, index) => (
                     <div key={index} className="rounded-lg overflow-hidden bg-muted">
@@ -240,7 +242,7 @@ const PortfolioDetail = () => {
                       ) : (
                         <img
                           src={mediaItem.url}
-                          alt={mediaItem.caption || `Изображение ${index + 1}`}
+                          alt={mediaItem.caption || t("Изображение {n}", { n: index + 1 })}
                           className={`w-full aspect-video ${
                             mediaItem.fit === 'contain' ? 'object-contain' : 'object-cover'
                           }`}
@@ -264,7 +266,7 @@ const PortfolioDetail = () => {
                 onClick={() => navigate("/portfolio")}
               >
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                Вернуться к списку проектов
+                {t("Вернуться к списку проектов")}
               </Button>
             </div>
           </div>

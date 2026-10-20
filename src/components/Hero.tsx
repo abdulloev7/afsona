@@ -18,6 +18,7 @@ import {
   getTextAlign,
   type HeroBanner,
 } from "@/lib/heroBanner";
+import { t } from "@/i18n";
 
 // Banner text slides up when its slide becomes current; skipped for "reduce motion".
 const fadeUp = (delay: "delay-0" | "delay-100" | "delay-200" = "delay-0") =>
@@ -98,11 +99,10 @@ const Hero = () => {
               AFSONA
             </p>
             <p className="text-xl md:text-2xl mb-4 opacity-90 text-foreground">
-              Эко материалы для ремонта
+              {t("Эко материалы для ремонта")}
             </p>
             <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto opacity-80 text-foreground">
-              Качественные краски и материалы для профессионального и домашнего
-              ремонта. Экологично, надежно, красиво.
+              {t("Качественные краски и материалы для профессионального и домашнего ремонта. Экологично, надежно, красиво.")}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Button
@@ -111,7 +111,7 @@ const Hero = () => {
                 onClick={() => handleButtonClick("/#products")}
                 className="text-lg px-8 py-6"
               >
-                Посмотреть ассортимент
+                {t("Посмотреть ассортимент")}
               </Button>
               <Button
                 size="lg"
@@ -119,7 +119,7 @@ const Hero = () => {
                 onClick={() => handleButtonClick("/#contacts")}
                 className="text-lg px-8 py-6"
               >
-                Связаться с нами
+                {t("Связаться с нами")}
               </Button>
             </div>
           </div>
@@ -308,7 +308,7 @@ const Hero = () => {
                   key={index}
                   onClick={() => api?.scrollTo(index)}
                   className="group flex h-6 min-w-6 items-center justify-center px-1"
-                  aria-label={`Слайд ${index + 1}`}
+                  aria-label={t("Слайд {n}", { n: index + 1 })}
                   aria-current={current === index ? "true" : undefined}
                 >
                   <span
@@ -333,7 +333,7 @@ const Hero = () => {
                 className="h-9 w-9 rounded-full bg-white/90 hover:bg-white border border-border shadow-sm"
               >
                 <ArrowLeft className="h-4 w-4 text-foreground" />
-                <span className="sr-only">Предыдущий слайд</span>
+                <span className="sr-only">{t("Предыдущий слайд")}</span>
               </Button>
               <Button
                 variant="secondary"
@@ -342,7 +342,7 @@ const Hero = () => {
                 className="h-9 w-9 rounded-full bg-white/90 hover:bg-white border border-border shadow-sm"
               >
                 <ArrowRight className="h-4 w-4 text-foreground" />
-                <span className="sr-only">Следующий слайд</span>
+                <span className="sr-only">{t("Следующий слайд")}</span>
               </Button>
             </div>
           </div>

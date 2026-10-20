@@ -6,11 +6,13 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 import { useUserRole } from "@/hooks/useUserRole";
 import { SearchDialog } from "@/components/SearchDialog";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import afsona_logo_new from "@/assets/afsona-logo-new.jpg";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { STORE_PHONE_DISPLAY, STORE_PHONE_HREF, STORE_WHATSAPP_URL } from "@/lib/contacts";
+import { t } from "@/i18n";
 
 const Header = () => {
   const { user } = useAuth();
@@ -110,7 +112,7 @@ const Header = () => {
           <Link to="/" className="flex items-center h-16">
             <img 
               src={afsona_logo_new} 
-              alt="AFSONA - Эко материалы для ремонта" 
+              alt={t("AFSONA - Эко материалы для ремонта")} 
               className="h-16 w-auto object-contain"
             />
           </Link>
@@ -120,49 +122,50 @@ const Header = () => {
               to="/catalog"
               className="text-foreground hover:text-primary transition-colors"
             >
-              Каталог
+              {t("Каталог")}
             </Link>
             <Link 
               to="/brands"
               className="text-foreground hover:text-primary transition-colors"
             >
-              Бренды
+              {t("Бренды")}
             </Link>
             <Link 
               to="/tinting"
               className="text-foreground hover:text-primary transition-colors"
             >
-              Колеровка
+              {t("Колеровка")}
             </Link>
             <Link 
               to="/news"
               className="text-foreground hover:text-primary transition-colors"
             >
-              Новости
+              {t("Новости")}
             </Link>
             {isAdmin && (
               <Link 
                 to="/portfolio"
                 className="text-foreground hover:text-primary transition-colors"
               >
-                Портфолио
+                {t("Портфолио")}
               </Link>
             )}
             <Link 
               to="/about"
               className="text-foreground hover:text-primary transition-colors"
             >
-              О нас
+              {t("О нас")}
             </Link>
             <Link 
               to="/contacts"
               className="text-foreground hover:text-primary transition-colors"
             >
-              Контакты
+              {t("Контакты")}
             </Link>
           </nav>
 
           <div className="flex items-center gap-1">
+            <LanguageSwitcher className="hidden sm:flex mr-1" />
             <a
               href={STORE_PHONE_HREF}
               className="hidden xl:inline-flex items-center gap-1.5 px-2 font-semibold text-foreground hover:text-primary transition-colors whitespace-nowrap"
@@ -171,18 +174,18 @@ const Header = () => {
               {STORE_PHONE_DISPLAY}
             </a>
             <Button asChild variant="ghost" size="icon" className="xl:hidden hover:bg-primary/10">
-              <a href={STORE_PHONE_HREF} aria-label="Позвонить">
+              <a href={STORE_PHONE_HREF} aria-label={t("Позвонить")}>
                 <IconPhone size={20} stroke={1.5} />
               </a>
             </Button>
             <Button asChild variant="ghost" size="icon" className="hidden sm:inline-flex hover:bg-primary/10">
-              <a href={STORE_WHATSAPP_URL} target="_blank" rel="noopener noreferrer" aria-label="Написать в WhatsApp">
+              <a href={STORE_WHATSAPP_URL} target="_blank" rel="noopener noreferrer" aria-label={t("Написать в WhatsApp")}>
                 <IconBrandWhatsapp size={20} stroke={1.5} />
               </a>
             </Button>
             <SearchDialog />
             <Button asChild variant="ghost" size="icon" className="relative hover:bg-primary/10">
-              <Link to="/cart" aria-label={cartCount > 0 ? `Корзина, товаров: ${cartCount}` : "Корзина"}>
+              <Link to="/cart" aria-label={cartCount > 0 ? t("Корзина, товаров: {count}", { count: cartCount }) : t("Корзина")}>
                 <IconShoppingBag size={20} stroke={1.5} />
                 {cartCount > 0 && (
                   <Badge 
@@ -199,16 +202,16 @@ const Header = () => {
               <>
                 {isAdmin && (
                   <Button asChild variant="ghost" size="sm" className="hover:bg-primary/10">
-                    <Link to="/admin" aria-label="Админ">
+                    <Link to="/admin" aria-label={t("Админ")}>
                       <IconLayoutDashboard size={20} stroke={1.5} className="mr-1" />
-                      <span className="hidden md:inline">Админ</span>
+                      <span className="hidden md:inline">{t("Админ")}</span>
                     </Link>
                   </Button>
                 )}
                 <Button asChild variant="ghost" size="sm" className="relative hidden md:inline-flex hover:bg-primary/10">
                   <Link to="/profile?tab=orders">
                     <IconUser size={20} stroke={1.5} className="mr-1" />
-                    Профиль
+                    {t("Профиль")}
                     {completedOrdersCount > 0 && (
                       <Badge 
                         variant="destructive" 
@@ -222,7 +225,7 @@ const Header = () => {
               </>
             ) : (
               <Button asChild variant="ghost" size="icon" className="hidden md:inline-flex hover:bg-primary/10">
-                <Link to="/auth" aria-label="Войти" title="Войти">
+                <Link to="/auth" aria-label={t("Войти")} title={t("Войти")}>
                   <IconUser size={20} stroke={1.5} />
                 </Link>
               </Button>
@@ -231,22 +234,22 @@ const Header = () => {
             {/* Mobile burger */}
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="md:hidden" aria-label="Открыть меню">
+                <Button variant="ghost" size="icon" className="md:hidden" aria-label={t("Открыть меню")}>
                   <IconMenu2 size={24} stroke={1.5} />
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-72 p-0">
-                <SheetTitle className="sr-only">Меню навигации</SheetTitle>
+                <SheetTitle className="sr-only">{t("Меню навигации")}</SheetTitle>
                 <nav className="flex flex-col py-6">
                   {[
-                    { to: "/", label: "Главная" },
-                    { to: "/catalog", label: "Каталог" },
-                    { to: "/brands", label: "Бренды" },
-                    { to: "/tinting", label: "Колеровка" },
-                    { to: "/news", label: "Новости" },
-                    ...(isAdmin ? [{ to: "/portfolio", label: "Портфолио" }] : []),
-                    { to: "/about", label: "О нас" },
-                    { to: "/contacts", label: "Контакты" },
+                    { to: "/", label: t("Главная") },
+                    { to: "/catalog", label: t("Каталог") },
+                    { to: "/brands", label: t("Бренды") },
+                    { to: "/tinting", label: t("Колеровка") },
+                    { to: "/news", label: t("Новости") },
+                    ...(isAdmin ? [{ to: "/portfolio", label: t("Портфолио") }] : []),
+                    { to: "/about", label: t("О нас") },
+                    { to: "/contacts", label: t("Контакты") },
                   ].map((item) => (
                     <Link
                       key={item.to}
@@ -260,6 +263,7 @@ const Header = () => {
                   ))}
 
                   <div className="border-t border-border mt-4 pt-4 px-6 flex flex-col gap-2">
+                    <LanguageSwitcher variant="full" className="mb-2" />
                     <Button asChild className="w-full">
                       <a href={STORE_PHONE_HREF}>
                         <IconPhone size={18} stroke={1.5} className="mr-2" />
@@ -269,14 +273,14 @@ const Header = () => {
                     <Button asChild variant="outline" className="w-full">
                       <a href={STORE_WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
                         <IconBrandWhatsapp size={18} stroke={1.5} className="mr-2" />
-                        Написать в WhatsApp
+                        {t("Написать в WhatsApp")}
                       </a>
                     </Button>
                     {user ? (
                       <Link to="/profile?tab=orders">
                         <Button variant="outline" className="w-full justify-start relative">
                           <IconUser size={18} stroke={1.5} className="mr-2" />
-                          Профиль
+                          {t("Профиль")}
                           {completedOrdersCount > 0 && (
                             <Badge variant="destructive" className="ml-auto h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs">
                               {completedOrdersCount}
@@ -288,7 +292,7 @@ const Header = () => {
                       <Link to="/auth">
                         <Button variant="ghost" className="w-full">
                           <IconLogin size={18} stroke={1.5} className="mr-2" />
-                          Войти
+                          {t("Войти")}
                         </Button>
                       </Link>
                     )}

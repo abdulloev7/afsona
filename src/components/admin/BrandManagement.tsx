@@ -18,6 +18,8 @@ const brandSchema = z.object({
     .regex(/^[a-z0-9-]+$/, "Slug может содержать только строчные буквы, цифры и дефисы"),
   logo: z.string().url("Неверный URL логотипа").optional().or(z.literal('')),
   description: z.string().trim().max(1000, "Описание должно быть короче 1000 символов").optional().or(z.literal('')),
+  // Shown on the /tg version of the site; empty means the Russian description is shown there
+  description_tg: z.string().trim().max(1000, "Описание на таджикском должно быть короче 1000 символов").optional().or(z.literal('')),
   website: z.string().url("Неверный URL сайта").optional().or(z.literal('')),
   country: z.string().trim().max(100, "Название страны должно быть короче 100 символов").optional().or(z.literal('')),
   established_year: z.number().int().min(1800, "Год должен быть больше 1800").max(new Date().getFullYear(), "Год не может быть в будущем").nullable(),
@@ -29,6 +31,7 @@ interface Brand {
   slug: string;
   logo: string | null;
   description: string | null;
+  description_tg?: string | null;
   website: string | null;
   country: string | null;
   established_year: number | null;
@@ -48,6 +51,7 @@ const BrandManagement = () => {
     slug: '',
     logo: '',
     description: '',
+    description_tg: '',
     website: '',
     country: '',
     established_year: '',
@@ -135,6 +139,7 @@ const BrandManagement = () => {
         slug: brand.slug,
         logo: brand.logo || '',
         description: brand.description || '',
+        description_tg: brand.description_tg || '',
         website: brand.website || '',
         country: brand.country || '',
         established_year: brand.established_year?.toString() || '',
@@ -146,6 +151,7 @@ const BrandManagement = () => {
         slug: '',
         logo: '',
         description: '',
+        description_tg: '',
         website: '',
         country: '',
         established_year: '',
@@ -164,6 +170,7 @@ const BrandManagement = () => {
         slug: formData.slug,
         logo: formData.logo || '',
         description: formData.description || '',
+        description_tg: formData.description_tg || '',
         website: formData.website || '',
         country: formData.country || '',
         established_year: rawYear,
@@ -183,6 +190,7 @@ const BrandManagement = () => {
         ...validationResult.data,
         logo: validationResult.data.logo || null,
         description: validationResult.data.description || null,
+        description_tg: validationResult.data.description_tg || null,
         website: validationResult.data.website || null,
         country: validationResult.data.country || null,
         display_order: editingBrand ? editingBrand.display_order : brands.length,
@@ -327,6 +335,16 @@ const BrandManagement = () => {
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   rows={4}
                   placeholder="Краткое описание бренда"
+                />
+              </div>
+              <div>
+                <Label>Описание на таджикском</Label>
+                <Textarea
+                  lang="tg"
+                  value={formData.description_tg}
+                  onChange={(e) => setFormData({ ...formData, description_tg: e.target.value })}
+                  rows={4}
+                  placeholder="Для afsona.tj/tg. Если пусто, там будет русское описание"
                 />
               </div>
               <div>

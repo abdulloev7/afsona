@@ -54,6 +54,7 @@ export type Database = {
           country: string | null
           created_at: string
           description: string | null
+          description_tg: string | null
           display_order: number | null
           established_year: number | null
           id: string
@@ -67,6 +68,7 @@ export type Database = {
           country?: string | null
           created_at?: string
           description?: string | null
+          description_tg?: string | null
           display_order?: number | null
           established_year?: number | null
           id?: string
@@ -80,6 +82,7 @@ export type Database = {
           country?: string | null
           created_at?: string
           description?: string | null
+          description_tg?: string | null
           display_order?: number | null
           established_year?: number | null
           id?: string
@@ -434,6 +437,7 @@ export type Database = {
           category_id: string
           created_at: string
           description: string | null
+          description_tg: string | null
           eco: boolean | null
           features: string[] | null
           id: string
@@ -443,6 +447,7 @@ export type Database = {
           is_featured: boolean | null
           media: Json | null
           name: string
+          name_tg: string | null
           old_price: number | null
           price: number
           rating: number | null
@@ -459,6 +464,7 @@ export type Database = {
           category_id: string
           created_at?: string
           description?: string | null
+          description_tg?: string | null
           eco?: boolean | null
           features?: string[] | null
           id?: string
@@ -468,6 +474,7 @@ export type Database = {
           is_featured?: boolean | null
           media?: Json | null
           name: string
+          name_tg?: string | null
           old_price?: number | null
           price: number
           rating?: number | null
@@ -484,6 +491,7 @@ export type Database = {
           category_id?: string
           created_at?: string
           description?: string | null
+          description_tg?: string | null
           eco?: boolean | null
           features?: string[] | null
           id?: string
@@ -493,6 +501,7 @@ export type Database = {
           is_featured?: boolean | null
           media?: Json | null
           name?: string
+          name_tg?: string | null
           old_price?: number | null
           price?: number
           rating?: number | null

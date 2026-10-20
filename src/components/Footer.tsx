@@ -3,6 +3,7 @@ import afsona_logo_full from "@/assets/afsona-logo-full.jpg";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
 import { STORES } from "@/lib/contacts";
 import { FaTelegram, FaWhatsapp, FaInstagram } from "react-icons/fa";
+import { t } from "@/i18n";
 
 const Footer = () => {
   return (
@@ -11,63 +12,62 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <div className="mb-4">
-              <img src={afsona_logo_full} alt="AFSONA - Эко материалы для ремонта" className="h-16 w-auto" />
+              <img src={afsona_logo_full} alt={t("AFSONA - Эко материалы для ремонта")} className="h-16 w-auto" />
             </div>
             <p className="text-sm opacity-80 leading-relaxed">
-              Качественные краски и материалы для профессионального и домашнего ремонта. 
-              Экологично, надежно, красиво.
+              {t("Качественные краски и материалы для профессионального и домашнего ремонта. Экологично, надежно, красиво.")}
             </p>
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4">Навигация</h4>
+            <h4 className="font-semibold mb-4">{t("Навигация")}</h4>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link to="/" className="opacity-90 hover:opacity-100 hover:text-primary transition-colors">
-                  Главная
+                  {t("Главная")}
                 </Link>
               </li>
               <li>
                 <Link to="/catalog" className="opacity-90 hover:opacity-100 hover:text-primary transition-colors">
-                  Каталог
+                  {t("Каталог")}
                 </Link>
               </li>
               <li>
                 <Link to="/brands" className="opacity-90 hover:opacity-100 hover:text-primary transition-colors">
-                  Бренды
+                  {t("Бренды")}
                 </Link>
               </li>
               <li>
                 <Link to="/tinting" className="opacity-90 hover:opacity-100 hover:text-primary transition-colors">
-                  Колеровка
+                  {t("Колеровка")}
                 </Link>
               </li>
               <li>
                 <Link to="/news" className="opacity-90 hover:opacity-100 hover:text-primary transition-colors">
-                  Новости
+                  {t("Новости")}
                 </Link>
               </li>
             </ul>
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4">Информация</h4>
+            <h4 className="font-semibold mb-4">{t("Информация")}</h4>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link to="/about" className="opacity-90 hover:opacity-100 hover:text-primary transition-colors">
-                  О компании
+                  {t("О компании")}
                 </Link>
               </li>
               <li>
                 <Link to="/contacts" className="opacity-90 hover:opacity-100 hover:text-primary transition-colors">
-                  Контакты
+                  {t("Контакты")}
                 </Link>
               </li>
             </ul>
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4">Магазины</h4>
+            <h4 className="font-semibold mb-4">{t("Магазины")}</h4>
             <div className="space-y-3 text-sm opacity-90">
               {STORES.map((store) => (
                 <div key={store.city}>
@@ -96,7 +96,7 @@ const Footer = () => {
               </a>
               <p className="flex items-start gap-2">
                 <Clock className="w-4 h-4 shrink-0 text-primary mt-0.5" />
-                <span>Пн–Сб: 08:00–12:00, 13:00–18:00<br />Воскресенье: выходной</span>
+                <span>{t("Пн–Сб: 08:00–12:00, 13:00–18:00")}<br />{t("Воскресенье: выходной")}</span>
               </p>
             </div>
             <div className="flex items-center gap-1 mt-3 -ml-2.5">
@@ -114,7 +114,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-border mt-8 pt-8 text-center">
-          <p className="text-sm opacity-75">© 2026 AFSONA. Все права защищены. Эко материалы для ремонта.</p>
+          <p className="text-sm opacity-75">{t("© 2026 AFSONA. Все права защищены. Эко материалы для ремонта.")}</p>
         </div>
       </div>
     </footer>
