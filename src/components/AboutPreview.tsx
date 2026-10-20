@@ -3,13 +3,13 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Store, Package, Palette, Truck } from "lucide-react";
 import { useStoreStats } from "@/hooks/useStoreStats";
 import { pluralizeProducts } from "@/lib/categories";
-import { DELIVERY_TEXT, TINT_TIME } from "@/lib/facts";
+import { DELIVERY_TEXT, TINT_TIME, YEARS_IN_BUSINESS } from "@/lib/facts";
 
 const AboutPreview = () => {
   const { data: stats } = useStoreStats();
 
   const facts = [
-    { icon: Store, text: "Два магазина: в Худжанде и Душанбе" },
+    { icon: Store, text: `${YEARS_IN_BUSINESS} года работы, два магазина: в Худжанде и Душанбе` },
     {
       icon: Package,
       text: stats

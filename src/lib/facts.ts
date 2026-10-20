@@ -1,4 +1,6 @@
 // Facts about the store confirmed by the owner (2026-10-20). Keep site copy to these.
+// Owner said "about 4 years" (2026-10-20); change here if it turns out different.
+export const YEARS_IN_BUSINESS = 4;
 export const FAN_DECKS = ["Caparol", "Nova", "NCS"];
 export const TINT_TIME = "5–10 минут";
 export const TINT_MACHINE = "Sigma Tint";

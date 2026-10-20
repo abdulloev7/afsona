@@ -8,7 +8,7 @@ import { useSeo } from "@/hooks/useSeo";
 import { useStoreStats } from "@/hooks/useStoreStats";
 import { pluralizeProducts } from "@/lib/categories";
 import { STORES } from "@/lib/contacts";
-import { DELIVERY_TEXT, FAN_DECKS, TINT_MACHINE, TINT_TIME } from "@/lib/facts";
+import { DELIVERY_TEXT, FAN_DECKS, TINT_MACHINE, TINT_TIME, YEARS_IN_BUSINESS } from "@/lib/facts";
 import tintingMachine from "@/assets/tinting-machine.jpg";
 
 const AboutPage = () => {
@@ -67,7 +67,8 @@ const AboutPage = () => {
             <div>
               <h1 className="text-3xl md:text-5xl font-semibold mb-5 text-foreground">О компании AFSONA</h1>
               <p className="text-lg text-muted-foreground mb-4">
-                AFSONA — магазины красок и материалов для ремонта в Худжанде и Душанбе. К нам приходят и те, кто
+                AFSONA — магазины красок и материалов для ремонта в Худжанде и Душанбе. Работаем уже{" "}
+                {YEARS_IN_BUSINESS} года. К нам приходят и те, кто
                 делает ремонт в своей квартире, и мастера-отделочники.
               </p>
               <p className="text-lg text-muted-foreground">
