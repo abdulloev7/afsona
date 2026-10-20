@@ -26,10 +26,10 @@ interface FeaturedProductCardProps {
 
 const TAG_STYLES: Record<string, string> = {
   'Хит': 'bg-primary text-primary-foreground',
-  'Советуем': 'bg-orange-500 text-white',
-  'Новинка': 'bg-purple-500 text-white',
-  'Акция': 'bg-yellow-400 text-yellow-900',
-  'Эко': 'bg-green-100 text-green-800',
+  'Советуем': 'bg-brand-green-dark text-primary-foreground',
+  'Новинка': 'bg-background text-primary ring-1 ring-inset ring-primary/40',
+  'Акция': 'bg-sale text-white',
+  'Эко': 'bg-primary/10 text-primary',
 };
 
 export function FeaturedProductCard({ product }: FeaturedProductCardProps) {

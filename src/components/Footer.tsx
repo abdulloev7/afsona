@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import afsona_logo_full from "@/assets/afsona-logo-full.jpg";
-import { MapPin, ExternalLink } from "lucide-react";
+import { MapPin, ExternalLink, Phone, Mail, Clock } from "lucide-react";
 import { FaTelegram, FaWhatsapp, FaInstagram } from "react-icons/fa";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
@@ -72,8 +72,9 @@ const Footer = () => {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="cursor-pointer hover:opacity-80 transition-opacity text-left">
-                    <p className="flex items-center gap-1">
-                      📍 г. Худжанд, 20-й микрорайон, 27
+                    <p className="flex items-center gap-2">
+                      <MapPin className="w-4 h-4 shrink-0 text-primary" />
+                      г. Худжанд, 20-й микрорайон, 27
                       <ExternalLink className="w-3 h-3" />
                     </p>
                   </button>
@@ -89,10 +90,18 @@ const Footer = () => {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-              <p>📞 +992 927 55 79 19</p>
-              <p>✉️ info@afsona.com.tj</p>
-              <p>🕒 Пн-Сб: 08:00-12:00, 13:00-18:00</p>
-              <p>🕒 Воскресенье: Выходной</p>
+              <a href="tel:+992927557919" className="flex items-center gap-2 hover:text-primary transition-colors">
+                <Phone className="w-4 h-4 shrink-0 text-primary" />
+                +992 927 55 79 19
+              </a>
+              <a href="mailto:info@afsona.com.tj" className="flex items-center gap-2 hover:text-primary transition-colors">
+                <Mail className="w-4 h-4 shrink-0 text-primary" />
+                info@afsona.com.tj
+              </a>
+              <p className="flex items-start gap-2">
+                <Clock className="w-4 h-4 shrink-0 text-primary mt-0.5" />
+                <span>Пн–Сб: 08:00–12:00, 13:00–18:00<br />Воскресенье: выходной</span>
+              </p>
             </div>
             <div className="flex items-center gap-3 mt-4">
               <a href="https://www.instagram.com/afsona.build/" target="_blank" rel="noopener noreferrer" className="text-foreground/70 hover:text-primary transition-colors" aria-label="Instagram">

@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { 
   MapPin, 
@@ -105,7 +104,6 @@ const ContactsPage = () => {
         <div className="container mx-auto px-4">
           {/* Hero Section */}
           <div className="text-center mb-16">
-            <Badge className="mb-4">Контакты</Badge>
             <h1 className="text-4xl md:text-5xl font-bold mb-6 text-primary">
               Свяжитесь с нами
             </h1>
@@ -208,7 +206,7 @@ const ContactsPage = () => {
                   onClick={() => window.open('https://t.me/+992927557919', '_blank')}
                   className="flex flex-col items-center gap-2 p-4 rounded-xl hover:bg-muted/30 transition-all duration-300 group"
                 >
-                  <div className="w-16 h-16 rounded-full bg-[#0088cc] flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                  <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                     <FaTelegram className="w-8 h-8 text-white" />
                   </div>
                   <span className="font-medium">Telegram</span>
@@ -218,7 +216,7 @@ const ContactsPage = () => {
                   onClick={() => window.open('https://wa.me/992927557919', '_blank')}
                   className="flex flex-col items-center gap-2 p-4 rounded-xl hover:bg-muted/30 transition-all duration-300 group"
                 >
-                  <div className="w-16 h-16 rounded-full bg-[#25D366] flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                  <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                     <FaWhatsapp className="w-8 h-8 text-white" />
                   </div>
                   <span className="font-medium">WhatsApp</span>
@@ -228,7 +226,7 @@ const ContactsPage = () => {
                   onClick={() => window.open('https://www.instagram.com/afsona.build/', '_blank')}
                   className="flex flex-col items-center gap-2 p-4 rounded-xl hover:bg-muted/30 transition-all duration-300 group"
                 >
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-[#f09433] via-[#e6683c] to-[#dc2743] flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                  <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                     <FaInstagram className="w-8 h-8 text-white" />
                   </div>
                   <span className="font-medium">Instagram</span>

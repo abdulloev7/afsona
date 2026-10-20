@@ -28,7 +28,7 @@ const ContactsPreview = () => {
           <div className="grid md:grid-cols-3 gap-6 mb-8">
             <Card className="shadow-card">
               <CardHeader className="text-center pb-2">
-                <div className="w-12 h-12 bg-brand-blue-light rounded-full flex items-center justify-center mx-auto mb-3">
+                <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center mx-auto mb-3">
                   <MapPin className="w-6 h-6 text-white" />
                 </div>
                 <CardTitle className="text-lg text-primary">Наш адрес</CardTitle>
@@ -83,7 +83,7 @@ const ContactsPreview = () => {
                     onClick={() => window.open('https://t.me/+992927557919', '_blank')}
                     className="flex flex-col items-center gap-1.5 p-2 rounded-lg hover:bg-muted/30 transition-all duration-300 group"
                   >
-                    <div className="w-10 h-10 rounded-full bg-[#0088cc] flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+                    <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
                       <FaTelegram className="w-5 h-5 text-white" />
                     </div>
                   </button>
@@ -92,7 +92,7 @@ const ContactsPreview = () => {
                     onClick={() => window.open('https://wa.me/992927557919', '_blank')}
                     className="flex flex-col items-center gap-1.5 p-2 rounded-lg hover:bg-muted/30 transition-all duration-300 group"
                   >
-                    <div className="w-10 h-10 rounded-full bg-[#25D366] flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+                    <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
                       <FaWhatsapp className="w-5 h-5 text-white" />
                     </div>
                   </button>
@@ -101,7 +101,7 @@ const ContactsPreview = () => {
                     onClick={() => window.open('https://www.instagram.com/afsona.build/', '_blank')}
                     className="flex flex-col items-center gap-1.5 p-2 rounded-lg hover:bg-muted/30 transition-all duration-300 group"
                   >
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#f09433] via-[#e6683c] to-[#dc2743] flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+                    <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
                       <FaInstagram className="w-5 h-5 text-white" />
                     </div>
                   </button>
@@ -110,7 +110,7 @@ const ContactsPreview = () => {
                     onClick={() => window.location.href = 'mailto:info@afsona.com.tj'}
                     className="flex flex-col items-center gap-1.5 p-2 rounded-lg hover:bg-muted/30 transition-all duration-300 group"
                   >
-                    <div className="w-10 h-10 rounded-full bg-brand-blue flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+                    <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
                       <Mail className="w-5 h-5 text-white" />
                     </div>
                   </button>
@@ -120,7 +120,7 @@ const ContactsPreview = () => {
 
             <Card className="shadow-card">
               <CardHeader className="text-center pb-2">
-                <div className="w-12 h-12 bg-brand-blue rounded-full flex items-center justify-center mx-auto mb-3">
+                <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center mx-auto mb-3">
                   <Clock className="w-6 h-6 text-white" />
                 </div>
                 <CardTitle className="text-lg text-primary">Режим работы</CardTitle>
