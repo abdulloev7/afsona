@@ -9,7 +9,15 @@ export type Store = {
   address: string;
   phones: StorePhone[];
   mapUrl: string;
+  lat: number;
+  lng: number;
 };
+
+export const mapEmbedUrl = (store: Store) =>
+  `https://www.google.com/maps?q=${store.lat},${store.lng}&z=17&output=embed`;
+
+export const yandexMapUrl = (store: Store) =>
+  `https://yandex.ru/maps/?pt=${store.lng},${store.lat}&z=17&l=map`;
 
 // Same addresses as the Telegram bot (api/telegram.js); map pins from the owner.
 export const STORES: Store[] = [
@@ -18,6 +26,8 @@ export const STORES: Store[] = [
     address: "Джумъа бозор",
     phones: [{ display: STORE_PHONE_DISPLAY, href: STORE_PHONE_HREF }],
     mapUrl: "https://maps.app.goo.gl/GLjf89PfguoddwVz5",
+    lat: 40.294528,
+    lng: 69.6087954,
   },
   {
     city: "Душанбе",
@@ -27,6 +37,8 @@ export const STORES: Store[] = [
       { display: "+992 501 79 52 79", href: "tel:+992501795279" },
     ],
     mapUrl: "https://maps.app.goo.gl/Hk5hH399Yy8MiBXz8",
+    lat: 38.6326319,
+    lng: 68.7662565,
   },
 ];
 

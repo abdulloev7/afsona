@@ -6,10 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { Clock, Mail, Send, Loader2 } from "lucide-react";
+import { Mail, Send, Loader2 } from "lucide-react";
 import { FaTelegram, FaWhatsapp, FaInstagram } from "react-icons/fa";
-import StoreCard from "@/components/StoreCard";
-import { STORES, STORE_HOURS } from "@/lib/contacts";
+import StoreLocator from "@/components/StoreLocator";
 import { useSeo } from "@/hooks/useSeo";
 
 const ContactsPage = () => {
@@ -101,15 +100,9 @@ const ContactsPage = () => {
           </div>
 
           {/* Stores */}
-          <div className="grid md:grid-cols-2 gap-4 mb-4">
-            {STORES.map((store) => (
-              <StoreCard key={store.city} store={store} />
-            ))}
+          <div className="max-w-5xl mx-auto mb-12">
+            <StoreLocator />
           </div>
-          <p className="flex items-center gap-2 text-sm text-foreground mb-12">
-            <Clock className="w-4 h-4 shrink-0 text-primary" />
-            Оба магазина: {STORE_HOURS}, воскресенье выходной
-          </p>
 
           {/* Social Links */}
           <Card className="mb-12">
