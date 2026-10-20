@@ -99,14 +99,14 @@ const Footer = () => {
                 <span>Пн–Сб: 08:00–12:00, 13:00–18:00<br />Воскресенье: выходной</span>
               </p>
             </div>
-            <div className="flex items-center gap-3 mt-4">
-              <a href="https://www.instagram.com/afsona.build/" target="_blank" rel="noopener noreferrer" className="text-foreground/70 hover:text-primary transition-colors" aria-label="Instagram">
+            <div className="flex items-center gap-1 mt-3 -ml-2.5">
+              <a href="https://www.instagram.com/afsona.build/" target="_blank" rel="noopener noreferrer" className="flex h-11 w-11 items-center justify-center rounded-md text-foreground/70 hover:text-primary transition-colors" aria-label="Instagram">
                 <FaInstagram size={22} />
               </a>
-              <a href="https://t.me/+992927557919" target="_blank" rel="noopener noreferrer" className="text-foreground/70 hover:text-primary transition-colors" aria-label="Telegram">
+              <a href="https://t.me/+992927557919" target="_blank" rel="noopener noreferrer" className="flex h-11 w-11 items-center justify-center rounded-md text-foreground/70 hover:text-primary transition-colors" aria-label="Telegram">
                 <FaTelegram size={22} />
               </a>
-              <a href="https://wa.me/992927557919" target="_blank" rel="noopener noreferrer" className="text-foreground/70 hover:text-primary transition-colors" aria-label="WhatsApp">
+              <a href="https://wa.me/992927557919" target="_blank" rel="noopener noreferrer" className="flex h-11 w-11 items-center justify-center rounded-md text-foreground/70 hover:text-primary transition-colors" aria-label="WhatsApp">
                 <FaWhatsapp size={22} />
               </a>
             </div>

@@ -6,6 +6,7 @@ import TextAlign from '@tiptap/extension-text-align';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
+import { compressImage } from "@/lib/compressImage";
 import { toast } from '@/hooks/use-toast';
 import {
   Bold,
@@ -94,13 +95,14 @@ const RichTextEditor = ({ content, onChange }: RichTextEditorProps) => {
     }
 
     try {
-      const fileExt = file.name.split('.').pop();
+      const toUpload = await compressImage(file, 1600);
+      const fileExt = toUpload.name.split('.').pop();
       const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
       const filePath = `news-content/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from('product-images')
-        .upload(filePath, file);
+        .upload(filePath, toUpload);
 
       if (uploadError) throw uploadError;
 

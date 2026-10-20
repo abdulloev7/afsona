@@ -181,31 +181,32 @@ const Header = () => {
               </a>
             </Button>
             <SearchDialog />
-            <Link to="/cart" className="relative">
-              <Button variant="ghost" size="sm" className="hover:bg-primary/10">
+            <Button asChild variant="ghost" size="icon" className="relative hover:bg-primary/10">
+              <Link to="/cart" aria-label={cartCount > 0 ? `Корзина, товаров: ${cartCount}` : "Корзина"}>
                 <IconShoppingBag size={20} stroke={1.5} />
                 {cartCount > 0 && (
                   <Badge 
                     variant="destructive" 
-                    className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
+                    className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
+                    aria-hidden="true"
                   >
                     {cartCount}
                   </Badge>
                 )}
-              </Button>
-            </Link>
+              </Link>
+            </Button>
             {user ? (
               <>
                 {isAdmin && (
-                  <Link to="/admin">
-                    <Button variant="ghost" size="sm" className="hover:bg-primary/10">
+                  <Button asChild variant="ghost" size="sm" className="hover:bg-primary/10">
+                    <Link to="/admin" aria-label="Админ">
                       <IconLayoutDashboard size={20} stroke={1.5} className="mr-1" />
                       <span className="hidden md:inline">Админ</span>
-                    </Button>
-                  </Link>
+                    </Link>
+                  </Button>
                 )}
-                <Link to="/profile?tab=orders" className="relative hidden md:inline-flex">
-                  <Button variant="ghost" size="sm" className="hover:bg-primary/10">
+                <Button asChild variant="ghost" size="sm" className="relative hidden md:inline-flex hover:bg-primary/10">
+                  <Link to="/profile?tab=orders">
                     <IconUser size={20} stroke={1.5} className="mr-1" />
                     Профиль
                     {completedOrdersCount > 0 && (
@@ -216,8 +217,8 @@ const Header = () => {
                         {completedOrdersCount}
                       </Badge>
                     )}
-                  </Button>
-                </Link>
+                  </Link>
+                </Button>
               </>
             ) : (
               <Button asChild variant="ghost" size="icon" className="hidden md:inline-flex hover:bg-primary/10">
@@ -230,7 +231,7 @@ const Header = () => {
             {/* Mobile burger */}
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="md:hidden">
+                <Button variant="ghost" size="icon" className="md:hidden" aria-label="Открыть меню">
                   <IconMenu2 size={24} stroke={1.5} />
                 </Button>
               </SheetTrigger>

@@ -45,7 +45,18 @@ Social and messenger icons use the brand green, not each network's own colors.
 
 ## Motion
 
-framer-motion respects the OS "reduce motion" setting through `MotionConfig reducedMotion="user"` in `src/App.tsx`. Keep motion to short fades and slides; no bouncing or pulsing.
+Motion is plain CSS (tailwindcss-animate classes such as `animate-in fade-in slide-in-from-bottom-5`); framer-motion is no longer loaded on shop pages. A global `prefers-reduced-motion` rule in `src/index.css` switches animations and transitions off for people who ask for less motion. Keep motion to short fades and slides; no bouncing or pulsing.
+
+## Touch and labels
+
+- Every tap target is at least 24×24 px; icon buttons use `size="icon"` (40 px). Small dots get a 24 px button around them.
+- An icon-only button or link always has an `aria-label` in Russian.
+- Don't wrap a `<Button>` in a `<Link>`; use `<Button asChild><Link …/></Button>`.
+
+## Performance
+
+- Only the home page is in the main bundle; every other route is `React.lazy` in `src/App.tsx`.
+- Admin uploads go through `compressImage` (`src/lib/compressImage.ts`): WebP, at most 1600–2400 px wide. Supabase free plan has no image resizing, so the uploaded file is what shoppers download.
 
 ## Focus and selection
 

@@ -14,22 +14,34 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useToast } from '@/hooks/use-toast';
 import { ShoppingCart, Trash2, ArrowLeft } from 'lucide-react';
-import { z } from 'zod';
 import { GroupedCartItems } from '@/components/cart/GroupedCartItems';
 import { DELIVERY_TEXT } from "@/lib/facts";
 import { useSeo } from "@/hooks/useSeo";
 
-const orderSchema = z.object({
-  customerName: z.string().trim().min(1, { message: "Имя обязательно" }),
-  customerPhone: z.string().trim().min(1, { message: "Телефон обязателен" }),
-  customerEmail: z.union([z.literal(""), z.string().trim().email({ message: "Некорректный email" })]).optional(),
-  deliveryAddress: z.string().trim().min(1, { message: "Адрес доставки обязателен" }),
-  notes: z.string().optional(),
-});
+type OrderForm = {
+  customerName: string;
+  customerPhone: string;
+  customerEmail: string;
+  deliveryAddress: string;
+  notes: string;
+};
+
+// Plain checks keep a form library out of the shop bundle.
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const validateOrder = (form: OrderForm) => {
+  const errors: { [key: string]: string } = {};
+  if (!form.customerName.trim()) errors.customerName = "Имя обязательно";
+  if (!form.customerPhone.trim()) errors.customerPhone = "Телефон обязателен";
+  const email = form.customerEmail.trim();
+  if (email && !EMAIL_RE.test(email)) errors.customerEmail = "Некорректный email";
+  if (!form.deliveryAddress.trim()) errors.deliveryAddress = "Адрес доставки обязателен";
+  return errors;
+};
 
 const Cart = () => {
   useSeo({ title: 'Корзина', noindex: true });
-  const [orderForm, setOrderForm] = useState({
+  const [orderForm, setOrderForm] = useState<OrderForm>({
     customerName: '',
     customerPhone: '',
     customerEmail: '',
@@ -115,22 +127,11 @@ const Cart = () => {
   };
 
   const validateForm = () => {
-    try {
-      orderSchema.parse(orderForm);
-      setErrors({});
-      return true;
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        const newErrors: { [key: string]: string } = {};
-        error.issues.forEach((issue) => {
-          if (issue.path[0]) {
-            newErrors[issue.path[0] as string] = issue.message;
-          }
-        });
-        setErrors(newErrors);
-      }
-      return false;
-    }
+    const newErrors = validateOrder(orderForm);
+    setErrors(newErrors);
+    const firstInvalid = Object.keys(newErrors)[0];
+    if (firstInvalid) document.getElementById(firstInvalid)?.focus();
+    return !firstInvalid;
   };
 
   const handleSubmitOrder = async (e: React.FormEvent) => {
@@ -217,13 +218,13 @@ const Cart = () => {
       <Header />
       <main className="flex-1 py-16">
         <div className="container mx-auto px-4 max-w-6xl">
-          <div className="flex items-center gap-4 mb-8">
-            <Button variant="ghost" onClick={() => navigate('/')}>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-8">
+            <Button variant="ghost" className="-ml-4" onClick={() => navigate('/')}>
               <ArrowLeft className="h-4 w-4 mr-2" />
               Назад к покупкам
             </Button>
-            <h1 className="text-3xl font-bold flex items-center gap-2">
-              <ShoppingCart className="h-8 w-8" />
+            <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-2">
+              <ShoppingCart className="h-7 w-7 sm:h-8 sm:w-8" aria-hidden="true" />
               Корзина ({items.length})
             </h1>
           </div>
@@ -245,19 +246,12 @@ const Cart = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Cart Items */}
               <div className="lg:col-span-2 space-y-4">
+                <h2 className="sr-only">Товары в корзине</h2>
                 {/* Selection Header */}
                 <div className="flex items-center justify-between p-4 bg-card rounded-lg border">
                   <div className="flex items-center gap-3">
                     <Checkbox
-                      checked={isAllSelected}
-                      ref={(el) => {
-                        if (el) {
-                          const input = el.querySelector('button');
-                          if (input) {
-                            (input as any).indeterminate = isPartiallySelected;
-                          }
-                        }
-                      }}
+                      checked={isPartiallySelected ? "indeterminate" : isAllSelected}
                       onCheckedChange={toggleAll}
                       id="select-all"
                     />
@@ -294,7 +288,7 @@ const Cart = () => {
               <div className="space-y-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Итого</CardTitle>
+                    <CardTitle as="h2">Итого</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <div className="flex justify-between text-sm text-muted-foreground">
@@ -315,7 +309,7 @@ const Cart = () => {
 
                 <Card>
                   <CardHeader>
-                    <CardTitle>Оформление заказа</CardTitle>
+                    <CardTitle as="h2">Оформление заказа</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <form onSubmit={handleSubmitOrder} className="space-y-4">
@@ -323,12 +317,15 @@ const Cart = () => {
                         <Label htmlFor="customerName">Имя *</Label>
                         <Input
                           id="customerName"
+                          autoComplete="name"
+                          aria-invalid={!!errors.customerName}
+                          aria-describedby={errors.customerName ? "customerName-error" : undefined}
                           value={orderForm.customerName}
                           onChange={(e) => setOrderForm({ ...orderForm, customerName: e.target.value })}
                           required
                         />
                         {errors.customerName && (
-                          <p className="text-sm text-destructive">{errors.customerName}</p>
+                          <p id="customerName-error" className="text-sm text-destructive">{errors.customerName}</p>
                         )}
                       </div>
 
@@ -336,13 +333,18 @@ const Cart = () => {
                         <Label htmlFor="customerPhone">Телефон *</Label>
                         <Input
                           id="customerPhone"
+                          type="tel"
+                          inputMode="tel"
+                          autoComplete="tel"
+                          aria-invalid={!!errors.customerPhone}
+                          aria-describedby={errors.customerPhone ? "customerPhone-error" : undefined}
                           value={orderForm.customerPhone}
                           onChange={(e) => setOrderForm({ ...orderForm, customerPhone: e.target.value })}
                           placeholder="+992 90 123 45 67"
                           required
                         />
                         {errors.customerPhone && (
-                          <p className="text-sm text-destructive">{errors.customerPhone}</p>
+                          <p id="customerPhone-error" className="text-sm text-destructive">{errors.customerPhone}</p>
                         )}
                       </div>
 
@@ -350,13 +352,16 @@ const Cart = () => {
                         <Label htmlFor="customerEmail">Email</Label>
                         <Input
                           id="customerEmail"
+                          autoComplete="email"
+                          aria-invalid={!!errors.customerEmail}
+                          aria-describedby={errors.customerEmail ? "customerEmail-error" : undefined}
                           type="email"
                           value={orderForm.customerEmail}
                           onChange={(e) => setOrderForm({ ...orderForm, customerEmail: e.target.value })}
                           placeholder="example@mail.com"
                         />
                         {errors.customerEmail && (
-                          <p className="text-sm text-destructive">{errors.customerEmail}</p>
+                          <p id="customerEmail-error" className="text-sm text-destructive">{errors.customerEmail}</p>
                         )}
                       </div>
 
@@ -364,6 +369,9 @@ const Cart = () => {
                         <Label htmlFor="deliveryAddress">Адрес доставки *</Label>
                         <Textarea
                           id="deliveryAddress"
+                          autoComplete="street-address"
+                          aria-invalid={!!errors.deliveryAddress}
+                          aria-describedby={errors.deliveryAddress ? "deliveryAddress-error" : undefined}
                           value={orderForm.deliveryAddress}
                           onChange={(e) => setOrderForm({ ...orderForm, deliveryAddress: e.target.value })}
                           placeholder="г. Худжанд, ул. ..."
@@ -373,7 +381,7 @@ const Cart = () => {
                           {DELIVERY_TEXT}. Заказ на меньшую сумму можно забрать в магазине.
                         </p>
                         {errors.deliveryAddress && (
-                          <p className="text-sm text-destructive">{errors.deliveryAddress}</p>
+                          <p id="deliveryAddress-error" className="text-sm text-destructive">{errors.deliveryAddress}</p>
                         )}
                       </div>
 

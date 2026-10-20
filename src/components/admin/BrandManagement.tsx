@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { compressImage } from "@/lib/compressImage";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -92,13 +93,14 @@ const BrandManagement = () => {
 
     try {
       setUploading(true);
-      const fileExt = file.name.split('.').pop();
+      const toUpload = await compressImage(file, 800);
+      const fileExt = toUpload.name.split('.').pop();
       const fileName = `${Math.random()}.${fileExt}`;
       const filePath = `${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from('product-images')
-        .upload(filePath, file);
+        .upload(filePath, toUpload);
 
       if (uploadError) throw uploadError;
 

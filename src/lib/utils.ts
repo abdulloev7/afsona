@@ -1,7 +1,5 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { format } from "date-fns";
-import { ru } from "date-fns/locale";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -24,6 +22,9 @@ export function transliterate(text: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
+const newsDateFormat = new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+
+// "20 октября 2026", without the " г." suffix Intl adds
 export function formatNewsDate(date: string): string {
-  return format(new Date(date), 'd MMMM yyyy', { locale: ru });
+  return newsDateFormat.format(new Date(date)).replace(/\s*г\.$/, '');
 }

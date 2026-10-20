@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
+import { compressImage } from "@/lib/compressImage";
 import { useToast } from '@/hooks/use-toast';
 import { Package, Pencil, Trash2, Plus, X, Archive, Star, Info } from 'lucide-react';
 import { z } from 'zod';
@@ -233,12 +234,13 @@ export function ProductManagement() {
       const uploadedMedia: Omit<MediaItem, 'file'>[] = [];
       for (const item of media) {
         if (item.file) {
-          const fileExt = item.file.name.split('.').pop();
+          const file = await compressImage(item.file, 1600);
+          const fileExt = file.name.split('.').pop();
           const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
           
           const { error: uploadError } = await supabase.storage
             .from('product-images')
-            .upload(fileName, item.file);
+            .upload(fileName, file);
 
           if (uploadError) throw uploadError;
 

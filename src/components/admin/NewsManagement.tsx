@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { compressImage } from "@/lib/compressImage";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -146,7 +147,8 @@ const NewsManagement = () => {
     }
   };
 
-  const uploadFile = async (file: File, folder: string): Promise<string> => {
+  const uploadFile = async (original: File, folder: string): Promise<string> => {
+    const file = await compressImage(original);
     const fileExt = file.name.split(".").pop();
     const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
     const filePath = `${folder}/${fileName}`;
