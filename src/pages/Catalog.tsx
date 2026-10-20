@@ -97,9 +97,9 @@ const Catalog = () => {
           <div className="container mx-auto px-4">
             <Skeleton className="h-10 w-48 mb-3" />
             <Skeleton className="h-5 w-72 mb-10" />
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
               {Array.from({ length: 9 }).map((_, i) => (
-                <Skeleton key={i} className="h-[72px] rounded-lg" />
+                <Skeleton key={i} className="aspect-[16/13] rounded-lg" />
               ))}
             </div>
           </div>
@@ -121,7 +121,7 @@ const Catalog = () => {
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-12">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 mb-12">
             {categories.map((category) => (
               <CategoryTile
                 key={category.id}
