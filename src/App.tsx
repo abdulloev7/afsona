@@ -2,6 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { MotionConfig } from "framer-motion";
 import { AuthProvider } from "@/contexts/AuthContext";
@@ -14,17 +15,19 @@ import BrandsPage from "./pages/BrandsPage";
 import AboutPage from "./pages/AboutPage";
 import ContactsPage from "./pages/ContactsPage";
 import TintingPage from "./pages/TintingPage";
-import Auth from "./pages/Auth";
-import Profile from "./pages/Profile";
 import Cart from "./pages/Cart";
-import Admin from "./pages/Admin";
-import Orders from "./pages/Orders";
 import Product from "./pages/Product";
-import News from "./pages/News";
-import NewsDetail from "./pages/NewsDetail";
-import Portfolio from "./pages/Portfolio";
-import PortfolioDetail from "./pages/PortfolioDetail";
 import CategoryPage from "./pages/CategoryPage";
+
+// Account, admin and content pages load on demand so the shop's first screen stays light.
+const Auth = lazy(() => import("./pages/Auth"));
+const Profile = lazy(() => import("./pages/Profile"));
+const Admin = lazy(() => import("./pages/Admin"));
+const Orders = lazy(() => import("./pages/Orders"));
+const News = lazy(() => import("./pages/News"));
+const NewsDetail = lazy(() => import("./pages/NewsDetail"));
+const Portfolio = lazy(() => import("./pages/Portfolio"));
+const PortfolioDetail = lazy(() => import("./pages/PortfolioDetail"));
 
 const queryClient = new QueryClient();
 
@@ -37,6 +40,7 @@ const App = () => (
             <Toaster />
             <Sonner />
             <BrowserRouter>
+              <Suspense fallback={null}>
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/catalog" element={<Catalog />} />
@@ -72,6 +76,7 @@ const App = () => (
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
+              </Suspense>
             </BrowserRouter>
           </CartProvider>
         </AuthProvider>

@@ -16,7 +16,7 @@ const CategoryTile = ({ name, slug, productCount = 0 }: CategoryTileProps) => {
       to={getCategoryLink(slug)}
       className="group flex flex-col overflow-hidden rounded-lg border border-border bg-card transition-colors hover:border-primary/50"
     >
-      <span className="relative block aspect-[16/10] overflow-hidden bg-[#FFFAE5]">
+      <span className="relative block aspect-[16/10] overflow-hidden bg-background">
         {image ? (
           <img
             src={image}
