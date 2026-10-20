@@ -42,7 +42,7 @@ const BrandPage = () => {
   useSeo({
     title: brand ? `${brand.name}: краски и материалы` : undefined,
     description: brand
-      ? toDescription(brand.description, `Продукция бренда ${brand.name} в магазине AFSONA, Душанбе. Цены, наличие и доставка по городу.`)
+      ? toDescription(brand.description, `Продукция бренда ${brand.name} в магазине AFSONA в Душанбе и Худжанде. Цены и наличие.`)
       : undefined,
     image: brand?.logo,
     noindex: !loading && !brand,

@@ -1,8 +1,8 @@
 export const SITE_URL = 'https://afsona.tj';
 export const SITE_NAME = 'AFSONA';
-export const DEFAULT_TITLE = 'AFSONA — эко краски и материалы для ремонта в Душанбе';
+export const DEFAULT_TITLE = 'AFSONA — эко краски и материалы для ремонта в Душанбе и Худжанде';
 export const DEFAULT_DESCRIPTION =
-  'Экологичные краски, грунтовки, штукатурки и инструменты для ремонта в Душанбе. Компьютерная колеровка, доставка по городу, консультации специалистов.';
+  'Экологичные краски, грунтовки, штукатурки и инструменты для ремонта. Магазины в Душанбе и Худжанде, компьютерная колеровка, консультации специалистов.';
 export const DEFAULT_IMAGE =
   'https://storage.googleapis.com/gpt-engineer-file-uploads/tdx3gONRWyXFDFtmzznIiU5lLPI2/social-images/social-1759066595227-Screenshot_1.jpg';
 

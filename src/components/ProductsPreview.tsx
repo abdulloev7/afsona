@@ -1,6 +1,6 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Paintbrush, Hammer, Droplets, Palette, Wrench, Layers } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import CategoryTile from "@/components/CategoryTile";
+import { sortCategories } from "@/lib/categories";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -29,15 +29,6 @@ const ProductsPreview = () => {
 
       if (categoriesError) throw categoriesError;
 
-      const priorityOrder: Record<string, number> = {
-        'paints-and-coatings': 1,
-        'decorative-coatings': 2,
-        'primers-preparatory': 3,
-        'adhesives-sealants': 4,
-        'brushes-tools': 5,
-        'rollers': 6
-      };
-
       const categoriesWithCount = await Promise.all(
         (categoriesData || []).map(async (category) => {
           const { count } = await (supabase
@@ -53,13 +44,7 @@ const ProductsPreview = () => {
         })
       );
 
-      const sortedCategories = categoriesWithCount
-        .sort((a, b) => {
-          const priorityA = priorityOrder[a.slug] || 999;
-          const priorityB = priorityOrder[b.slug] || 999;
-          return priorityA - priorityB;
-        })
-        .slice(0, 6);
+      const sortedCategories = sortCategories(categoriesWithCount);
 
       setCategories(sortedCategories);
     } catch (error) {
@@ -69,45 +54,14 @@ const ProductsPreview = () => {
     }
   };
 
-  const getCategoryLink = (slug: string) => {
-    const routeMap: Record<string, string> = {
-      'paints-and-coatings': '/paints-coatings',
-      'adhesives-sealants': '/adhesives-sealants',
-      'primers-preparatory': '/primers',
-      'putties-leveling': '/putties-leveling',
-      'decorative-coatings': '/decorative-coatings',
-      'tints-thinners': '/tints-thinners',
-      'waterproofing': '/waterproofing',
-      'brushes-tools': '/brushes-tools',
-      'rollers': '/rollers',
-      'spatulas-accessories': '/spatulas-accessories'
-    };
-    return routeMap[slug] || '/paints-coatings';
-  };
-
-  const getCategoryIcon = (slug: string) => {
-    const iconMap: Record<string, React.ReactNode> = {
-      'paints-and-coatings': <Paintbrush className="w-6 h-6" />,
-      'decorative-coatings': <Palette className="w-6 h-6" />,
-      'primers-preparatory': <Layers className="w-6 h-6" />,
-      'adhesives-sealants': <Droplets className="w-6 h-6" />,
-      'brushes-tools': <Hammer className="w-6 h-6" />,
-      'rollers': <Wrench className="w-6 h-6" />,
-    };
-    return iconMap[slug] || <Paintbrush className="w-6 h-6" />;
-  };
-
   if (loading) {
     return (
-      <section id="products" className="py-16 bg-background">
+      <section id="products" className="py-12 md:py-16 bg-background">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-10">
-            <Skeleton className="h-10 w-64 mx-auto mb-4" />
-            <Skeleton className="h-5 w-96 mx-auto" />
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <Skeleton key={i} className="h-32" />
+          <Skeleton className="h-9 w-48 mb-6" />
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <Skeleton key={i} className="h-[72px] rounded-lg" />
             ))}
           </div>
         </div>
@@ -116,42 +70,28 @@ const ProductsPreview = () => {
   }
 
   return (
-    <section id="products" className="py-16 bg-background">
+    <section id="products" className="py-12 md:py-16 bg-background">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-10">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-primary">
-            Наш ассортимент
-          </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Широкий выбор качественных материалов для любых задач
-          </p>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-          {categories.map((category) => (
-            <Link key={category.id} to={getCategoryLink(category.slug)}>
-              <Card className="h-full hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group text-center">
-                <CardContent className="p-4">
-                  <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-3 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                    {getCategoryIcon(category.slug)}
-                  </div>
-                  <h3 className="font-semibold text-base mb-1 line-clamp-2">{category.name}</h3>
-                  <p className="text-xs text-muted-foreground">
-                    {category.productCount} товаров
-                  </p>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
-        </div>
-
-        <div className="text-center">
-          <Link to="/catalog">
-            <Button size="lg">
-              Весь каталог
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
+        <div className="flex items-end justify-between gap-4 mb-6">
+          <h2 className="text-2xl md:text-3xl font-semibold text-foreground">Каталог</h2>
+          <Link
+            to="/catalog"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline underline-offset-4"
+          >
+            Весь каталог
+            <ArrowRight className="w-4 h-4" />
           </Link>
+        </div>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {categories.map((category) => (
+            <CategoryTile
+              key={category.id}
+              name={category.name}
+              slug={category.slug}
+              productCount={category.productCount}
+            />
+          ))}
         </div>
       </div>
     </section>
