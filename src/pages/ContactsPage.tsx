@@ -108,7 +108,7 @@ const ContactsPage = () => {
           </div>
           <p className="flex items-center gap-2 text-sm text-foreground mb-12">
             <Clock className="w-4 h-4 shrink-0 text-primary" />
-            Режим работы: {STORE_HOURS}, воскресенье выходной
+            Оба магазина: {STORE_HOURS}, воскресенье выходной
           </p>
 
           {/* Social Links */}

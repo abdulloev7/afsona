@@ -11,17 +11,13 @@ export type Store = {
   mapUrl: string;
 };
 
-// Same addresses as the Telegram bot (api/telegram.js). Map links search by
-// name until the store owner sends exact pins.
-const mapSearch = (query: string) =>
-  `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
-
+// Same addresses as the Telegram bot (api/telegram.js); map pins from the owner.
 export const STORES: Store[] = [
   {
     city: "Худжанд",
     address: "Джумъа бозор",
     phones: [{ display: STORE_PHONE_DISPLAY, href: STORE_PHONE_HREF }],
-    mapUrl: mapSearch("Джума базар, Худжанд"),
+    mapUrl: "https://maps.app.goo.gl/GLjf89PfguoddwVz5",
   },
   {
     city: "Душанбе",
@@ -30,7 +26,7 @@ export const STORES: Store[] = [
       { display: "+992 906 66 70 60", href: "tel:+992906667060" },
       { display: "+992 501 79 52 79", href: "tel:+992501795279" },
     ],
-    mapUrl: mapSearch("Базар Кушониён, Душанбе"),
+    mapUrl: "https://maps.app.goo.gl/Hk5hH399Yy8MiBXz8",
   },
 ];
 
