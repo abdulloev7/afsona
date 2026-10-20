@@ -31,4 +31,5 @@ export const store = {
   createOrder: (chat, customer) => rpc("bot_order_create", { p_chat: chat, p_customer: customer }),
   getSetting: (name) => rpc("bot_setting_get", { p_name: name }),
   setSetting: (name, value) => rpc("bot_setting_set", { p_name: name, p_value: value }),
+  takeSiteOrder: (orderId) => rpc("bot_site_order_take", { p_order_id: orderId }),
 };

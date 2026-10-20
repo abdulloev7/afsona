@@ -170,6 +170,14 @@ const Cart = () => {
       const order = data?.[0];
       if (!order) throw new Error('create_order returned no order');
 
+      // Copy of the order to the shop's Telegram chat (api/site-order.js); never blocks the order
+      fetch('/api/site-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId: order.order_id }),
+        keepalive: true,
+      }).catch((tgError) => console.error('Error sending Telegram notification:', tgError));
+
       // Send order notification email
       try {
         const { data: emailData, error: emailInvokeError } = await supabase.functions.invoke('send-order-notification', {
