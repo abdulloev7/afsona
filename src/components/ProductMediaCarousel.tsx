@@ -39,14 +39,14 @@ export const ProductMediaCarousel = ({ media, productName }: ProductMediaCarouse
   const currentMedia = media[currentIndex];
 
   return (
-    <Card className="p-6 relative">
+    <Card className="p-3 sm:p-6 relative">
       {/* Main Media Display */}
       <div className="relative">
         {currentMedia.type === 'image' ? (
           <img
             src={currentMedia.url}
             alt={currentMedia.caption || productName}
-            className={`w-full h-[400px] ${
+            className={`w-full aspect-square sm:aspect-auto sm:h-[400px] ${
               currentMedia.fit === 'contain' ? 'object-contain' : 'object-cover'
             } rounded-lg`}
           />
@@ -68,6 +68,7 @@ export const ProductMediaCarousel = ({ media, productName }: ProductMediaCarouse
               size="icon"
               className="absolute left-2 top-1/2 -translate-y-1/2 bg-background/80 hover:bg-background"
               onClick={handlePrevious}
+              aria-label="Предыдущее фото"
             >
               <ChevronLeft className="h-6 w-6" />
             </Button>
@@ -76,6 +77,7 @@ export const ProductMediaCarousel = ({ media, productName }: ProductMediaCarouse
               size="icon"
               className="absolute right-2 top-1/2 -translate-y-1/2 bg-background/80 hover:bg-background"
               onClick={handleNext}
+              aria-label="Следующее фото"
             >
               <ChevronRight className="h-6 w-6" />
             </Button>
@@ -92,18 +94,24 @@ export const ProductMediaCarousel = ({ media, productName }: ProductMediaCarouse
 
       {/* Dots Indicator - только если больше одного медиа */}
       {media.length > 1 && (
-        <div className="flex justify-center gap-2 mt-4">
+        <div className="flex justify-center mt-2">
           {media.map((_, index) => (
+            // The button is a 24px tap target; the dot inside is what shows.
             <button
               key={index}
               onClick={() => setCurrentIndex(index)}
-              className={`w-2 h-2 rounded-full transition-all ${
-                index === currentIndex
-                  ? 'bg-primary w-6'
-                  : 'bg-muted-foreground/30 hover:bg-muted-foreground/50'
-              }`}
+              className="group flex h-6 min-w-6 items-center justify-center px-1"
               aria-label={`Перейти к медиа ${index + 1}`}
-            />
+              aria-current={index === currentIndex ? "true" : undefined}
+            >
+              <span
+                className={`block h-2 rounded-full transition-all ${
+                  index === currentIndex
+                    ? 'bg-primary w-6'
+                    : 'w-2 bg-muted-foreground/30 group-hover:bg-muted-foreground/50'
+                }`}
+              />
+            </button>
           ))}
         </div>
       )}

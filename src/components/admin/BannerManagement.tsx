@@ -22,6 +22,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { supabase } from '@/integrations/supabase/client';
+import { compressImage } from "@/lib/compressImage";
 import { useToast } from '@/hooks/use-toast';
 import { Plus, Pencil, Trash2, ArrowUp, ArrowDown, Image as ImageIcon, Eye, EyeOff, Smartphone, AlertTriangle, X } from 'lucide-react';
 import BannerPositionPreview, { ElementPositions, FocalPoint, ImageSettings } from './BannerPositionPreview';
@@ -186,12 +187,13 @@ const BannerManagement = () => {
 
     setUploading(kind);
     try {
-      const fileExt = file.name.split('.').pop();
+      const toUpload = await compressImage(file, 2400);
+      const fileExt = toUpload.name.split('.').pop();
       const fileName = `banners/${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
 
       const { error: uploadError } = await supabase.storage
         .from('product-images')
-        .upload(fileName, file);
+        .upload(fileName, toUpload);
 
       if (uploadError) throw uploadError;
 

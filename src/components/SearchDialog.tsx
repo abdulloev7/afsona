@@ -160,8 +160,8 @@ export function SearchDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="sm">
-          <Search className="h-4 w-4" />
+        <Button variant="ghost" size="icon" aria-label="Поиск по товарам">
+          <Search className="h-5 w-5" />
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl p-0">

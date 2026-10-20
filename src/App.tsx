@@ -4,22 +4,21 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { MotionConfig } from "framer-motion";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { CartProvider } from "@/contexts/CartContext";
 import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-import BrandPage from "./pages/BrandPage";
-import Catalog from "./pages/Catalog";
-import BrandsPage from "./pages/BrandsPage";
-import AboutPage from "./pages/AboutPage";
-import ContactsPage from "./pages/ContactsPage";
-import TintingPage from "./pages/TintingPage";
-import Cart from "./pages/Cart";
-import Product from "./pages/Product";
-import CategoryPage from "./pages/CategoryPage";
 
-// Account, admin and content pages load on demand so the shop's first screen stays light.
+// Only the home page ships in the main file; every other page loads when first opened.
+const Catalog = lazy(() => import("./pages/Catalog"));
+const CategoryPage = lazy(() => import("./pages/CategoryPage"));
+const Product = lazy(() => import("./pages/Product"));
+const BrandsPage = lazy(() => import("./pages/BrandsPage"));
+const BrandPage = lazy(() => import("./pages/BrandPage"));
+const TintingPage = lazy(() => import("./pages/TintingPage"));
+const AboutPage = lazy(() => import("./pages/AboutPage"));
+const ContactsPage = lazy(() => import("./pages/ContactsPage"));
+const Cart = lazy(() => import("./pages/Cart"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 const Auth = lazy(() => import("./pages/Auth"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Admin = lazy(() => import("./pages/Admin"));
@@ -33,55 +32,53 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <MotionConfig reducedMotion="user">
-      <TooltipProvider>
-        <AuthProvider>
-          <CartProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Suspense fallback={null}>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/catalog" element={<Catalog />} />
-                <Route path="/brands" element={<BrandsPage />} />
-                <Route path="/about" element={<AboutPage />} />
-                <Route path="/contacts" element={<ContactsPage />} />
-                <Route path="/tinting" element={<TintingPage />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/cart" element={<Cart />} />
-                <Route path="/admin" element={<Admin />} />
-                <Route path="/orders" element={<Orders />} />
-                <Route path="/product/:id" element={<Product />} />
-                <Route path="/brands/:slug" element={<BrandPage />} />
-                <Route path="/paints-coatings" element={<CategoryPage />} />
-                <Route path="/wall-paints" element={<CategoryPage />} />
-                <Route path="/ceiling-paints" element={<CategoryPage />} />
-                <Route path="/facade-paints" element={<CategoryPage />} />
-                <Route path="/primers" element={<CategoryPage />} />
-                <Route path="/decorative-coatings" element={<CategoryPage />} />
-                <Route path="/waterproofing" element={<CategoryPage />} />
-                <Route path="/adhesives-sealants" element={<CategoryPage />} />
-                <Route path="/putties-leveling" element={<CategoryPage />} />
-                <Route path="/tints-thinners" element={<CategoryPage />} />
-                <Route path="/brushes-tools" element={<CategoryPage />} />
-                <Route path="/rollers" element={<CategoryPage />} />
-                <Route path="/spatulas-accessories" element={<CategoryPage />} />
-                <Route path="/tools" element={<CategoryPage />} />
-                <Route path="/news" element={<News />} />
-                <Route path="/news/:slug" element={<NewsDetail />} />
-                <Route path="/portfolio" element={<Portfolio />} />
-                <Route path="/portfolio/:slug" element={<PortfolioDetail />} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-              </Suspense>
-            </BrowserRouter>
-          </CartProvider>
-        </AuthProvider>
-      </TooltipProvider>
-    </MotionConfig>
+    <TooltipProvider>
+      <AuthProvider>
+        <CartProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Suspense fallback={<div className="min-h-screen bg-background" />}>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/catalog" element={<Catalog />} />
+              <Route path="/brands" element={<BrandsPage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/contacts" element={<ContactsPage />} />
+              <Route path="/tinting" element={<TintingPage />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/admin" element={<Admin />} />
+              <Route path="/orders" element={<Orders />} />
+              <Route path="/product/:id" element={<Product />} />
+              <Route path="/brands/:slug" element={<BrandPage />} />
+              <Route path="/paints-coatings" element={<CategoryPage />} />
+              <Route path="/wall-paints" element={<CategoryPage />} />
+              <Route path="/ceiling-paints" element={<CategoryPage />} />
+              <Route path="/facade-paints" element={<CategoryPage />} />
+              <Route path="/primers" element={<CategoryPage />} />
+              <Route path="/decorative-coatings" element={<CategoryPage />} />
+              <Route path="/waterproofing" element={<CategoryPage />} />
+              <Route path="/adhesives-sealants" element={<CategoryPage />} />
+              <Route path="/putties-leveling" element={<CategoryPage />} />
+              <Route path="/tints-thinners" element={<CategoryPage />} />
+              <Route path="/brushes-tools" element={<CategoryPage />} />
+              <Route path="/rollers" element={<CategoryPage />} />
+              <Route path="/spatulas-accessories" element={<CategoryPage />} />
+              <Route path="/tools" element={<CategoryPage />} />
+              <Route path="/news" element={<News />} />
+              <Route path="/news/:slug" element={<NewsDetail />} />
+              <Route path="/portfolio" element={<Portfolio />} />
+              <Route path="/portfolio/:slug" element={<PortfolioDetail />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+            </Suspense>
+          </BrowserRouter>
+        </CartProvider>
+      </AuthProvider>
+    </TooltipProvider>
   </QueryClientProvider>
 );
 

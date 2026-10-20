@@ -35,16 +35,17 @@ export const CartItemCard = ({
       )}
     >
       <CardContent className="p-4">
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
           <Checkbox
             checked={isSelected}
             onCheckedChange={onToggleSelect}
+            aria-label={`Выбрать «${item.product.name}» для заказа`}
           />
           {item.product.image && (
-            <Link to={productUrl} className="shrink-0">
+            <Link to={productUrl} className="shrink-0" tabIndex={-1} aria-hidden="true">
               <img 
                 src={item.product.image} 
-                alt={item.product.name}
+                alt=""
                 className="w-16 h-16 object-cover rounded hover:opacity-80 transition-opacity cursor-pointer"
               />
             </Link>
@@ -78,31 +79,38 @@ export const CartItemCard = ({
               </p>
             )}
           </div>
-          <div className="flex items-center gap-2">
+          {/* On phones the controls drop to their own row so the name keeps its width */}
+          <div className="flex w-full items-center justify-end gap-2 sm:w-auto">
             <Button
               variant="outline"
-              size="sm"
+              size="icon"
               onClick={() => onUpdateQuantity(item.quantity - 1)}
+              aria-label="Уменьшить количество"
             >
               <Minus className="h-4 w-4" />
             </Button>
-            <span className="w-8 text-center font-medium">{item.quantity}</span>
+            <span className="w-8 text-center font-medium" aria-live="polite">
+              <span className="sr-only">Количество: </span>
+              {item.quantity}
+            </span>
             <Button
               variant="outline"
-              size="sm"
+              size="icon"
               onClick={() => onUpdateQuantity(item.quantity + 1)}
+              aria-label="Увеличить количество"
             >
               <Plus className="h-4 w-4" />
             </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onRemove}
+              className="ml-2 text-muted-foreground hover:text-destructive"
+              aria-label={`Удалить «${item.product.name}» из корзины`}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onRemove}
-            className="text-muted-foreground hover:text-destructive"
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
         </div>
       </CardContent>
     </Card>

@@ -261,7 +261,7 @@ export default function Product() {
           </ol>
         </nav>
 
-        <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
+        <div className="grid md:grid-cols-2 gap-8 lg:gap-12 [&>*]:min-w-0">
           <div className="md:sticky md:top-24 self-start">
             <ProductMediaCarousel media={media} productName={product.name} />
           </div>
@@ -327,7 +327,7 @@ export default function Product() {
                 className="w-full"
               >
                 <ShoppingCart className="mr-2 h-5 w-5" />
-                {productHasVariants ? 'Выбрать фасовку и добавить в корзину' : 'Добавить в корзину'}
+                {productHasVariants ? 'Выбрать фасовку' : 'Добавить в корзину'}
               </Button>
             ) : (
               <Button onClick={handleGoToCart} size="lg" variant="secondary" className="w-full">

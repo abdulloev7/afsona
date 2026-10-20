@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Carousel,
@@ -20,12 +19,9 @@ import {
   type HeroBanner,
 } from "@/lib/heroBanner";
 
-const fadeUp = (delay = 0) => ({
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -10 },
-  transition: { duration: 0.5, ease: "easeOut" as const, delay },
-});
+// Banner text slides up when its slide becomes current; skipped for "reduce motion".
+const fadeUp = (delay: "delay-0" | "delay-100" | "delay-200" = "delay-0") =>
+  `animate-in fade-in slide-in-from-bottom-5 duration-500 ease-out fill-mode-both motion-reduce:animate-none ${delay}`;
 
 const Hero = () => {
   const [banners, setBanners] = useState<HeroBanner[]>([]);
@@ -96,12 +92,7 @@ const Hero = () => {
   if (!loading && banners.length === 0) {
     return (
       <section className="h-[50vh] sm:h-[60vh] md:h-[65vh] lg:h-[75vh] flex items-center justify-center bg-background">
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.8, ease: "easeInOut" }}
-          className="container mx-auto px-4 text-center"
-        >
+        <div className={cn("container mx-auto px-4 text-center", fadeUp())}>
           <div className="max-w-4xl mx-auto">
             <p className="text-5xl md:text-7xl font-bold mb-6 leading-tight text-foreground">
               AFSONA
@@ -132,7 +123,7 @@ const Hero = () => {
               </Button>
             </div>
           </div>
-        </motion.div>
+        </div>
       </section>
     );
   }
@@ -208,25 +199,23 @@ const Hero = () => {
                   )}
 
                   {/* Text placed where the admin put it (wide layout). The wrapper centres each
-                      element on its point; the inner motion div only animates. */}
+                      element on its point; the inner div only animates. */}
                   <div className={cn("absolute inset-0", portraitOnPhones && "hidden md:block")}>
                     {banner.title && (
                       <div
                         className="absolute z-10 -translate-x-1/2 -translate-y-1/2 w-max max-w-[85%]"
                         style={{ left: `${title.x}%`, top: `${title.y}%` }}
                       >
-                        <AnimatePresence mode="wait">
-                          {isCurrent && (
-                            <motion.div key={`title-${banner.id}`} {...fadeUp()}>
+                        {isCurrent && (
+                          <div key={`title-${banner.id}`} className={fadeUp()}>
                               <TitleTag
                                 className={`text-base sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white leading-tight ${getTextAlign(title.x)}`}
                                 style={{ textShadow: "0 2px 8px rgba(0,0,0,0.5)" }}
                               >
                                 {banner.title}
                               </TitleTag>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
+                          </div>
+                        )}
                       </div>
                     )}
 
@@ -235,18 +224,16 @@ const Hero = () => {
                         className="absolute z-10 -translate-x-1/2 -translate-y-1/2 w-max max-w-[85%]"
                         style={{ left: `${subtitle.x}%`, top: `${subtitle.y}%` }}
                       >
-                        <AnimatePresence mode="wait">
-                          {isCurrent && (
-                            <motion.div key={`subtitle-${banner.id}`} {...fadeUp(0.1)}>
+                        {isCurrent && (
+                          <div key={`subtitle-${banner.id}`} className={fadeUp("delay-100")}>
                               <p
                                 className={`text-xs sm:text-base lg:text-lg text-white/90 ${getTextAlign(subtitle.x)}`}
                                 style={{ textShadow: "0 1px 4px rgba(0,0,0,0.5)" }}
                               >
                                 {banner.subtitle}
                               </p>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
+                          </div>
+                        )}
                       </div>
                     )}
 
@@ -255,18 +242,16 @@ const Hero = () => {
                         className="absolute z-10 -translate-x-1/2 -translate-y-1/2"
                         style={{ left: `${button.x}%`, top: `${button.y}%` }}
                       >
-                        <AnimatePresence mode="wait">
-                          {isCurrent && (
-                            <motion.div key={`button-${banner.id}`} {...fadeUp(0.2)}>
+                        {isCurrent && (
+                          <div key={`button-${banner.id}`} className={fadeUp("delay-200")}>
                               <Button
                                 onClick={() => handleButtonClick(banner.button_link)}
                                 className="h-7 px-3 text-xs sm:h-9 sm:px-5 sm:text-sm md:h-10 md:px-6 md:text-base whitespace-nowrap"
                               >
                                 {banner.button_text}
                               </Button>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
@@ -316,21 +301,27 @@ const Hero = () => {
                 : "py-2.5 bg-background md:bg-transparent md:py-0"
             )}
           >
-            <div className="flex items-center gap-2">
+            <div className="flex items-center">
               {banners.map((_, index) => (
+                // 24px tap target around a small dot
                 <button
                   key={index}
                   onClick={() => api?.scrollTo(index)}
-                  className={`h-2 md:h-2.5 rounded-full transition-all duration-300 ${
-                    current === index
-                      ? "bg-primary w-5 md:w-6"
-                      : cn(
-                          "w-2 md:w-2.5 md:bg-white/60 md:hover:bg-white/80",
-                          portraitOnPhones ? "bg-white/60" : "bg-foreground/25"
-                        )
-                  }`}
+                  className="group flex h-6 min-w-6 items-center justify-center px-1"
                   aria-label={`Слайд ${index + 1}`}
-                />
+                  aria-current={current === index ? "true" : undefined}
+                >
+                  <span
+                    className={`block h-2 md:h-2.5 rounded-full transition-all duration-300 ${
+                      current === index
+                        ? "bg-primary w-5 md:w-6"
+                        : cn(
+                            "w-2 md:w-2.5 md:bg-white/60 md:group-hover:bg-white/80",
+                            portraitOnPhones ? "bg-white/60" : "bg-foreground/25"
+                          )
+                    }`}
+                  />
+                </button>
               ))}
             </div>
 
