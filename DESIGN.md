@@ -20,6 +20,7 @@ Tokens live in `src/index.css` (HSL, without `hsl()`), exposed through Tailwind 
 | `--brand-green-dark` | 151 48% 19% | "Советуем" label, pressed states |
 | `--secondary` / `--muted` | 50 60% 91% / 50 50% 89% | Quiet panels and inputs on cream |
 | `--sale` | 12 65% 40% | "Акция" only. The one warm accent outside the green family. |
+| `--destructive` | 0 70% 42% | Errors and "Нет в наличии". White text on it passes 4.5:1. |
 
 Product labels: Хит = solid green, Советуем = dark green, Новинка = cream with a green outline, Акция = sale red, Эко = pale green with green text. Filters use green when active and white with a border when not.
 
@@ -30,6 +31,7 @@ Social and messenger icons use the brand green, not each network's own colors.
 - Body and UI: **Golos Text** 400–700 (Google Fonts). Made for Cyrillic.
 - Headings h1–h6: **Commissioner** 600, letter-spacing −0.015em, `text-wrap: balance`.
 - Paragraphs use `text-wrap: pretty` (set globally).
+- Heading levels never skip. A card right under the page h1 uses `<CardTitle as="h2">` (CardTitle defaults to h3).
 - No serif or italic display type. No text smaller than 12px for anything people need to read.
 
 ## Layout and components

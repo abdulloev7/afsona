@@ -101,13 +101,13 @@ const ContactsPage = () => {
 
           {/* Stores */}
           <div className="max-w-5xl mx-auto mb-12">
-            <StoreLocator />
+            <StoreLocator headingLevel="h2" />
           </div>
 
           {/* Social Links */}
           <Card className="mb-12">
             <CardHeader className="text-center">
-              <CardTitle className="text-2xl">Мы в социальных сетях</CardTitle>
+              <CardTitle as="h2" className="text-2xl">Мы в социальных сетях</CardTitle>
               <p className="text-muted-foreground">Свяжитесь с нами удобным способом</p>
             </CardHeader>
             <CardContent>
@@ -159,7 +159,7 @@ const ContactsPage = () => {
           <div className="max-w-2xl mx-auto mb-12">
             <Card>
               <CardHeader>
-                <CardTitle>Напишите нам</CardTitle>
+                <CardTitle as="h2">Напишите нам</CardTitle>
                 <p className="text-muted-foreground">Заполните форму и мы свяжемся с вами</p>
               </CardHeader>
               <CardContent>

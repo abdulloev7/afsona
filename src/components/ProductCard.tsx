@@ -1,9 +1,8 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Link, useNavigate } from 'react-router-dom';
+import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { ShoppingCart, Leaf, ShoppingBag } from 'lucide-react';
+import { ShoppingCart, ShoppingBag, Package } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 
 import { useToast } from '@/hooks/use-toast';
@@ -36,9 +35,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   
   const { toast } = useToast();
 
-  const handleImageClick = () => {
-    navigate(`/product/${product.id}`);
-  };
+  const productUrl = `/product/${product.id}`;
 
   // Check if product has multiple variants requiring selection
   const productHasVariants = 
@@ -107,101 +104,71 @@ export const ProductCard = ({ product }: ProductCardProps) => {
 
   const firstMedia = allMedia[0];
 
+  const priceText = (() => {
+    if (product.size_variants && product.size_variants.length > 0) {
+      const prices = product.size_variants.map(v => v.price);
+      const minPrice = Math.min(...prices);
+      const maxPrice = Math.max(...prices);
+      return minPrice === maxPrice
+        ? `${minPrice.toLocaleString('ru-RU')} сом.`
+        : `от ${minPrice.toLocaleString('ru-RU')} сом.`;
+    }
+    return `${product.price.toLocaleString('ru-RU')} сом.`;
+  })();
+
   return (
-    <Card className="flex flex-col shadow-card hover:shadow-brand transition-all duration-300 hover:-translate-y-1">
-      <CardHeader>
+    <Card className="flex flex-col overflow-hidden hover:border-primary/50 transition-colors">
+      <Link
+        to={productUrl}
+        className="block aspect-square w-full bg-white"
+        aria-label={product.name}
+        tabIndex={-1}
+      >
         {firstMedia ? (
-          <div 
-            className="bg-white rounded-lg p-2 mb-4 cursor-pointer hover:opacity-90 transition-opacity" 
-            onClick={handleImageClick}
-          >
-            {firstMedia.type === 'image' ? (
-              <img 
-                src={firstMedia.url} 
-                alt={product.name}
-                className={`w-full h-48 rounded-lg ${
-                  firstMedia.fit === 'contain' 
-                    ? 'object-contain' 
-                    : 'object-cover'
-                }`}
-              />
-            ) : (
-              <video 
-                src={firstMedia.url}
-                className={`w-full h-48 rounded-lg ${
-                  firstMedia.fit === 'contain' 
-                    ? 'object-contain' 
-                    : 'object-cover'
-                }`}
-              />
-            )}
-          </div>
+          firstMedia.type === 'image' ? (
+            <img
+              src={firstMedia.url}
+              alt=""
+              loading="lazy"
+              className={`h-full w-full ${firstMedia.fit === 'contain' ? 'object-contain p-2' : 'object-cover'}`}
+            />
+          ) : (
+            <video
+              src={firstMedia.url}
+              className={`h-full w-full ${firstMedia.fit === 'contain' ? 'object-contain p-2' : 'object-cover'}`}
+            />
+          )
         ) : (
-          <div 
-            className="w-full h-48 bg-white rounded-lg mb-4 flex items-center justify-center cursor-pointer hover:opacity-90 transition-opacity"
-            onClick={handleImageClick}
-          >
-            <span className="text-muted-foreground">Фото скоро появится</span>
-          </div>
+          <span className="flex h-full w-full items-center justify-center text-muted-foreground">
+            <Package className="h-10 w-10" strokeWidth={1.25} />
+          </span>
         )}
-        <div className="flex items-start justify-between">
-          <CardTitle className="text-lg">{product.name}</CardTitle>
-          {product.eco && (
-            <Badge variant="secondary" className="ml-2">
-              <Leaf className="h-3 w-3 mr-1" />
-              ЭКО
-            </Badge>
-          )}
-        </div>
-      </CardHeader>
-      <CardContent className="flex-1 flex flex-col">
-        <div className="text-2xl font-bold mb-2 text-primary">
-          {product.size_variants && product.size_variants.length > 0 ? (
-            (() => {
-              const prices = product.size_variants.map(v => v.price);
-              const minPrice = Math.min(...prices);
-              const maxPrice = Math.max(...prices);
-              return minPrice === maxPrice 
-                ? `${minPrice.toLocaleString('ru-RU')} сом.`
-                : `от ${minPrice.toLocaleString('ru-RU')} сом.`;
-            })()
-          ) : (
-            `${product.price.toLocaleString('ru-RU')} сом.`
-          )}
-        </div>
-        
+      </Link>
+      <CardContent className="flex-1 flex flex-col p-3 sm:p-5">
+        <CardTitle className="text-sm sm:text-base font-medium leading-snug">
+          <Link to={productUrl} className="hover:text-primary transition-colors">
+            {product.name}
+          </Link>
+        </CardTitle>
         {product.brand && (
-          <p className="text-sm text-muted-foreground mb-2">
-            {product.brand}
-          </p>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1">{product.brand}</p>
         )}
-        
-        <div className="mt-auto pt-4">
-          {productHasVariants ? (
-            <Button 
-              className="w-full" 
+        <p className="text-lg sm:text-xl font-semibold text-foreground mt-2">{priceText}</p>
+
+        <div className="mt-auto pt-3">
+          {productHasVariants || !isInCart ? (
+            <Button
+              className="w-full"
+              size="sm"
               onClick={handleAddToCart}
               disabled={!product.in_stock}
             >
-              <ShoppingCart className="h-4 w-4 mr-2" />
-              {product.in_stock ? 'Добавить в корзину' : 'Нет в наличии'}
-            </Button>
-          ) : !isInCart ? (
-            <Button 
-              className="w-full" 
-              onClick={handleAddToCart}
-              disabled={!product.in_stock}
-            >
-              <ShoppingCart className="h-4 w-4 mr-2" />
-              {product.in_stock ? 'Добавить в корзину' : 'Нет в наличии'}
+              <ShoppingCart className="h-4 w-4 mr-1.5" />
+              {product.in_stock ? 'В корзину' : 'Нет в наличии'}
             </Button>
           ) : (
-            <Button 
-              className="w-full" 
-              onClick={handleGoToCart}
-              variant="secondary"
-            >
-              <ShoppingBag className="h-4 w-4 mr-2" />
+            <Button className="w-full" size="sm" onClick={handleGoToCart} variant="secondary">
+              <ShoppingBag className="h-4 w-4 mr-1.5" />
               Заказать
             </Button>
           )}

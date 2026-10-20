@@ -312,7 +312,7 @@ const CategoryPage = () => {
           {showFilters && (
             <div className="bg-card border rounded-lg p-4 mb-6 space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="font-semibold">Фильтры</h3>
+                <h2 className="font-semibold">Фильтры</h2>
                 {activeFiltersCount > 0 && (
                   <Button variant="ghost" size="sm" onClick={clearFilters}>
                     <X className="w-4 h-4 mr-1" />
@@ -362,8 +362,9 @@ const CategoryPage = () => {
           </div>
 
           {/* Products grid */}
+          <h2 className="sr-only">Товары</h2>
           {filteredAndSorted.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+            <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6 mb-16">
               {filteredAndSorted.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}

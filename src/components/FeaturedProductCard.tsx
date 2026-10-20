@@ -135,11 +135,11 @@ export function FeaturedProductCard({ product }: FeaturedProductCardProps) {
           {/* Price */}
           <div className="flex items-baseline gap-2 mb-2">
             <span className="text-lg sm:text-xl font-bold text-foreground">
-              {displayPrice.toLocaleString('ru-RU')} сом
+              {displayPrice.toLocaleString('ru-RU')} сом.
             </span>
             {product.old_price && (
               <span className="text-sm text-muted-foreground line-through">
-                {product.old_price.toLocaleString('ru-RU')} сом
+                {product.old_price.toLocaleString('ru-RU')} сом.
               </span>
             )}
           </div>

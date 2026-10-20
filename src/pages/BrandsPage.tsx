@@ -153,7 +153,7 @@ const BrandsPage = () => {
                   </CardHeader>
                   <CardContent className="px-6">
                     <div className="flex items-center justify-between mb-2">
-                      <CardTitle className="text-xl">{brand.name}</CardTitle>
+                      <CardTitle as="h2" className="text-xl">{brand.name}</CardTitle>
                       <Badge variant="secondary">
                         {brand.productCount} {brand.productCount === 1 ? 'товар' : brand.productCount && brand.productCount < 5 ? 'товара' : 'товаров'}
                       </Badge>

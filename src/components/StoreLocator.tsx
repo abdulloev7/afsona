@@ -15,7 +15,7 @@ const SOCIALS = [
 
 // Address, phones, hours and a map for one store at a time, with a switch
 // between the stores.
-const StoreLocator = () => {
+const StoreLocator = ({ headingLevel = "h3" }: { headingLevel?: "h2" | "h3" }) => {
   const [index, setIndex] = useState(0);
   const store = STORES[index];
 
@@ -46,7 +46,7 @@ const StoreLocator = () => {
             <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center mx-auto mb-3">
               <MapPin className="w-6 h-6 text-primary-foreground" />
             </div>
-            <CardTitle className="text-lg text-primary">Наш адрес</CardTitle>
+            <CardTitle as={headingLevel} className="text-lg text-primary">Наш адрес</CardTitle>
           </CardHeader>
           <CardContent className="text-center">
             <p className="text-foreground mb-1">г. {store.city}</p>
@@ -59,7 +59,7 @@ const StoreLocator = () => {
             <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center mx-auto mb-3">
               <Phone className="w-6 h-6 text-primary-foreground" />
             </div>
-            <CardTitle className="text-lg text-primary">Контакты</CardTitle>
+            <CardTitle as={headingLevel} className="text-lg text-primary">Контакты</CardTitle>
           </CardHeader>
           <CardContent className="text-center space-y-4">
             <div className="space-y-1">
@@ -95,7 +95,7 @@ const StoreLocator = () => {
             <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center mx-auto mb-3">
               <Clock className="w-6 h-6 text-primary-foreground" />
             </div>
-            <CardTitle className="text-lg text-primary">Режим работы</CardTitle>
+            <CardTitle as={headingLevel} className="text-lg text-primary">Режим работы</CardTitle>
           </CardHeader>
           <CardContent className="text-center space-y-1">
             <div>

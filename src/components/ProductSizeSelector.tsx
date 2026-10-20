@@ -76,7 +76,7 @@ export const ProductSizeSelector = ({ product, isOpen, onClose, onAddToCart }: P
                           {variant.volume}
                         </Label>
                       </div>
-                      <span className="text-sm font-semibold text-primary">{variant.price} сом</span>
+                      <span className="text-sm font-semibold text-primary">{variant.price.toLocaleString("ru-RU")} сом.</span>
                     </div>
                   ))
                 ) : (
