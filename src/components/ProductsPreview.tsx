@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
+import { t } from "@/i18n";
 
 interface Category {
   id: string;
@@ -73,12 +74,12 @@ const ProductsPreview = () => {
     <section id="products" className="py-12 md:py-16 bg-background">
       <div className="container mx-auto px-4">
         <div className="flex items-end justify-between gap-4 mb-6">
-          <h2 className="text-2xl md:text-3xl font-semibold text-foreground">Каталог</h2>
+          <h2 className="text-2xl md:text-3xl font-semibold text-foreground">{t("Каталог")}</h2>
           <Link
             to="/catalog"
             className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline underline-offset-4"
           >
-            Весь каталог
+            {t("Весь каталог")}
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
@@ -87,7 +88,7 @@ const ProductsPreview = () => {
           {categories.map((category) => (
             <CategoryTile
               key={category.id}
-              name={category.name}
+              name={t(category.name)}
               slug={category.slug}
               productCount={category.productCount}
             />

@@ -6,6 +6,7 @@ import { useCart } from '@/contexts/CartContext';
 
 import { useToast } from '@/hooks/use-toast';
 import { ProductSizeSelector } from './ProductSizeSelector';
+import { formatPrice, localized, t } from "@/i18n";
 
 interface FeaturedProduct {
   id: string;
@@ -32,6 +33,7 @@ const TAG_STYLES: Record<string, string> = {
   'Эко': 'bg-primary/10 text-primary',
 };
 
+// Tags are stored in Russian; t() shows them in the visitor's language.
 // At most two labels per card, most important first, so the labels still mean something.
 const TAG_PRIORITY = ['Акция', 'Хит', 'Новинка', 'Советуем', 'Эко'];
 const MAX_TAGS = 2;
@@ -64,8 +66,8 @@ export function FeaturedProductCard({ product }: FeaturedProductCardProps) {
     // Add product without variants directly
     addToCart(product.id, 1, null);
     toast({
-      title: "Успешно!",
-      description: "Товар добавлен в корзину",
+      title: t("Успешно!"),
+      description: t("Товар добавлен в корзину"),
     });
   };
 
@@ -74,13 +76,13 @@ export function FeaturedProductCard({ product }: FeaturedProductCardProps) {
       await addToCart(product.id, quantity, size);
       setShowSizeSelector(false);
       toast({
-        title: "Успешно!",
-        description: "Товар добавлен в корзину",
+        title: t("Успешно!"),
+        description: t("Товар добавлен в корзину"),
       });
     } catch (error) {
       toast({
-        title: "Ошибка",
-        description: "Не удалось добавить товар в корзину",
+        title: t("Ошибка"),
+        description: t("Не удалось добавить товар в корзину"),
         variant: "destructive",
       });
     }
@@ -104,7 +106,7 @@ export function FeaturedProductCard({ product }: FeaturedProductCardProps) {
                 key={tag}
                 className={`px-1.5 sm:px-2 py-0.5 text-[11px] sm:text-xs font-semibold rounded ${TAG_STYLES[tag] || 'bg-muted text-muted-foreground'}`}
               >
-                {tag}
+                {t(tag)}
               </span>
             ))}
           </div>
@@ -120,7 +122,7 @@ export function FeaturedProductCard({ product }: FeaturedProductCardProps) {
           {product.image ? (
             <img
               src={product.image}
-              alt={product.name}
+              alt={localized(product, 'name')}
               className={`w-full h-full ${product.image_fit === 'contain' ? 'object-contain' : 'object-cover'} group-hover:scale-105 transition-transform duration-300`}
             />
           ) : (
@@ -135,18 +137,18 @@ export function FeaturedProductCard({ product }: FeaturedProductCardProps) {
           {/* Price */}
           <div className="flex items-baseline gap-2 mb-2">
             <span className="text-lg sm:text-xl font-bold text-foreground">
-              {displayPrice.toLocaleString('ru-RU')} сом.
+              {formatPrice(displayPrice)}
             </span>
             {product.old_price && (
               <span className="text-sm text-muted-foreground line-through">
-                {product.old_price.toLocaleString('ru-RU')} сом.
+                {formatPrice(product.old_price)}
               </span>
             )}
           </div>
 
           {/* Name - allow 3 lines for full visibility */}
           <h3 className="text-sm sm:text-base font-medium text-foreground line-clamp-3 min-h-[3.75rem] mb-2 group-hover:text-primary transition-colors">
-            {product.name}
+            {localized(product, 'name')}
           </h3>
 
           {/* Stock Status */}
@@ -154,10 +156,10 @@ export function FeaturedProductCard({ product }: FeaturedProductCardProps) {
             {product.in_stock ? (
               <>
                 <Check className="h-4 w-4 text-primary" />
-                <span className="text-primary font-medium">В наличии</span>
+                <span className="text-primary font-medium">{t("В наличии")}</span>
               </>
             ) : (
-              <span className="text-muted-foreground">Нет в наличии</span>
+              <span className="text-muted-foreground">{t("Нет в наличии")}</span>
             )}
           </div>
 
@@ -169,7 +171,7 @@ export function FeaturedProductCard({ product }: FeaturedProductCardProps) {
               className="w-full gap-2 px-2 bg-primary hover:bg-primary/90"
             >
               <ShoppingCart className="h-4 w-4" />
-              В корзину
+              {t("В корзину")}
             </Button>
           </div>
         </div>

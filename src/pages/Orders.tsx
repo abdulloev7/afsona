@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Package, Clock, CheckCircle, XCircle, ArrowLeft } from 'lucide-react';
 import { useSeo } from "@/hooks/useSeo";
 import { getOrderStatusLabel } from "@/lib/orderStatus";
+import { formatDateTime, formatPrice, localized, t } from "@/i18n";
 
 interface Order {
   id: string;
@@ -34,7 +35,7 @@ interface Order {
 }
 
 const Orders = () => {
-  useSeo({ title: 'Мои заказы', noindex: true });
+  useSeo({ title: t("Мои заказы"), noindex: true });
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
@@ -50,8 +51,8 @@ const Orders = () => {
   useEffect(() => {
     if (!user) {
       toast({
-        title: "Требуется авторизация",
-        description: "Войдите, чтобы увидеть свои заказы",
+        title: t("Требуется авторизация"),
+        description: t("Войдите, чтобы увидеть свои заказы"),
         variant: "destructive",
       });
       navigate('/auth');
@@ -73,7 +74,8 @@ const Orders = () => {
             price,
             selected_size,
             product:products (
-              name
+              name,
+              name_tg
             )
           )
         `)
@@ -85,8 +87,8 @@ const Orders = () => {
     } catch (error) {
       console.error('Error fetching orders:', error);
       toast({
-        title: "Ошибка",
-        description: "Не удалось загрузить заказы",
+        title: t("Ошибка"),
+        description: t("Не удалось загрузить заказы"),
         variant: "destructive",
       });
     } finally {
@@ -128,25 +130,25 @@ const Orders = () => {
           <div className="flex items-center gap-4 mb-8">
             <Button variant="ghost" onClick={() => navigate('/')}>
               <ArrowLeft className="h-4 w-4 mr-2" />
-              На главную
+              {t("На главную")}
             </Button>
             <div>
-              <h1 className="text-3xl font-bold">Мои заказы</h1>
-              <p className="text-muted-foreground">История ваших заказов</p>
+              <h1 className="text-3xl font-bold">{t("Мои заказы")}</h1>
+              <p className="text-muted-foreground">{t("История ваших заказов")}</p>
             </div>
           </div>
 
           {loading ? (
-            <div className="text-center py-8">Загрузка заказов...</div>
+            <div className="text-center py-8">{t("Загрузка заказов...")}</div>
           ) : orders.length === 0 ? (
             <div className="text-center py-16">
               <Package className="h-16 w-16 mx-auto mb-4 opacity-50" />
-              <h2 className="text-2xl font-bold mb-4">Заказов пока нет</h2>
+              <h2 className="text-2xl font-bold mb-4">{t("Заказов пока нет")}</h2>
               <p className="text-muted-foreground mb-6">
-                Вы еще не сделали ни одного заказа
+                {t("Вы еще не сделали ни одного заказа")}
               </p>
               <Button onClick={goToCatalog}>
-                Перейти к каталогу
+                {t("Перейти к каталогу")}
               </Button>
             </div>
           ) : (
@@ -157,11 +159,11 @@ const Orders = () => {
                     <div className="flex items-start justify-between">
                       <div>
                         <CardTitle className="flex items-center gap-2">
-                          Заказ #{order.id.slice(0, 8)}
+                          {t("Заказ #")}{order.id.slice(0, 8)}
                           {getStatusBadge(order.status)}
                         </CardTitle>
                         <p className="text-sm text-muted-foreground mt-1">
-                          {new Date(order.created_at).toLocaleString('ru-RU')}
+                          {formatDateTime(order.created_at)}
                         </p>
                       </div>
                     </div>
@@ -170,28 +172,28 @@ const Orders = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {/* Информация о доставке */}
                       <div>
-                        <h3 className="font-semibold mb-2">Информация о доставке</h3>
+                        <h3 className="font-semibold mb-2">{t("Информация о доставке")}</h3>
                         <div className="space-y-1 text-sm">
-                          <p><strong>Имя:</strong> {order.customer_name}</p>
-                          <p><strong>Телефон:</strong> {order.customer_phone}</p>
+                          <p><strong>{t("Имя:")}</strong> {order.customer_name}</p>
+                          <p><strong>{t("Телефон:")}</strong> {order.customer_phone}</p>
                           {order.customer_email && (
                             <p><strong>Email:</strong> {order.customer_email}</p>
                           )}
-                          <p><strong>Адрес:</strong> {order.delivery_address}</p>
+                          <p><strong>{t("Адрес:")}</strong> {order.delivery_address}</p>
                           {order.notes && (
-                            <p><strong>Комментарий:</strong> {order.notes}</p>
+                            <p><strong>{t("Комментарий:")}</strong> {order.notes}</p>
                           )}
                         </div>
                       </div>
 
                       {/* Товары */}
                       <div>
-                        <h3 className="font-semibold mb-2">Состав заказа</h3>
+                        <h3 className="font-semibold mb-2">{t("Состав заказа")}</h3>
                         <div className="space-y-2">
                           {order.order_items?.map((item, index) => (
                             <div key={index} className="flex justify-between text-sm">
                               <span>
-                                {item.product.name} x {item.quantity}
+                                {localized(item.product, 'name')} x {item.quantity}
                                 {item.selected_size && (
                                   <span className="text-muted-foreground ml-1">
                                     ({item.selected_size})
@@ -199,13 +201,13 @@ const Orders = () => {
                                 )}
                               </span>
                               <span className="font-medium">
-                                {(item.price * item.quantity).toLocaleString('ru-RU')} сом.
+                                {formatPrice(item.price * item.quantity)}
                               </span>
                             </div>
                           ))}
                           <div className="border-t pt-2 flex justify-between font-bold">
-                            <span>Итого:</span>
-                            <span>{order.total_amount.toLocaleString('ru-RU')} сом.</span>
+                            <span>{t("Итого:")}</span>
+                            <span>{formatPrice(order.total_amount)}</span>
                           </div>
                         </div>
                       </div>

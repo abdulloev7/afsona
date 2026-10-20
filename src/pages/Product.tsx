@@ -15,8 +15,10 @@ import NotFound from "./NotFound";
 import { useSeo } from "@/hooks/useSeo";
 import { SITE_URL, toDescription } from "@/lib/seo";
 import { getCategoryLink } from "@/lib/categories";
+import { TINT_TIME } from "@/lib/facts";
 import ProductStores from "@/components/ProductStores";
 import RelatedProducts from "@/components/RelatedProducts";
+import { formatPrice, lang, localized, pathFor, t } from "@/i18n";
 
 // Categories whose products can be tinted in the store.
 const TINTABLE_CATEGORIES = ['paints-and-coatings', 'decorative-coatings'];
@@ -54,11 +56,20 @@ export default function Product() {
   const [loading, setLoading] = useState(true);
   const productImage = product?.image || product?.media?.find((m) => m.type === 'image')?.url || null;
   useSeo({
-    title: product ? `${product.name} — купить в Душанбе и Худжанде` : !loading ? 'Страница не найдена' : undefined,
+    title: product ? t("{name} — купить в Душанбе и Худжанде", { name: product.name }) : !loading ? t("Страница не найдена") : undefined,
     description: product
       ? toDescription(
           product.description,
-          `${product.name}${product.brand_info?.name ? ` от ${product.brand_info.name}` : ''} в магазине AFSONA. Цена ${product.price} сом., магазины в Душанбе и Худжанде.`
+          product.brand_info?.name
+            ? t("{name} от {brand} в магазине AFSONA. Цена {price}, магазины в Душанбе и Худжанде.", {
+                name: product.name,
+                brand: product.brand_info.name,
+                price: formatPrice(product.price),
+              })
+            : t("{name} в магазине AFSONA. Цена {price}, магазины в Душанбе и Худжанде.", {
+                name: product.name,
+                price: formatPrice(product.price),
+              })
         )
       : undefined,
     image: productImage,
@@ -81,7 +92,7 @@ export default function Product() {
             availability: product.in_stock === false
               ? 'https://schema.org/OutOfStock'
               : 'https://schema.org/InStock',
-            url: `${SITE_URL}/product/${product.id}`,
+            url: `${SITE_URL}${pathFor(lang, `/product/${product.id}`)}`,
           },
         }
       : null,
@@ -104,7 +115,9 @@ export default function Product() {
         .select(`
           id,
           name,
+          name_tg,
           description,
+          description_tg,
           price,
           image,
           image_fit,
@@ -126,8 +139,8 @@ export default function Product() {
       if (error) {
         console.error('Error fetching product:', error);
         toast({
-          title: "Ошибка",
-          description: "Не удалось загрузить товар",
+          title: t("Ошибка"),
+          description: t("Не удалось загрузить товар"),
           variant: "destructive",
         });
         setLoading(false);
@@ -139,9 +152,11 @@ export default function Product() {
         return;
       }
 
-      // Cast size_variants from Json to proper type
+      // Cast size_variants from Json to proper type; name and description in the visitor's language
       const typedData = {
         ...data,
+        name: localized(data, 'name'),
+        description: localized(data, 'description') || null,
         size_variants: data.size_variants as { volume: string; price: number }[] | null,
         media: data.media as { type: 'image' | 'video'; url: string; caption?: string; fit?: 'cover' | 'contain' }[] | null
       };
@@ -179,8 +194,8 @@ export default function Product() {
     addToCart(product.id, 1, size);
     setIsInCart(true);
     toast({
-      title: "Товар добавлен",
-      description: "Товар успешно добавлен в корзину",
+      title: t("Товар добавлен"),
+      description: t("Товар успешно добавлен в корзину"),
     });
   };
 
@@ -192,13 +207,13 @@ export default function Product() {
       setShowSizeSelector(false);
       setIsInCart(true);
       toast({
-        title: "Товар добавлен",
-        description: "Товар успешно добавлен в корзину",
+        title: t("Товар добавлен"),
+        description: t("Товар успешно добавлен в корзину"),
       });
     } catch (error) {
       toast({
-        title: "Ошибка",
-        description: "Не удалось добавить товар в корзину",
+        title: t("Ошибка"),
+        description: t("Не удалось добавить товар в корзину"),
         variant: "destructive",
       });
     }
@@ -213,7 +228,7 @@ export default function Product() {
       <div className="min-h-screen bg-background">
         <Header />
         <div className="container mx-auto px-4 pt-24 pb-8">
-          <div className="text-center">Загрузка...</div>
+          <div className="text-center">{t("Загрузка...")}</div>
         </div>
         <Footer />
       </div>
@@ -227,7 +242,6 @@ export default function Product() {
   const prices = variants ? variants.map((v) => v.price) : [product.price];
   const minPrice = Math.min(...prices);
   const maxPrice = Math.max(...prices);
-  const formatPrice = (n: number) => `${n.toLocaleString('ru-RU')} сом.`;
   const canTint = !!product.category && TINTABLE_CATEGORIES.includes(product.category.slug);
 
   const media = [
@@ -241,17 +255,17 @@ export default function Product() {
     <div className="min-h-screen bg-background">
       <Header />
       <main className="container mx-auto px-4 pt-24 pb-16">
-        <nav aria-label="Навигация" className="mb-6">
+        <nav aria-label={t("Навигация")} className="mb-6">
           <ol className="flex flex-wrap items-center gap-1 text-sm text-muted-foreground">
             <li>
-              <Link to="/catalog" className="hover:text-primary transition-colors">Каталог</Link>
+              <Link to="/catalog" className="hover:text-primary transition-colors">{t("Каталог")}</Link>
             </li>
             {product.category && (
               <>
                 <li aria-hidden="true"><ChevronRight className="h-3.5 w-3.5" /></li>
                 <li>
                   <Link to={getCategoryLink(product.category.slug)} className="hover:text-primary transition-colors">
-                    {product.category.name}
+                    {t(product.category.name)}
                   </Link>
                 </li>
               </>
@@ -288,18 +302,18 @@ export default function Product() {
                 {product.eco && (
                   <Badge variant="secondary" className="gap-1">
                     <Leaf className="h-3 w-3" />
-                    Эко
+                    {t("Эко")}
                   </Badge>
                 )}
                 {!product.in_stock && (
-                  <Badge variant="destructive">Нет в наличии</Badge>
+                  <Badge variant="destructive">{t("Нет в наличии")}</Badge>
                 )}
               </div>
             )}
 
             <div>
               <p className="text-3xl md:text-4xl font-semibold text-primary">
-                {minPrice === maxPrice ? formatPrice(minPrice) : `от ${formatPrice(minPrice)}`}
+                {minPrice === maxPrice ? formatPrice(minPrice) : t("от {price}", { price: formatPrice(minPrice) })}
               </p>
               {variants && variants.length > 1 && (
                 <ul className="mt-4 divide-y divide-border rounded-lg border border-border bg-card">
@@ -312,10 +326,10 @@ export default function Product() {
                 </ul>
               )}
               {variants && variants.length === 1 && (
-                <p className="mt-2 text-sm text-muted-foreground">Фасовка: {variants[0].volume}</p>
+                <p className="mt-2 text-sm text-muted-foreground">{t("Фасовка: {sizes}", { sizes: variants[0].volume })}</p>
               )}
               {!variants && product.sizes && product.sizes.length > 0 && (
-                <p className="mt-2 text-sm text-muted-foreground">Фасовка: {product.sizes.join(', ')}</p>
+                <p className="mt-2 text-sm text-muted-foreground">{t("Фасовка: {sizes}", { sizes: product.sizes.join(', ') })}</p>
               )}
             </div>
 
@@ -327,12 +341,12 @@ export default function Product() {
                 className="w-full"
               >
                 <ShoppingCart className="mr-2 h-5 w-5" />
-                {productHasVariants ? 'Выбрать фасовку' : 'Добавить в корзину'}
+                {productHasVariants ? t("Выбрать фасовку") : t("Добавить в корзину")}
               </Button>
             ) : (
               <Button onClick={handleGoToCart} size="lg" variant="secondary" className="w-full">
                 <ShoppingBag className="mr-2 h-5 w-5" />
-                Перейти к заказу
+                {t("Перейти к заказу")}
               </Button>
             )}
 
@@ -343,8 +357,8 @@ export default function Product() {
               >
                 <Palette className="h-5 w-5 shrink-0 text-primary mt-0.5" />
                 <span className="text-sm">
-                  <span className="font-medium text-foreground">Нужен свой цвет?</span>{' '}
-                  <span className="text-muted-foreground">Подберём и заколеруем за 5–10 минут. Как это работает</span>
+                  <span className="font-medium text-foreground">{t("Нужен свой цвет?")}</span>{' '}
+                  <span className="text-muted-foreground">{t("Подберём и заколеруем за {time}. Как это работает", { time: TINT_TIME })}</span>
                 </span>
               </Link>
             )}
@@ -353,14 +367,14 @@ export default function Product() {
 
             {product.description && (
               <div>
-                <h2 className="text-lg font-semibold mb-2">Описание</h2>
+                <h2 className="text-lg font-semibold mb-2">{t("Описание")}</h2>
                 <p className="text-muted-foreground whitespace-pre-line">{product.description}</p>
               </div>
             )}
 
             {product.features && product.features.length > 0 && (
               <div>
-                <h2 className="text-lg font-semibold mb-2">Особенности</h2>
+                <h2 className="text-lg font-semibold mb-2">{t("Особенности")}</h2>
                 <ul className="list-disc list-inside space-y-1 text-muted-foreground">
                   {product.features.map((feature, index) => (
                     <li key={index}>{feature}</li>

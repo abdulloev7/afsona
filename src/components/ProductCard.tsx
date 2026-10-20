@@ -7,6 +7,7 @@ import { useCart } from '@/contexts/CartContext';
 
 import { useToast } from '@/hooks/use-toast';
 import { ProductSizeSelector } from './ProductSizeSelector';
+import { formatPrice, localized, t } from "@/i18n";
 
 interface ProductCardProps {
   product: {
@@ -55,13 +56,13 @@ export const ProductCard = ({ product }: ProductCardProps) => {
       await addToCart(product.id, 1, size);
       setIsInCart(true);
       toast({
-        title: "Успешно!",
-        description: "Товар добавлен в корзину",
+        title: t("Успешно!"),
+        description: t("Товар добавлен в корзину"),
       });
     } catch (error) {
       toast({
-        title: "Ошибка",
-        description: "Не удалось добавить товар в корзину",
+        title: t("Ошибка"),
+        description: t("Не удалось добавить товар в корзину"),
         variant: "destructive",
       });
     }
@@ -73,13 +74,13 @@ export const ProductCard = ({ product }: ProductCardProps) => {
       setShowSizeSelector(false);
       setIsInCart(true);
       toast({
-        title: "Успешно!",
-        description: "Товар добавлен в корзину",
+        title: t("Успешно!"),
+        description: t("Товар добавлен в корзину"),
       });
     } catch (error) {
       toast({
-        title: "Ошибка",
-        description: "Не удалось добавить товар в корзину",
+        title: t("Ошибка"),
+        description: t("Не удалось добавить товар в корзину"),
         variant: "destructive",
       });
     }
@@ -110,10 +111,10 @@ export const ProductCard = ({ product }: ProductCardProps) => {
       const minPrice = Math.min(...prices);
       const maxPrice = Math.max(...prices);
       return minPrice === maxPrice
-        ? `${minPrice.toLocaleString('ru-RU')} сом.`
-        : `от ${minPrice.toLocaleString('ru-RU')} сом.`;
+        ? formatPrice(minPrice)
+        : t("от {price}", { price: formatPrice(minPrice) });
     }
-    return `${product.price.toLocaleString('ru-RU')} сом.`;
+    return formatPrice(product.price);
   })();
 
   return (
@@ -121,7 +122,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
       <Link
         to={productUrl}
         className="block aspect-square w-full bg-white"
-        aria-label={product.name}
+        aria-label={localized(product, 'name')}
         tabIndex={-1}
       >
         {firstMedia ? (
@@ -147,7 +148,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
       <CardContent className="flex-1 flex flex-col p-3 sm:p-5">
         <CardTitle className="text-sm sm:text-base font-medium leading-snug">
           <Link to={productUrl} className="hover:text-primary transition-colors">
-            {product.name}
+            {localized(product, 'name')}
           </Link>
         </CardTitle>
         {product.brand && (
@@ -164,12 +165,12 @@ export const ProductCard = ({ product }: ProductCardProps) => {
               disabled={!product.in_stock}
             >
               <ShoppingCart className="h-4 w-4 mr-1.5" />
-              {product.in_stock ? 'В корзину' : 'Нет в наличии'}
+              {product.in_stock ? t("В корзину") : t("Нет в наличии")}
             </Button>
           ) : (
             <Button className="w-full" size="sm" onClick={handleGoToCart} variant="secondary">
               <ShoppingBag className="h-4 w-4 mr-1.5" />
-              Заказать
+              {t("Заказать")}
             </Button>
           )}
         </div>

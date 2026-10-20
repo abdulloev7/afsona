@@ -5,12 +5,12 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatNewsDate } from "@/lib/utils";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { Calendar, ArrowLeft, Home, Image as ImageIcon, Video } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useSeo } from "@/hooks/useSeo";
 import { toDescription } from "@/lib/seo";
+import { formatLongDate, t } from "@/i18n";
 interface MediaItem {
   type: 'image' | 'video';
   url: string;
@@ -70,8 +70,8 @@ const NewsDetail = () => {
       }
     } catch (error: any) {
       toast({
-        title: "Ошибка",
-        description: "Не удалось загрузить новость",
+        title: t("Ошибка"),
+        description: t("Не удалось загрузить новость"),
         variant: "destructive",
       });
       setNotFound(true);
@@ -104,14 +104,14 @@ const NewsDetail = () => {
         <Header />
         <main className="flex-1 container mx-auto px-4 py-12 max-w-4xl">
           <div className="text-center py-12">
-            <h1 className="text-4xl font-bold mb-4">Новость не найдена</h1>
+            <h1 className="text-4xl font-bold mb-4">{t("Новость не найдена")}</h1>
             <p className="text-muted-foreground mb-8">
-              Запрашиваемая новость не существует или была удалена
+              {t("Запрашиваемая новость не существует или была удалена")}
             </p>
             <Button asChild>
               <Link to="/news">
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                Вернуться к новостям
+                {t("Вернуться к новостям")}
               </Link>
             </Button>
           </div>
@@ -132,7 +132,7 @@ const NewsDetail = () => {
           </Link>
           <span>/</span>
           <Link to="/news" className="hover:text-foreground transition-colors">
-            Новости
+            {t("Новости")}
           </Link>
           <span>/</span>
           <span className="text-foreground">{news.title}</span>
@@ -146,7 +146,7 @@ const NewsDetail = () => {
           <div className="flex items-center gap-2 text-muted-foreground mb-8">
             <Calendar className="h-5 w-5" />
             <time dateTime={news.published_at}>
-              {formatNewsDate(news.published_at)}
+              {formatLongDate(news.published_at)}
             </time>
           </div>
 
@@ -177,7 +177,7 @@ const NewsDetail = () => {
             <div className="space-y-4 border-t pt-8 mb-12">
               <h3 className="text-2xl font-semibold flex items-center gap-2">
                 <ImageIcon className="h-6 w-6" />
-                Медиагалерея ({news.media.length})
+                {t("Медиагалерея")} ({news.media.length})
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {news.media.map((item, index) => (
@@ -214,7 +214,7 @@ const NewsDetail = () => {
           {/* Back button */}
           <Button onClick={() => navigate("/news")} variant="outline">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Назад к новостям
+            {t("Назад к новостям")}
           </Button>
         </article>
       </main>

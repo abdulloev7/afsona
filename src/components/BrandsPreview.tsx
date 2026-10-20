@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate, Link } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowRight } from "lucide-react";
+import { t } from "@/i18n";
 
 interface Brand {
   id: string;
@@ -65,9 +66,9 @@ const BrandsPreview = () => {
     <section className="py-16 px-4" id="brands">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-10">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-primary">Наши бренды</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-primary">{t("Наши бренды")}</h2>
           <p className="text-muted-foreground">
-            Работаем с ведущими производителями
+            {t("Работаем с ведущими производителями")}
           </p>
         </div>
 
@@ -101,7 +102,7 @@ const BrandsPreview = () => {
         <div className="text-center">
           <Link to="/brands">
             <Button variant="outline" size="lg">
-              Все бренды
+              {t("Все бренды")}
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </Link>

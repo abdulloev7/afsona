@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { t } from "@/i18n";
 
 interface MediaItem {
   type: 'image' | 'video';
@@ -22,7 +23,7 @@ export const ProductMediaCarousel = ({ media, productName }: ProductMediaCarouse
     return (
       <Card className="p-6">
         <div className="w-full h-[400px] bg-muted rounded-lg flex items-center justify-center">
-          <span className="text-muted-foreground">Нет изображения</span>
+          <span className="text-muted-foreground">{t("Нет изображения")}</span>
         </div>
       </Card>
     );
@@ -68,7 +69,7 @@ export const ProductMediaCarousel = ({ media, productName }: ProductMediaCarouse
               size="icon"
               className="absolute left-2 top-1/2 -translate-y-1/2 bg-background/80 hover:bg-background"
               onClick={handlePrevious}
-              aria-label="Предыдущее фото"
+              aria-label={t("Предыдущее фото")}
             >
               <ChevronLeft className="h-6 w-6" />
             </Button>
@@ -77,7 +78,7 @@ export const ProductMediaCarousel = ({ media, productName }: ProductMediaCarouse
               size="icon"
               className="absolute right-2 top-1/2 -translate-y-1/2 bg-background/80 hover:bg-background"
               onClick={handleNext}
-              aria-label="Следующее фото"
+              aria-label={t("Следующее фото")}
             >
               <ChevronRight className="h-6 w-6" />
             </Button>
@@ -101,7 +102,7 @@ export const ProductMediaCarousel = ({ media, productName }: ProductMediaCarouse
               key={index}
               onClick={() => setCurrentIndex(index)}
               className="group flex h-6 min-w-6 items-center justify-center px-1"
-              aria-label={`Перейти к медиа ${index + 1}`}
+              aria-label={t("Перейти к медиа {n}", { n: index + 1 })}
               aria-current={index === currentIndex ? "true" : undefined}
             >
               <span

@@ -2,6 +2,7 @@ import {
   Paintbrush, Palette, Blend, Droplet, Layers, SprayCan, Droplets, Brush, PaintRoller, Hammer,
   type LucideIcon,
 } from "lucide-react";
+import { isTajik } from "@/i18n";
 
 // Display order of categories in the catalog and on the home page.
 export const CATEGORY_ORDER: Record<string, number> = {
@@ -57,8 +58,11 @@ export const sortCategories = <T extends { slug: string }>(categories: T[]) =>
   [...categories].sort((a, b) => (CATEGORY_ORDER[a.slug] || 999) - (CATEGORY_ORDER[b.slug] || 999));
 
 export const pluralizeProducts = (n: number) => {
+  // Tajik nouns don't change after a number: "1 маҳсулот", "5 маҳсулот"
+  if (isTajik) return 'маҳсулот';
   const mod10 = n % 10, mod100 = n % 100;
   if (mod10 === 1 && mod100 !== 11) return 'товар';
   if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return 'товара';
   return 'товаров';
 };
+

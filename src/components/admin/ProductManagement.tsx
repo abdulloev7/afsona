@@ -16,6 +16,9 @@ import { MediaUploader, MediaItem } from './MediaUploader';
 const productSchema = z.object({
   name: z.string().trim().min(1, "Название обязательно").max(200, "Название должно быть короче 200 символов"),
   description: z.string().trim().max(2000, "Описание должно быть короче 2000 символов").optional().or(z.literal('')),
+  // Tajik copies for the /tg version of the site; empty means the Russian text is shown there
+  name_tg: z.string().trim().max(200, "Название на таджикском должно быть короче 200 символов").transform((v) => v || null),
+  description_tg: z.string().trim().max(2000, "Описание на таджикском должно быть короче 2000 символов").transform((v) => v || null),
   price: z.number().positive("Цена должна быть положительной").max(999999.99, "Цена слишком высокая"),
   category_id: z.string().uuid("Выберите категорию"),
   brand_id: z.string().uuid("Неверный идентификатор бренда").nullable(),
@@ -34,7 +37,9 @@ const AVAILABLE_TAGS = ['Хит', 'Новинка', 'Советуем', 'Акц�
 interface Product {
   id: string;
   name: string;
+  name_tg?: string | null;
   description: string | null;
+  description_tg?: string | null;
   price: number;
   image: string | null;
   category_id: string;
@@ -209,6 +214,8 @@ export function ProductManagement() {
       const validationResult = productSchema.safeParse({
         name: formData.get('name') as string,
         description: formData.get('description') as string,
+        name_tg: (formData.get('name_tg') as string) || '',
+        description_tg: (formData.get('description_tg') as string) || '',
         price: isNaN(rawPrice) ? 0 : rawPrice,
         category_id: formData.get('category_id') as string,
         brand_id: (() => {
@@ -520,6 +527,31 @@ export function ProductManagement() {
                   defaultValue={editingProduct?.description || ''}
                   rows={3}
                 />
+              </div>
+
+              <div className="rounded-lg border border-border p-3 space-y-3">
+                <p className="text-sm text-muted-foreground">
+                  Для таджикской версии сайта (afsona.tj/tg). Если оставить пустым, там будет русский текст.
+                </p>
+                <div>
+                  <Label htmlFor="name_tg">Название на таджикском</Label>
+                  <Input
+                    id="name_tg"
+                    name="name_tg"
+                    lang="tg"
+                    defaultValue={editingProduct?.name_tg || ''}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="description_tg">Описание на таджикском</Label>
+                  <Textarea
+                    id="description_tg"
+                    name="description_tg"
+                    lang="tg"
+                    defaultValue={editingProduct?.description_tg || ''}
+                    rows={3}
+                  />
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">

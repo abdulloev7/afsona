@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Minus, Plus } from "lucide-react";
+import { formatPrice, localized, t } from "@/i18n";
 
 interface ProductSizeSelectorProps {
   product: {
@@ -45,27 +46,27 @@ export const ProductSizeSelector = ({ product, isOpen, onClose, onAddToCart }: P
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Выберите объем</DialogTitle>
+          <DialogTitle>{t("Выберите объем")}</DialogTitle>
         </DialogHeader>
         
         <div className="space-y-6">
           <div>
-            <h4 className="font-medium mb-2">{product.name}</h4>
+            <h4 className="font-medium mb-2">{localized(product, 'name')}</h4>
             {product.size_variants ? (
               <p className="text-sm text-muted-foreground">
                 {selectedSize && product.size_variants.find(v => v.volume === selectedSize)
-                  ? `${product.size_variants.find(v => v.volume === selectedSize)?.price} сом.`
-                  : 'Выберите объем'}
+                  ? formatPrice(product.size_variants.find(v => v.volume === selectedSize)?.price ?? 0)
+                  : t("Выберите объем")}
               </p>
             ) : (
-              <p className="text-lg font-semibold text-primary">{product.price} сом.</p>
+              <p className="text-lg font-semibold text-primary">{formatPrice(product.price)}</p>
             )}
           </div>
 
           {((product.size_variants && product.size_variants.length > 0) || 
             (product.sizes && product.sizes.length > 0)) && (
             <div className="space-y-3">
-              <Label className="text-sm font-medium">Доступные объемы:</Label>
+              <Label className="text-sm font-medium">{t("Доступные объемы:")}</Label>
               <RadioGroup value={selectedSize} onValueChange={setSelectedSize}>
                 {product.size_variants ? (
                   product.size_variants.map((variant) => (
@@ -76,7 +77,7 @@ export const ProductSizeSelector = ({ product, isOpen, onClose, onAddToCart }: P
                           {variant.volume}
                         </Label>
                       </div>
-                      <span className="text-sm font-semibold text-primary">{variant.price.toLocaleString("ru-RU")} сом.</span>
+                      <span className="text-sm font-semibold text-primary">{formatPrice(variant.price)}</span>
                     </div>
                   ))
                 ) : (
@@ -94,7 +95,7 @@ export const ProductSizeSelector = ({ product, isOpen, onClose, onAddToCart }: P
           )}
 
           <div className="space-y-3">
-            <Label className="text-sm font-medium">Количество:</Label>
+            <Label className="text-sm font-medium">{t("Количество:")}</Label>
             <div className="flex items-center space-x-3">
               <Button
                 type="button"
@@ -119,14 +120,14 @@ export const ProductSizeSelector = ({ product, isOpen, onClose, onAddToCart }: P
 
           <div className="flex gap-3 pt-4">
             <Button variant="outline" onClick={onClose} className="flex-1">
-              Отмена
+              {t("Отмена")}
             </Button>
             <Button 
               onClick={handleSubmit} 
               disabled={!selectedSize}
               className="flex-1"
             >
-              Добавить в корзину
+              {t("Добавить в корзину")}
             </Button>
           </div>
         </div>

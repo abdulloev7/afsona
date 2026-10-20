@@ -16,10 +16,12 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { supabase } from "@/integrations/supabase/client";
+import { formatPrice, localized, t } from "@/i18n";
 
 interface SearchResult {
   id: string;
   name: string;
+  name_tg?: string | null;
   description: string | null;
   category: { name: string; slug: string } | null;
   brand: string | null;
@@ -35,7 +37,7 @@ interface GroupedResults {
 
 const groupByCategory = (results: SearchResult[]): GroupedResults => {
   return results.reduce((acc, item) => {
-    const categoryName = item.category?.name || "Без категории";
+    const categoryName = item.category?.name ? t(item.category.name) : t("Без категории");
     if (!acc[categoryName]) {
       acc[categoryName] = [];
     }
@@ -80,6 +82,7 @@ export function SearchDialog() {
       const selectFields = `
         id,
         name,
+        name_tg,
         description,
         brand,
         price,
@@ -100,7 +103,7 @@ export function SearchDialog() {
           supabase
             .from('products')
             .select(selectFields)
-            .or(`name.ilike.${searchTerm},description.ilike.${searchTerm},brand.ilike.${searchTerm}`)
+            .or(`name.ilike.${searchTerm},name_tg.ilike.${searchTerm},description.ilike.${searchTerm},brand.ilike.${searchTerm}`)
             .eq('archived', false)
             .eq('in_stock', true)
             .limit(30),
@@ -160,40 +163,40 @@ export function SearchDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label="Поиск по товарам">
+        <Button variant="ghost" size="icon" aria-label={t("Поиск по товарам")}>
           <Search className="h-5 w-5" />
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl p-0">
         <Command shouldFilter={false}>
           <CommandInput 
-            placeholder="Поиск товаров, брендов, категорий..." 
+            placeholder={t("Поиск товаров, брендов, категорий...")} 
             value={search}
             onValueChange={setSearch}
           />
           <CommandList>
             {!search && (
-              <CommandGroup heading="Быстрые ссылки">
+              <CommandGroup heading={t("Быстрые ссылки")}>
                 <CommandItem onSelect={() => scrollToSection('tinting')}>
-                  Услуга колеровки
+                  {t("Услуга колеровки")}
                 </CommandItem>
                 <CommandItem onSelect={() => scrollToSection('brands')}>
-                  Наши бренды
+                  {t("Наши бренды")}
                 </CommandItem>
                 <CommandItem onSelect={() => scrollToSection('contacts')}>
-                  Контакты
+                  {t("Контакты")}
                 </CommandItem>
               </CommandGroup>
             )}
 
             {loading && (
               <div className="py-6 text-center text-sm text-muted-foreground">
-                Поиск...
+                {t("Поиск...")}
               </div>
             )}
             {!loading && search && results.length === 0 && (
               <div className="py-6 text-center text-sm text-muted-foreground">
-                Ничего не найдено
+                {t("Ничего не найдено")}
               </div>
             )}
             
@@ -208,14 +211,14 @@ export function SearchDialog() {
                     {item.image && (
                       <img 
                         src={item.image} 
-                        alt={item.name}
+                        alt={localized(item, 'name')}
                         className="w-10 h-10 object-cover rounded mr-3 flex-shrink-0"
                       />
                     )}
                     <div className="flex-1 min-w-0">
-                      <div className="font-medium truncate">{item.name}</div>
+                      <div className="font-medium truncate">{localized(item, 'name')}</div>
                       <div className="text-sm text-muted-foreground truncate">
-                        {item.brand_info?.name || item.brand} • {item.price.toLocaleString('ru-RU')} сом.
+                        {item.brand_info?.name || item.brand} • {formatPrice(item.price)}
                       </div>
                     </div>
                   </CommandItem>
@@ -227,7 +230,7 @@ export function SearchDialog() {
         
         {/* Подсказка для клавиатуры */}
         <div className="border-t px-4 py-2 text-xs text-muted-foreground">
-          Нажмите <kbd className="px-1.5 py-0.5 bg-muted rounded text-muted-foreground">Ctrl</kbd> + <kbd className="px-1.5 py-0.5 bg-muted rounded text-muted-foreground">K</kbd> для быстрого поиска
+          {t("Быстрый поиск:")}{" "}<kbd className="px-1.5 py-0.5 bg-muted rounded text-muted-foreground">Ctrl</kbd> + <kbd className="px-1.5 py-0.5 bg-muted rounded text-muted-foreground">K</kbd>
         </div>
       </DialogContent>
     </Dialog>

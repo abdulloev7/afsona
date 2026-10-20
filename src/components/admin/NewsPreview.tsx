@@ -1,8 +1,8 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, Image as ImageIcon, Video } from 'lucide-react';
-import { formatNewsDate } from '@/lib/utils';
 import { sanitizeHtml } from '@/lib/sanitize';
+import { formatLongDate } from "@/i18n";
 
 interface MediaItem {
   type: 'image' | 'video';
@@ -53,7 +53,7 @@ const NewsPreview = ({
           {/* Date */}
           <div className="flex items-center gap-2 text-muted-foreground">
             <Calendar className="h-4 w-4" />
-            <span>{formatNewsDate(new Date().toISOString())}</span>
+            <span>{formatLongDate(new Date().toISOString())}</span>
           </div>
 
           {/* Main Image */}

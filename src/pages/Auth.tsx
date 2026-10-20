@@ -10,14 +10,15 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { z } from 'zod';
 import { useSeo } from "@/hooks/useSeo";
+import { t } from "@/i18n";
 
 const authSchema = z.object({
-  email: z.string().trim().email({ message: "Введите корректный email" }),
-  password: z.string().min(6, { message: "Пароль должен содержать минимум 6 символов" }),
+  email: z.string().trim().email({ message: t("Введите корректный email") }),
+  password: z.string().min(6, { message: t("Пароль должен содержать минимум 6 символов") }),
 });
 
 const Auth = () => {
-  useSeo({ title: 'Вход', noindex: true });
+  useSeo({ title: t("Вход"), noindex: true });
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -90,22 +91,22 @@ const Auth = () => {
         <div className="container mx-auto px-4 max-w-md">
           <Tabs defaultValue="signin" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="signin">Вход</TabsTrigger>
-              <TabsTrigger value="signup">Регистрация</TabsTrigger>
+              <TabsTrigger value="signin">{t("Вход")}</TabsTrigger>
+              <TabsTrigger value="signup">{t("Регистрация")}</TabsTrigger>
             </TabsList>
             
             <TabsContent value="signin">
               <Card>
                 <CardHeader>
-                  <CardTitle>Вход в личный кабинет</CardTitle>
+                  <CardTitle>{t("Вход в личный кабинет")}</CardTitle>
                   <CardDescription>
-                    Войдите в свой аккаунт для доступа к корзине и заказам
+                    {t("Войдите в свой аккаунт для доступа к корзине и заказам")}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <form onSubmit={handleSignIn} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="signin-email">Эл. почта</Label>
+                      <Label htmlFor="signin-email">{t("Эл. почта")}</Label>
                       <Input
                         id="signin-email"
                         type="email"
@@ -118,7 +119,7 @@ const Auth = () => {
                       )}
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="signin-password">Пароль</Label>
+                      <Label htmlFor="signin-password">{t("Пароль")}</Label>
                       <Input
                         id="signin-password"
                         type="password"
@@ -131,7 +132,7 @@ const Auth = () => {
                       )}
                     </div>
                     <Button type="submit" className="w-full" disabled={loading}>
-                      {loading ? 'Входим...' : 'Войти'}
+                      {loading ? t("Входим...") : t("Войти")}
                     </Button>
                   </form>
                 </CardContent>
@@ -141,15 +142,15 @@ const Auth = () => {
             <TabsContent value="signup">
               <Card>
                 <CardHeader>
-                  <CardTitle>Регистрация</CardTitle>
+                  <CardTitle>{t("Регистрация")}</CardTitle>
                   <CardDescription>
-                    Создайте аккаунт для покупок и отслеживания заказов
+                    {t("Создайте аккаунт для покупок и отслеживания заказов")}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <form onSubmit={handleSignUp} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="signup-email">Эл. почта</Label>
+                      <Label htmlFor="signup-email">{t("Эл. почта")}</Label>
                       <Input
                         id="signup-email"
                         type="email"
@@ -162,7 +163,7 @@ const Auth = () => {
                       )}
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="signup-password">Пароль</Label>
+                      <Label htmlFor="signup-password">{t("Пароль")}</Label>
                       <Input
                         id="signup-password"
                         type="password"
@@ -175,7 +176,7 @@ const Auth = () => {
                       )}
                     </div>
                     <Button type="submit" className="w-full" disabled={loading}>
-                      {loading ? 'Создаем аккаунт...' : 'Зарегистрироваться'}
+                      {loading ? t("Создаем аккаунт...") : t("Зарегистрироваться")}
                     </Button>
                   </form>
                 </CardContent>

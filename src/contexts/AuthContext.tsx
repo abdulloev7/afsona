@@ -3,6 +3,7 @@ import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { errorMessage } from "@/lib/errorMessage";
+import { t } from "@/i18n";
 
 interface AuthContextType {
   user: User | null;
@@ -62,14 +63,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     if (error) {
       toast({
-        title: "Ошибка регистрации",
+        title: t("Ошибка регистрации"),
         description: errorMessage(error),
         variant: "destructive",
       });
     } else {
       toast({
-        title: "Регистрация успешна",
-        description: "Проверьте почту для подтверждения аккаунта",
+        title: t("Регистрация успешна"),
+        description: t("Проверьте почту для подтверждения аккаунта"),
       });
     }
 
@@ -84,14 +85,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     if (error) {
       toast({
-        title: "Ошибка входа",
+        title: t("Ошибка входа"),
         description: errorMessage(error),
         variant: "destructive",
       });
     } else {
       toast({
-        title: "Добро пожаловать!",
-        description: "Вы успешно вошли в систему",
+        title: t("Добро пожаловать!"),
+        description: t("Вы успешно вошли в систему"),
       });
     }
 
@@ -102,14 +103,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const { error } = await supabase.auth.signOut();
     if (error) {
       toast({
-        title: "Ошибка выхода",
+        title: t("Ошибка выхода"),
         description: errorMessage(error),
         variant: "destructive",
       });
     } else {
       toast({
-        title: "До свидания!",
-        description: "Вы успешно вышли из системы",
+        title: t("До свидания!"),
+        description: t("Вы успешно вышли из системы"),
       });
     }
   };

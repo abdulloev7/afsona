@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ExternalLink } from "lucide-react";
 import { useSeo } from "@/hooks/useSeo";
 import { toDescription } from "@/lib/seo";
+import { localized, t } from "@/i18n";
 
 interface Brand {
   id: string;
@@ -40,9 +41,12 @@ const BrandPage = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   useSeo({
-    title: brand ? `${brand.name}: краски и материалы` : undefined,
+    title: brand ? t("{brand}: краски и материалы", { brand: brand.name }) : undefined,
     description: brand
-      ? toDescription(brand.description, `Продукция бренда ${brand.name} в магазине AFSONA в Душанбе и Худжанде. Цены и наличие.`)
+      ? toDescription(
+          localized(brand, 'description'),
+          t("Продукция бренда {brand} в магазине AFSONA в Душанбе и Худжанде. Цены и наличие.", { brand: brand.name }),
+        )
       : undefined,
     image: brand?.logo,
     noindex: !loading && !brand,
@@ -70,8 +74,8 @@ const BrandPage = () => {
       
       if (!brandData) {
         toast({
-          title: "Бренд не найден",
-          description: "Бренд с таким именем не существует",
+          title: t("Бренд не найден"),
+          description: t("Бренд с таким именем не существует"),
           variant: "destructive",
         });
         navigate('/');
@@ -96,8 +100,8 @@ const BrandPage = () => {
     } catch (error) {
       console.error('Error fetching brand data:', error);
       toast({
-        title: "Ошибка",
-        description: "Не удалось загрузить данные бренда",
+        title: t("Ошибка"),
+        description: t("Не удалось загрузить данные бренда"),
         variant: "destructive",
       });
     } finally {
@@ -157,18 +161,18 @@ const BrandPage = () => {
               <div className="md:col-span-2">
                 <h1 className="text-4xl font-bold mb-4">{brand.name}</h1>
                 {brand.description && (
-                  <p className="text-lg opacity-80 mb-4">{brand.description}</p>
+                  <p className="text-lg opacity-80 mb-4">{localized(brand, 'description')}</p>
                 )}
                 <div className="flex flex-wrap gap-4 text-sm">
                   {brand.country && (
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold">Страна:</span>
+                      <span className="font-semibold">{t("Страна:")}</span>
                       <span>{brand.country}</span>
                     </div>
                   )}
                   {brand.established_year && (
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold">Основан:</span>
+                      <span className="font-semibold">{t("Основан:")}</span>
                       <span>{brand.established_year}</span>
                     </div>
                   )}
@@ -179,7 +183,7 @@ const BrandPage = () => {
                       rel="noopener noreferrer"
                       className="flex items-center gap-2 text-primary hover:underline"
                     >
-                      <span>Официальный сайт</span>
+                      <span>{t("Официальный сайт")}</span>
                       <ExternalLink className="w-4 h-4" />
                     </a>
                   )}
@@ -192,12 +196,12 @@ const BrandPage = () => {
         {/* Products Section */}
         <section className="py-12 px-4">
           <div className="max-w-7xl mx-auto">
-            <h2 className="text-3xl font-bold mb-8">Продукция {brand.name}</h2>
+            <h2 className="text-3xl font-bold mb-8">{t("Продукция {brand}", { brand: brand.name })}</h2>
             
             {products.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-lg opacity-70">
-                  В настоящее время нет товаров этого бренда в каталоге
+                  {t("В настоящее время нет товаров этого бренда в каталоге")}
                 </p>
               </div>
             ) : (

@@ -37,10 +37,24 @@ const CATEGORY_ROUTES: Record<string, string> = {
 const escapeXml = (s: string) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
+// Every page exists in Russian (/x) and Tajik (/tg/x); both are listed and point at each other.
+const tgPath = (path: string) => (path === "/" ? "/tg" : `/tg${path}`);
+
+const alternates = (path: string) =>
+  [["ru", path], ["tg", tgPath(path)], ["x-default", path]]
+    .map(([lang, p]) => `    <xhtml:link rel="alternate" hreflang="${lang}" href="${escapeXml(SITE_URL + p)}"/>\n`)
+    .join("");
+
 const urlEntry = (path: string, opts: { lastmod?: string | null; priority: string; changefreq: string }) =>
-  `  <url>\n    <loc>${escapeXml(SITE_URL + path)}</loc>\n` +
-  (opts.lastmod ? `    <lastmod>${opts.lastmod.slice(0, 10)}</lastmod>\n` : "") +
-  `    <changefreq>${opts.changefreq}</changefreq>\n    <priority>${opts.priority}</priority>\n  </url>`;
+  [path, tgPath(path)]
+    .map(
+      (loc) =>
+        `  <url>\n    <loc>${escapeXml(SITE_URL + loc)}</loc>\n` +
+        alternates(path) +
+        (opts.lastmod ? `    <lastmod>${opts.lastmod.slice(0, 10)}</lastmod>\n` : "") +
+        `    <changefreq>${opts.changefreq}</changefreq>\n    <priority>${opts.priority}</priority>\n  </url>`,
+    )
+    .join("\n");
 
 serve(async () => {
   try {
@@ -79,7 +93,7 @@ serve(async () => {
 
     const xml =
       `<?xml version="1.0" encoding="UTF-8"?>\n` +
-      `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${entries.join("\n")}\n</urlset>\n`;
+      `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${entries.join("\n")}\n</urlset>\n`;
 
     return new Response(xml, {
       headers: {

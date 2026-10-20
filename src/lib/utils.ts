@@ -21,10 +21,3 @@ export function transliterate(text: string): string {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
 }
-
-const newsDateFormat = new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
-
-// "20 октября 2026", without the " г." suffix Intl adds
-export function formatNewsDate(date: string): string {
-  return newsDateFormat.format(new Date(date)).replace(/\s*г\.$/, '');
-}

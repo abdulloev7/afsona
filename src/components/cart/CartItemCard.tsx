@@ -5,6 +5,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Plus, Minus, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { CartItem } from '@/contexts/CartContext';
+import { formatPrice, localized, t } from "@/i18n";
 
 interface CartItemCardProps {
   item: CartItem;
@@ -39,7 +40,7 @@ export const CartItemCard = ({
           <Checkbox
             checked={isSelected}
             onCheckedChange={onToggleSelect}
-            aria-label={`Выбрать «${item.product.name}» для заказа`}
+            aria-label={t("Выбрать «{name}» для заказа", { name: localized(item.product, 'name') })}
           />
           {item.product.image && (
             <Link to={productUrl} className="shrink-0" tabIndex={-1} aria-hidden="true">
@@ -52,11 +53,11 @@ export const CartItemCard = ({
           )}
           <div className="flex-1 min-w-0">
             <Link to={productUrl} className="hover:text-primary transition-colors">
-              <h3 className="font-semibold truncate">{item.product.name}</h3>
+              <h3 className="font-semibold truncate">{localized(item.product, 'name')}</h3>
             </Link>
             {item.selected_size && (
               <p className="text-sm text-muted-foreground">
-                Объем: {item.selected_size}
+                {t("Объем:")}{" "}{item.selected_size}
               </p>
             )}
             {item.product.brand?.name && (
@@ -67,15 +68,15 @@ export const CartItemCard = ({
             {item.quantity > 1 ? (
               <div>
                 <p className="text-sm text-muted-foreground">
-                  {item.quantity} × {itemPrice.toLocaleString('ru-RU')} сом.
+                  {item.quantity} × {formatPrice(itemPrice)}
                 </p>
                 <p className="text-lg font-bold">
-                  {totalPrice.toLocaleString('ru-RU')} сом.
+                  {formatPrice(totalPrice)}
                 </p>
               </div>
             ) : (
               <p className="text-lg font-bold">
-                {itemPrice.toLocaleString('ru-RU')} сом.
+                {formatPrice(itemPrice)}
               </p>
             )}
           </div>
@@ -85,19 +86,19 @@ export const CartItemCard = ({
               variant="outline"
               size="icon"
               onClick={() => onUpdateQuantity(item.quantity - 1)}
-              aria-label="Уменьшить количество"
+              aria-label={t("Уменьшить количество")}
             >
               <Minus className="h-4 w-4" />
             </Button>
             <span className="w-8 text-center font-medium" aria-live="polite">
-              <span className="sr-only">Количество: </span>
+              <span className="sr-only">{t("Количество:")}{" "}</span>
               {item.quantity}
             </span>
             <Button
               variant="outline"
               size="icon"
               onClick={() => onUpdateQuantity(item.quantity + 1)}
-              aria-label="Увеличить количество"
+              aria-label={t("Увеличить количество")}
             >
               <Plus className="h-4 w-4" />
             </Button>
@@ -106,7 +107,7 @@ export const CartItemCard = ({
               size="icon"
               onClick={onRemove}
               className="ml-2 text-muted-foreground hover:text-destructive"
-              aria-label={`Удалить «${item.product.name}» из корзины`}
+              aria-label={t("Удалить «{name}» из корзины", { name: localized(item.product, 'name') })}
             >
               <Trash2 className="h-4 w-4" />
             </Button>

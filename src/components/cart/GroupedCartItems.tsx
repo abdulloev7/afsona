@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { CartItemCard } from './CartItemCard';
 import { CATEGORY_GROUPS, type CartItem } from '@/contexts/CartContext';
 import { Separator } from '@/components/ui/separator';
+import { t } from "@/i18n";
 
 interface GroupedCartItemsProps {
   items: CartItem[];
@@ -39,7 +40,7 @@ export const GroupedCartItems = ({
 
     items.forEach((item) => {
       const categorySlug = item.product.category?.slug || 'other';
-      const categoryInfo = CATEGORY_GROUPS[categorySlug] || { label: 'Прочее', order: 99 };
+      const categoryInfo = CATEGORY_GROUPS[categorySlug] || { label: t("Прочее"), order: 99 };
       
       // Use a simplified group key for tools
       let groupKey = categorySlug;
@@ -48,7 +49,7 @@ export const GroupedCartItems = ({
       // Merge tool categories into one group
       if (['brushes-tools', 'rollers', 'spatulas-accessories'].includes(categorySlug)) {
         groupKey = 'tools';
-        groupLabel = 'Инструменты';
+        groupLabel = t('Инструменты');
       }
 
       if (!groups.has(groupKey)) {

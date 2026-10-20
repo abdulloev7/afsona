@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState, useCallback } fr
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { t } from "@/i18n";
 
 export interface CartItem {
   id: string;
@@ -12,6 +13,7 @@ export interface CartItem {
   product: {
     id: string;
     name: string;
+    name_tg?: string | null;
     price: number;
     image?: string;
     sizes?: string[] | null;
@@ -25,16 +27,16 @@ export interface CartItem {
 
 // Category groups for visual separation
 export const CATEGORY_GROUPS: Record<string, { label: string; order: number }> = {
-  'paints-and-coatings': { label: 'Краски и покрытия', order: 1 },
-  'decorative-coatings': { label: 'Декоративные покрытия', order: 2 },
-  'primers-preparatory': { label: 'Подготовка поверхности', order: 3 },
-  'putties-leveling': { label: 'Шпатлевки и выравнивание', order: 4 },
-  'waterproofing': { label: 'Гидроизоляция', order: 5 },
-  'adhesives-sealants': { label: 'Клеи и герметики', order: 6 },
-  'tints-thinners': { label: 'Колеры и разбавители', order: 7 },
-  'brushes-tools': { label: 'Инструменты', order: 8 },
-  'rollers': { label: 'Валики', order: 8 },
-  'spatulas-accessories': { label: 'Инструменты', order: 8 },
+  'paints-and-coatings': { label: t("Краски и покрытия"), order: 1 },
+  'decorative-coatings': { label: t("Декоративные покрытия"), order: 2 },
+  'primers-preparatory': { label: t("Подготовка поверхности"), order: 3 },
+  'putties-leveling': { label: t("Шпатлевки и выравнивание"), order: 4 },
+  'waterproofing': { label: t("Гидроизоляция"), order: 5 },
+  'adhesives-sealants': { label: t("Клеи и герметики"), order: 6 },
+  'tints-thinners': { label: t("Колеры и разбавители"), order: 7 },
+  'brushes-tools': { label: t("Инструменты"), order: 8 },
+  'rollers': { label: t("Валики"), order: 8 },
+  'spatulas-accessories': { label: t("Инструменты"), order: 8 },
 };
 
 interface CartContextType {
@@ -100,7 +102,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const productIds = [...new Set(entries.map(e => e.product_id))];
     const { data: products } = await supabase
       .from('products')
-      .select('id, name, price, image, sizes, size_variants, category_id, brand_id, category:categories(id, name, slug), brand:brands(id, name)')
+      .select('id, name, name_tg, price, image, sizes, size_variants, category_id, brand_id, category:categories(id, name, slug), brand:brands(id, name)')
       .in('id', productIds);
 
     if (!products) return [];
@@ -185,6 +187,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           product:products(
             id, 
             name, 
+            name_tg,
             price, 
             image, 
             sizes, 
@@ -214,8 +217,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (error) {
       console.error('Error fetching cart items:', error);
       toast({
-        title: "Ошибка",
-        description: "Не удалось загрузить корзину",
+        title: t("Ошибка"),
+        description: t("Не удалось загрузить корзину"),
         variant: "destructive",
       });
     } finally {
@@ -246,7 +249,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .single();
       const sizeVariants = productData?.size_variants as { volume: string; price: number }[] | null;
       if (sizeVariants && sizeVariants.length > 0 && !selectedSize) {
-        toast({ title: "Ошибка", description: "Пожалуйста, выберите объем товара", variant: "destructive" });
+        toast({ title: t("Ошибка"), description: t("Пожалуйста, выберите объем товара"), variant: "destructive" });
         return;
       }
 
@@ -260,7 +263,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       saveGuestCart(guestEntries);
       const hydrated = await hydrateGuestCart(guestEntries);
       setItems(hydrated);
-      toast({ title: "Товар добавлен", description: "Товар успешно добавлен в корзину" });
+      toast({ title: t("Товар добавлен"), description: t("Товар успешно добавлен в корзину") });
       return;
     }
 
@@ -273,7 +276,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .single();
       const sizeVariants = productData?.size_variants as { volume: string; price: number }[] | null;
       if (sizeVariants && sizeVariants.length > 0 && !selectedSize) {
-        toast({ title: "Ошибка", description: "Пожалуйста, выберите объем товара", variant: "destructive" });
+        toast({ title: t("Ошибка"), description: t("Пожалуйста, выберите объем товара"), variant: "destructive" });
         return;
       }
 
@@ -286,11 +289,11 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           .insert({ user_id: user.id, product_id: productId, quantity, selected_size: selectedSize });
         if (error) throw error;
         await fetchCartItems();
-        toast({ title: "Товар добавлен", description: "Товар успешно добавлен в корзину" });
+        toast({ title: t("Товар добавлен"), description: t("Товар успешно добавлен в корзину") });
       }
     } catch (error) {
       console.error('Error adding to cart:', error);
-      toast({ title: "Ошибка", description: "Не удалось добавить товар в корзину", variant: "destructive" });
+      toast({ title: t("Ошибка"), description: t("Не удалось добавить товар в корзину"), variant: "destructive" });
     }
   };
 
@@ -325,7 +328,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (error) {
       console.error('Error updating quantity:', error);
       setItems(previousItems);
-      toast({ title: "Ошибка", description: "Не удалось обновить количество", variant: "destructive" });
+      toast({ title: t("Ошибка"), description: t("Не удалось обновить количество"), variant: "destructive" });
     }
   };
 
@@ -335,7 +338,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const guestEntries = loadGuestCart().filter(e => e.id !== itemId);
       saveGuestCart(guestEntries);
       setItems(prev => prev.filter(item => item.id !== itemId));
-      toast({ title: "Товар удален", description: "Товар удален из корзины" });
+      toast({ title: t("Товар удален"), description: t("Товар удален из корзины") });
       return;
     }
 
@@ -349,11 +352,11 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .eq('id', itemId)
         .eq('user_id', user.id);
       if (error) throw error;
-      toast({ title: "Товар удален", description: "Товар удален из корзины" });
+      toast({ title: t("Товар удален"), description: t("Товар удален из корзины") });
     } catch (error) {
       console.error('Error removing from cart:', error);
       setItems(previousItems);
-      toast({ title: "Ошибка", description: "Не удалось удалить товар из корзины", variant: "destructive" });
+      toast({ title: t("Ошибка"), description: t("Не удалось удалить товар из корзины"), variant: "destructive" });
     }
   };
 
@@ -361,7 +364,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!user) {
       clearGuestCartStorage();
       setItems([]);
-      toast({ title: "Корзина очищена", description: "Все товары удалены из корзины" });
+      toast({ title: t("Корзина очищена"), description: t("Все товары удалены из корзины") });
       return;
     }
 
@@ -372,10 +375,10 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .eq('user_id', user.id);
       if (error) throw error;
       setItems([]);
-      toast({ title: "Корзина очищена", description: "Все товары удалены из корзины" });
+      toast({ title: t("Корзина очищена"), description: t("Все товары удалены из корзины") });
     } catch (error) {
       console.error('Error clearing cart:', error);
-      toast({ title: "Ошибка", description: "Не удалось очистить корзину", variant: "destructive" });
+      toast({ title: t("Ошибка"), description: t("Не удалось очистить корзину"), variant: "destructive" });
     }
   };
 

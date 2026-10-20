@@ -5,12 +5,13 @@ import { MapPin, Phone, Clock, Mail } from "lucide-react";
 import { FaTelegram, FaWhatsapp, FaInstagram } from "react-icons/fa";
 import { STORES, STORE_WHATSAPP_URL, mapEmbedUrl, yandexMapUrl } from "@/lib/contacts";
 import { cn } from "@/lib/utils";
+import { t } from "@/i18n";
 
 const SOCIALS = [
   { href: "https://t.me/afsona_build", label: "Telegram", Icon: FaTelegram },
   { href: STORE_WHATSAPP_URL, label: "WhatsApp", Icon: FaWhatsapp },
   { href: "https://www.instagram.com/afsona.build/", label: "Instagram", Icon: FaInstagram },
-  { href: "mailto:info@afsona.com.tj", label: "Почта", Icon: Mail },
+  { href: "mailto:info@afsona.com.tj", label: t("Почта"), Icon: Mail },
 ];
 
 // Address, phones, hours and a map for one store at a time, with a switch
@@ -21,7 +22,7 @@ const StoreLocator = ({ headingLevel = "h3" }: { headingLevel?: "h2" | "h3" }) =
 
   return (
     <div>
-      <div role="tablist" aria-label="Магазин" className="flex justify-center mb-6">
+      <div role="tablist" aria-label={t("Магазин")} className="flex justify-center mb-6">
         <div className="inline-flex rounded-lg border border-border bg-card p-1">
           {STORES.map((s, i) => (
             <button
@@ -46,10 +47,10 @@ const StoreLocator = ({ headingLevel = "h3" }: { headingLevel?: "h2" | "h3" }) =
             <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center mx-auto mb-3">
               <MapPin className="w-6 h-6 text-primary-foreground" />
             </div>
-            <CardTitle as={headingLevel} className="text-lg text-primary">Наш адрес</CardTitle>
+            <CardTitle as={headingLevel} className="text-lg text-primary">{t("Наш адрес")}</CardTitle>
           </CardHeader>
           <CardContent className="text-center">
-            <p className="text-foreground mb-1">г. {store.city}</p>
+            <p className="text-foreground mb-1">{t("г. {city}", { city: store.city })}</p>
             <p className="text-muted-foreground text-sm">{store.address}</p>
           </CardContent>
         </Card>
@@ -59,7 +60,7 @@ const StoreLocator = ({ headingLevel = "h3" }: { headingLevel?: "h2" | "h3" }) =
             <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center mx-auto mb-3">
               <Phone className="w-6 h-6 text-primary-foreground" />
             </div>
-            <CardTitle as={headingLevel} className="text-lg text-primary">Контакты</CardTitle>
+            <CardTitle as={headingLevel} className="text-lg text-primary">{t("Контакты")}</CardTitle>
           </CardHeader>
           <CardContent className="text-center space-y-4">
             <div className="space-y-1">
@@ -95,16 +96,16 @@ const StoreLocator = ({ headingLevel = "h3" }: { headingLevel?: "h2" | "h3" }) =
             <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center mx-auto mb-3">
               <Clock className="w-6 h-6 text-primary-foreground" />
             </div>
-            <CardTitle as={headingLevel} className="text-lg text-primary">Режим работы</CardTitle>
+            <CardTitle as={headingLevel} className="text-lg text-primary">{t("Режим работы")}</CardTitle>
           </CardHeader>
           <CardContent className="text-center space-y-1">
             <div>
-              <p className="font-semibold">Пн–Сб:</p>
+              <p className="font-semibold">{t("Пн–Сб:")}</p>
               <p className="text-muted-foreground text-sm">08:00–12:00, 13:00–18:00</p>
             </div>
             <div>
-              <p className="font-semibold">Воскресенье:</p>
-              <p className="text-muted-foreground text-sm">Выходной</p>
+              <p className="font-semibold">{t("Воскресенье:")}</p>
+              <p className="text-muted-foreground text-sm">{t("Выходной")}</p>
             </div>
           </CardContent>
         </Card>
@@ -122,7 +123,7 @@ const StoreLocator = ({ headingLevel = "h3" }: { headingLevel?: "h2" | "h3" }) =
               allowFullScreen
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
-              title={`Карта: магазин AFSONA, ${store.city}`}
+              title={t("Карта: магазин AFSONA, {city}", { city: store.city })}
             />
           </div>
           <div className="p-4 bg-muted/30">
@@ -136,7 +137,7 @@ const StoreLocator = ({ headingLevel = "h3" }: { headingLevel?: "h2" | "h3" }) =
               <Button asChild variant="outline" size="sm" className="w-full">
                 <a href={yandexMapUrl(store)} target="_blank" rel="noopener noreferrer">
                   <MapPin className="w-4 h-4 mr-2" />
-                  Яндекс.Карты
+                  {t("Яндекс.Карты")}
                 </a>
               </Button>
             </div>
