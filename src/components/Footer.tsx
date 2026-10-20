@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import afsona_logo_full from "@/assets/afsona-logo-full.jpg";
-import { MapPin, ExternalLink, Phone, Mail, Clock } from "lucide-react";
+import { MapPin, Phone, Mail, Clock } from "lucide-react";
+import { STORES } from "@/lib/contacts";
 import { FaTelegram, FaWhatsapp, FaInstagram } from "react-icons/fa";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 const Footer = () => {
   return (
@@ -67,33 +67,29 @@ const Footer = () => {
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4">Контактная информация</h4>
-            <div className="space-y-2 text-sm opacity-90">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="cursor-pointer hover:opacity-80 transition-opacity text-left">
-                    <p className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4 shrink-0 text-primary" />
-                      г. Худжанд, 20-й микрорайон, 27
-                      <ExternalLink className="w-3 h-3" />
-                    </p>
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="bg-background">
-                  <DropdownMenuItem onClick={() => window.open('https://yandex.tj/maps/-/CLCdFG~t', '_blank')} className="cursor-pointer">
-                    <MapPin className="w-4 h-4 mr-2" />
-                    Открыть в Яндекс.Картах
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => window.open('https://maps.app.goo.gl/MEsrzn3JajJZfYk99', '_blank')} className="cursor-pointer">
-                    <MapPin className="w-4 h-4 mr-2" />
-                    Открыть в Google Maps
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-              <a href="tel:+992927557919" className="flex items-center gap-2 hover:text-primary transition-colors">
-                <Phone className="w-4 h-4 shrink-0 text-primary" />
-                +992 927 55 79 19
-              </a>
+            <h4 className="font-semibold mb-4">Магазины</h4>
+            <div className="space-y-3 text-sm opacity-90">
+              {STORES.map((store) => (
+                <div key={store.city}>
+                  <a
+                    href={store.mapUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-start gap-2 hover:text-primary transition-colors"
+                  >
+                    <MapPin className="w-4 h-4 shrink-0 text-primary mt-0.5" />
+                    <span>
+                      <span className="font-medium">{store.city}</span>, {store.address}
+                    </span>
+                  </a>
+                  {store.phones.map((phone) => (
+                    <a key={phone.href} href={phone.href} className="flex items-center gap-2 mt-1 hover:text-primary transition-colors">
+                      <Phone className="w-4 h-4 shrink-0 text-primary" />
+                      {phone.display}
+                    </a>
+                  ))}
+                </div>
+              ))}
               <a href="mailto:info@afsona.com.tj" className="flex items-center gap-2 hover:text-primary transition-colors">
                 <Mail className="w-4 h-4 shrink-0 text-primary" />
                 info@afsona.com.tj

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingCart, Check } from 'lucide-react';
+import { ShoppingCart, Check, Package } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/contexts/CartContext';
 
@@ -31,6 +31,10 @@ const TAG_STYLES: Record<string, string> = {
   'Акция': 'bg-sale text-white',
   'Эко': 'bg-primary/10 text-primary',
 };
+
+// At most two labels per card, most important first, so the labels still mean something.
+const TAG_PRIORITY = ['Акция', 'Хит', 'Новинка', 'Советуем', 'Эко'];
+const MAX_TAGS = 2;
 
 export function FeaturedProductCard({ product }: FeaturedProductCardProps) {
   const [showSizeSelector, setShowSizeSelector] = useState(false);
@@ -89,13 +93,16 @@ export function FeaturedProductCard({ product }: FeaturedProductCardProps) {
         className="group flex flex-col h-full bg-card rounded-xl overflow-hidden border border-border hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
       >
         {/* Image Container */}
-        <div className="relative aspect-square bg-white p-4 flex-shrink-0">
+        <div className="relative aspect-square bg-white p-3 sm:p-4 flex-shrink-0">
           {/* Tags */}
-          <div className="absolute top-3 left-3 z-10 flex flex-wrap gap-1.5">
-            {product.tags?.map((tag) => (
+          <div className="absolute top-2 left-2 sm:top-3 sm:left-3 right-2 z-10 flex flex-wrap gap-1">
+            {[...(product.tags ?? [])]
+              .sort((a, b) => (TAG_PRIORITY.indexOf(a) + 1 || 99) - (TAG_PRIORITY.indexOf(b) + 1 || 99))
+              .slice(0, MAX_TAGS)
+              .map((tag) => (
               <span 
                 key={tag}
-                className={`px-2 py-0.5 text-xs font-semibold rounded ${TAG_STYLES[tag] || 'bg-muted text-muted-foreground'}`}
+                className={`px-1.5 sm:px-2 py-0.5 text-[11px] sm:text-xs font-semibold rounded ${TAG_STYLES[tag] || 'bg-muted text-muted-foreground'}`}
               >
                 {tag}
               </span>
@@ -118,16 +125,16 @@ export function FeaturedProductCard({ product }: FeaturedProductCardProps) {
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-muted rounded">
-              <span className="text-muted-foreground text-4xl">📦</span>
+              <Package className="h-10 w-10 text-muted-foreground/60" />
             </div>
           )}
         </div>
 
         {/* Content - flex-1 to fill remaining space */}
-        <div className="flex-1 flex flex-col p-4">
+        <div className="flex-1 flex flex-col p-3 sm:p-4">
           {/* Price */}
           <div className="flex items-baseline gap-2 mb-2">
-            <span className="text-xl font-bold text-foreground">
+            <span className="text-lg sm:text-xl font-bold text-foreground">
               {displayPrice.toLocaleString('ru-RU')} сом
             </span>
             {product.old_price && (
@@ -138,7 +145,7 @@ export function FeaturedProductCard({ product }: FeaturedProductCardProps) {
           </div>
 
           {/* Name - allow 3 lines for full visibility */}
-          <h3 className="font-medium text-foreground line-clamp-3 min-h-[3.75rem] mb-2 group-hover:text-primary transition-colors">
+          <h3 className="text-sm sm:text-base font-medium text-foreground line-clamp-3 min-h-[3.75rem] mb-2 group-hover:text-primary transition-colors">
             {product.name}
           </h3>
 
@@ -159,7 +166,7 @@ export function FeaturedProductCard({ product }: FeaturedProductCardProps) {
             <Button
               onClick={handleAddToCart}
               disabled={!product.in_stock}
-              className="w-full gap-2 bg-primary hover:bg-primary/90"
+              className="w-full gap-2 px-2 bg-primary hover:bg-primary/90"
             >
               <ShoppingCart className="h-4 w-4" />
               В корзину

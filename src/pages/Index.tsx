@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
+import StoreIntro from "@/components/StoreIntro";
 import { FeaturedProducts } from "@/components/FeaturedProducts";
 import BrandsPreview from "@/components/BrandsPreview";
 import TintingPreview from "@/components/TintingPreview";
@@ -21,11 +22,12 @@ const Index = () => {
       <Header />
       <main className="pt-16">
         <Hero />
-        <div className="bg-background/95 backdrop-blur-sm">
-          <FeaturedProducts />
-          <BrandsPreview />
-          <TintingPreview />
+        <StoreIntro />
+        <div>
           <ProductsPreview />
+          <FeaturedProducts />
+          <TintingPreview />
+          <BrandsPreview />
           <AboutPreview />
           <ContactsPreview />
         </div>

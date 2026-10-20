@@ -78,9 +78,9 @@ const CategoryPage = () => {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [loading, setLoading] = useState(true);
   useSeo({
-    title: category ? `${category.name} — купить в Душанбе` : undefined,
+    title: category ? `${category.name} — купить в Душанбе и Худжанде` : undefined,
     description: category
-      ? toDescription(category.description, `${category.name} в магазине AFSONA: цены, наличие, доставка по Душанбе.`)
+      ? toDescription(category.description, `${category.name} в магазине AFSONA: цены, наличие, магазины в Душанбе и Худжанде.`)
       : undefined,
   });
 

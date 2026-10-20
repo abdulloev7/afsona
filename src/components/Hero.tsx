@@ -103,9 +103,9 @@ const Hero = () => {
           className="container mx-auto px-4 text-center"
         >
           <div className="max-w-4xl mx-auto">
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight text-foreground">
+            <p className="text-5xl md:text-7xl font-bold mb-6 leading-tight text-foreground">
               AFSONA
-            </h1>
+            </p>
             <p className="text-xl md:text-2xl mb-4 opacity-90 text-foreground">
               Эко материалы для ремонта
             </p>
@@ -178,7 +178,8 @@ const Hero = () => {
               y: banner.button_position_y ?? DEFAULT_POSITIONS.button.y,
             };
             const isCurrent = current === index;
-            const TitleTag = index === 0 ? "h1" : "h2";
+            // The page heading lives in StoreIntro; banner titles are display text.
+            const TitleTag = "p";
             const hasText = !!(banner.title || banner.subtitle || banner.button_text);
 
             return (

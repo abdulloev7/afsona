@@ -35,7 +35,7 @@ const Portfolio = () => {
   const [portfolio, setPortfolio] = useState<PortfolioItem[]>([]);
   useSeo({
     title: 'Наши работы',
-    description: 'Портфолио AFSONA: примеры ремонта и отделки с нашими красками и материалами в Душанбе.',
+    description: 'Портфолио AFSONA: примеры ремонта и отделки с нашими красками и материалами.',
   });
   const [loading, setLoading] = useState(true);
   const { isAdmin, loading: roleLoading } = useUserRole();

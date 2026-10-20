@@ -63,11 +63,11 @@ export default function Product() {
   const [loading, setLoading] = useState(true);
   const productImage = product?.image || product?.media?.find((m) => m.type === 'image')?.url || null;
   useSeo({
-    title: product ? `${product.name} — купить в Душанбе` : !loading ? 'Страница не найдена' : undefined,
+    title: product ? `${product.name} — купить в Душанбе и Худжанде` : !loading ? 'Страница не найдена' : undefined,
     description: product
       ? toDescription(
           product.description,
-          `${product.name}${product.brand_info?.name ? ` от ${product.brand_info.name}` : ''} в магазине AFSONA. Цена ${product.price} сом., доставка по Душанбе.`
+          `${product.name}${product.brand_info?.name ? ` от ${product.brand_info.name}` : ''} в магазине AFSONA. Цена ${product.price} сом., магазины в Душанбе и Худжанде.`
         )
       : undefined,
     image: productImage,

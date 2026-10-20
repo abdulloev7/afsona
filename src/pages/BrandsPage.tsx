@@ -25,7 +25,7 @@ interface Brand {
 const BrandsPage = () => {
   useSeo({
     title: 'Бренды красок и материалов',
-    description: 'Бренды в магазине AFSONA: Alantex, Raduga, Soudal, San Marito, Decor и другие. Оригинальная продукция производителей с доставкой по Душанбе.',
+    description: 'Бренды в магазине AFSONA: Alantex, Raduga, Soudal, San Marito, Decor и другие. Оригинальная продукция производителей в магазинах в Душанбе и Худжанде.',
   });
   const [brands, setBrands] = useState<Brand[]>([]);
   const [loading, setLoading] = useState(true);

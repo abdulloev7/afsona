@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { IconShoppingBag, IconUser, IconLogin, IconLayoutDashboard, IconMenu2 } from "@tabler/icons-react";
+import { IconShoppingBag, IconUser, IconLogin, IconLayoutDashboard, IconMenu2, IconPhone, IconBrandWhatsapp } from "@tabler/icons-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -10,6 +10,7 @@ import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/s
 import afsona_logo_new from "@/assets/afsona-logo-new.jpg";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { STORE_PHONE_DISPLAY, STORE_PHONE_HREF, STORE_WHATSAPP_URL } from "@/lib/contacts";
 
 const Header = () => {
   const { user } = useAuth();
@@ -114,13 +115,7 @@ const Header = () => {
             />
           </Link>
           
-          <nav className="hidden md:flex items-center space-x-6">
-            <Link 
-              to="/"
-              className="text-foreground hover:text-primary transition-colors"
-            >
-              Главная
-            </Link>
+          <nav className="hidden md:flex items-center gap-5 lg:gap-6">
             <Link 
               to="/catalog"
               className="text-foreground hover:text-primary transition-colors"
@@ -167,7 +162,24 @@ const Header = () => {
             </Link>
           </nav>
 
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center gap-1">
+            <a
+              href={STORE_PHONE_HREF}
+              className="hidden xl:inline-flex items-center gap-1.5 px-2 font-semibold text-foreground hover:text-primary transition-colors whitespace-nowrap"
+            >
+              <IconPhone size={18} stroke={1.75} className="text-primary" />
+              {STORE_PHONE_DISPLAY}
+            </a>
+            <Button asChild variant="ghost" size="icon" className="xl:hidden hover:bg-primary/10">
+              <a href={STORE_PHONE_HREF} aria-label="Позвонить">
+                <IconPhone size={20} stroke={1.5} />
+              </a>
+            </Button>
+            <Button asChild variant="ghost" size="icon" className="hidden sm:inline-flex hover:bg-primary/10">
+              <a href={STORE_WHATSAPP_URL} target="_blank" rel="noopener noreferrer" aria-label="Написать в WhatsApp">
+                <IconBrandWhatsapp size={20} stroke={1.5} />
+              </a>
+            </Button>
             <SearchDialog />
             <Link to="/cart" className="relative">
               <Button variant="ghost" size="sm" className="hover:bg-primary/10">
@@ -208,12 +220,11 @@ const Header = () => {
                 </Link>
               </>
             ) : (
-              <Link to="/auth" className="hidden md:inline-flex">
-                <Button variant="default" size="sm">
-                  <IconLogin size={20} stroke={1.5} className="mr-1" />
-                  Войти
-                </Button>
-              </Link>
+              <Button asChild variant="ghost" size="icon" className="hidden md:inline-flex hover:bg-primary/10">
+                <Link to="/auth" aria-label="Войти" title="Войти">
+                  <IconUser size={20} stroke={1.5} />
+                </Link>
+              </Button>
             )}
 
             {/* Mobile burger */}
@@ -248,6 +259,18 @@ const Header = () => {
                   ))}
 
                   <div className="border-t border-border mt-4 pt-4 px-6 flex flex-col gap-2">
+                    <Button asChild className="w-full">
+                      <a href={STORE_PHONE_HREF}>
+                        <IconPhone size={18} stroke={1.5} className="mr-2" />
+                        {STORE_PHONE_DISPLAY}
+                      </a>
+                    </Button>
+                    <Button asChild variant="outline" className="w-full">
+                      <a href={STORE_WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
+                        <IconBrandWhatsapp size={18} stroke={1.5} className="mr-2" />
+                        Написать в WhatsApp
+                      </a>
+                    </Button>
                     {user ? (
                       <Link to="/profile?tab=orders">
                         <Button variant="outline" className="w-full justify-start relative">
@@ -262,7 +285,7 @@ const Header = () => {
                       </Link>
                     ) : (
                       <Link to="/auth">
-                        <Button variant="default" className="w-full">
+                        <Button variant="ghost" className="w-full">
                           <IconLogin size={18} stroke={1.5} className="mr-2" />
                           Войти
                         </Button>

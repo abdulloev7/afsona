@@ -6,28 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { 
-  MapPin, 
-  Phone, 
-  Clock, 
-  Mail, 
-  ExternalLink,
-  Send,
-  Loader2
-} from "lucide-react";
+import { Clock, Mail, Send, Loader2 } from "lucide-react";
 import { FaTelegram, FaWhatsapp, FaInstagram } from "react-icons/fa";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import StoreCard from "@/components/StoreCard";
+import { STORES, STORE_HOURS } from "@/lib/contacts";
 import { useSeo } from "@/hooks/useSeo";
 
 const ContactsPage = () => {
   useSeo({
     title: 'Контакты',
-    description: 'Контакты магазина AFSONA в Душанбе: телефон +992 927 55 79 19, адрес и время работы. Звоните или пишите, поможем подобрать краску.',
+    description: 'Магазины AFSONA в Худжанде (Джумъа бозор) и Душанбе (базар Кушониён): адреса, телефоны и время работы. Звоните или пишите, поможем подобрать краску.',
   });
   const { toast } = useToast();
   const [formData, setFormData] = useState({
@@ -112,87 +100,16 @@ const ContactsPage = () => {
             </p>
           </div>
 
-          {/* Contact Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            {/* Address Card */}
-            <Card className="text-center">
-              <CardHeader>
-                <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
-                  <MapPin className="w-8 h-8 text-primary-foreground" />
-                </div>
-                <CardTitle>Наш адрес</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <button className="cursor-pointer hover:opacity-80 transition-opacity">
-                      <p className="font-semibold mb-1">г. Худжанд</p>
-                      <p className="text-muted-foreground flex items-center justify-center gap-1">
-                        20-й микрорайон, 27
-                        <ExternalLink className="w-3 h-3" />
-                      </p>
-                    </button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="bg-background">
-                    <DropdownMenuItem 
-                      onClick={() => window.open('https://yandex.tj/maps/-/CLCdFG~t', '_blank')}
-                      className="cursor-pointer"
-                    >
-                      <MapPin className="w-4 h-4 mr-2" />
-                      Открыть в Яндекс.Картах
-                    </DropdownMenuItem>
-                    <DropdownMenuItem 
-                      onClick={() => window.open('https://maps.app.goo.gl/MEsrzn3JajJZfYk99', '_blank')}
-                      className="cursor-pointer"
-                    >
-                      <MapPin className="w-4 h-4 mr-2" />
-                      Открыть в Google Maps
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </CardContent>
-            </Card>
-
-            {/* Phone Card */}
-            <Card className="text-center">
-              <CardHeader>
-                <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Phone className="w-8 h-8 text-white" />
-                </div>
-                <CardTitle>Телефон</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <a href="tel:+992927557919" className="block">
-                  <p className="font-semibold text-lg hover:text-primary transition-colors">
-                    +992 927 55 79 19
-                  </p>
-                </a>
-                <p className="text-sm text-muted-foreground mt-2">Основной номер</p>
-              </CardContent>
-            </Card>
-
-            {/* Hours Card */}
-            <Card className="text-center">
-              <CardHeader>
-                <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Clock className="w-8 h-8 text-primary-foreground" />
-                </div>
-                <CardTitle>Режим работы</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <div>
-                    <p className="font-semibold">Пн - Сб:</p>
-                    <p className="text-muted-foreground">08:00 - 12:00, 13:00 - 18:00</p>
-                  </div>
-                  <div>
-                    <p className="font-semibold">Воскресенье:</p>
-                    <p className="text-muted-foreground">Выходной</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+          {/* Stores */}
+          <div className="grid md:grid-cols-2 gap-4 mb-4">
+            {STORES.map((store) => (
+              <StoreCard key={store.city} store={store} />
+            ))}
           </div>
+          <p className="flex items-center gap-2 text-sm text-foreground mb-12">
+            <Clock className="w-4 h-4 shrink-0 text-primary" />
+            Режим работы: {STORE_HOURS}, воскресенье выходной
+          </p>
 
           {/* Social Links */}
           <Card className="mb-12">
@@ -245,51 +162,8 @@ const ContactsPage = () => {
             </CardContent>
           </Card>
 
-          {/* Map and Contact Form */}
-          <div className="grid lg:grid-cols-2 gap-8 mb-12">
-            {/* Map */}
-            <Card className="overflow-hidden">
-              <CardHeader>
-                <CardTitle>Как нас найти</CardTitle>
-                <p className="text-muted-foreground">г. Худжанд, 20-й микрорайон, 27</p>
-              </CardHeader>
-              <CardContent className="p-0">
-                <div className="w-full h-[400px]">
-                  <iframe
-                    src="https://www.google.com/maps?q=40.2997405,69.6201071&z=17&output=embed"
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0 }}
-                    allowFullScreen
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    title="Карта расположения магазина Афсона"
-                  />
-                </div>
-                <div className="p-4 bg-muted/30">
-                  <div className="grid grid-cols-2 gap-4">
-                    <Button
-                      variant="outline"
-                      className="w-full"
-                      onClick={() => window.open('https://maps.app.goo.gl/MEsrzn3JajJZfYk99', '_blank')}
-                    >
-                      <MapPin className="w-4 h-4 mr-2" />
-                      Google Maps
-                    </Button>
-                    <Button
-                      variant="outline"
-                      className="w-full"
-                      onClick={() => window.open('https://yandex.tj/maps/-/CLCdFG~t', '_blank')}
-                    >
-                      <MapPin className="w-4 h-4 mr-2" />
-                      Яндекс.Карты
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Contact Form */}
+          {/* Contact Form */}
+          <div className="max-w-2xl mx-auto mb-12">
             <Card>
               <CardHeader>
                 <CardTitle>Напишите нам</CardTitle>
