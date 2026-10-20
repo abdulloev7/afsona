@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Palette, CheckCircle2 } from "lucide-react";
 
 const TintingPreview = () => {
@@ -13,12 +12,9 @@ const TintingPreview = () => {
   ];
 
   return (
-    <section className="py-16 px-4 bg-gradient-to-b from-background to-muted/30" id="tinting">
+    <section className="py-16 px-4 bg-background" id="tinting">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-10">
-          <Badge className="mb-4 bg-gradient-to-r from-red-500 via-yellow-500 via-green-500 via-blue-500 to-purple-500 text-white">
-            Профессиональный сервис
-          </Badge>
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-primary">
             Компьютерная колеровка
           </h2>

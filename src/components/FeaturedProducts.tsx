@@ -6,12 +6,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 const AVAILABLE_TAGS = ['Хит', 'Советуем', 'Новинка', 'Акция'] as const;
 
-const TAG_FILTER_STYLES: Record<string, { active: string; inactive: string }> = {
-  'Хит': { active: 'bg-primary text-white', inactive: 'bg-primary/20 text-primary hover:bg-primary/30' },
-  'Советуем': { active: 'bg-orange-500 text-white', inactive: 'bg-orange-100 text-orange-600 hover:bg-orange-200' },
-  'Новинка': { active: 'bg-purple-500 text-white', inactive: 'bg-purple-100 text-purple-600 hover:bg-purple-200' },
-  'Акция': { active: 'bg-yellow-400 text-yellow-900', inactive: 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' },
-};
+const TAG_FILTER_ACTIVE = 'bg-primary text-primary-foreground';
+const TAG_FILTER_INACTIVE = 'bg-card text-foreground ring-1 ring-inset ring-border hover:ring-primary/40';
 
 interface FeaturedProduct {
   id: string;
@@ -86,9 +82,7 @@ export function FeaturedProducts() {
           <button
             onClick={() => setSelectedTag(null)}
             className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-              selectedTag === null
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-muted text-muted-foreground hover:bg-muted/80'
+              selectedTag === null ? TAG_FILTER_ACTIVE : TAG_FILTER_INACTIVE
             }`}
           >
             Все
@@ -96,13 +90,12 @@ export function FeaturedProducts() {
           {AVAILABLE_TAGS.map((tag) => {
             const count = products.filter(p => p.tags?.includes(tag)).length;
             if (count === 0) return null;
-            const styles = TAG_FILTER_STYLES[tag];
             return (
               <button
                 key={tag}
                 onClick={() => setSelectedTag(tag)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  selectedTag === tag ? styles.active : styles.inactive
+                  selectedTag === tag ? TAG_FILTER_ACTIVE : TAG_FILTER_INACTIVE
                 }`}
               >
                 {tag}

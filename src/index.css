@@ -11,10 +11,10 @@ All colors MUST be HSL.
     --background: 50 100% 95%;
     --foreground: 155 45% 18%;
 
-    --card: 50 80% 97%;
+    --card: 0 0% 100%;
     --card-foreground: 155 45% 18%;
 
-    --popover: 50 80% 97%;
+    --popover: 0 0% 100%;
     --popover-foreground: 155 45% 18%;
 
     --primary: 149 43% 28%;
@@ -24,7 +24,7 @@ All colors MUST be HSL.
     --secondary-foreground: 149 43% 28%;
 
     --muted: 50 50% 89%;
-    --muted-foreground: 155 30% 40%;
+    --muted-foreground: 155 18% 30%;
 
     --accent: 149 43% 28%;
     --accent-foreground: 45 30% 96%;
@@ -38,10 +38,13 @@ All colors MUST be HSL.
 
     /* Custom AFSONA Brand Colors - Eco Green Theme */
     --brand-green: 149 43% 28%;
-    --brand-green-light: 149 43% 28%;
-    --brand-green-dark: 149 43% 28%;
+    --brand-green-light: 149 34% 38%;
+    --brand-green-dark: 151 48% 19%;
     --brand-cream: 50 100% 95%;
     --brand-cream-light: 50 80% 97%;
+
+    /* Sale label: the one warm accent outside the green family */
+    --sale: 12 65% 40%;
     
     /* Gradients */
     --gradient-primary: linear-gradient(135deg, hsl(var(--brand-green)), hsl(var(--brand-green-light)));
@@ -115,16 +118,32 @@ All colors MUST be HSL.
   }
 
   html {
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Golos Text', system-ui, sans-serif;
   }
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Golos Text', system-ui, sans-serif;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Commissioner', 'Golos Text', sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background-color: hsl(var(--primary) / 0.2);
+  }
+
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
   }
 
   button, input, select, textarea, label, span, p, div, a, li, td, th {
@@ -173,7 +192,7 @@ All colors MUST be HSL.
   }
   
   .prose blockquote {
-    @apply border-l-4 border-primary pl-4 italic my-4 text-muted-foreground;
+    @apply border-l-2 border-border pl-4 my-4 text-muted-foreground;
   }
   
   .prose code {

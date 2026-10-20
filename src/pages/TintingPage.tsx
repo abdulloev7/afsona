@@ -4,7 +4,6 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { 
   IconColorSwatch, 
   IconDeviceDesktopAnalytics, 
@@ -93,9 +92,6 @@ const TintingPage = () => {
         <div className="container mx-auto px-4">
           {/* Hero Section */}
           <div className="text-center mb-16">
-            <Badge className="mb-4 bg-gradient-to-r from-red-500 via-yellow-500 via-green-500 via-blue-500 to-purple-500 text-white">
-              Профессиональное оборудование
-            </Badge>
             <h1 className="text-4xl md:text-5xl font-bold mb-6 text-primary">
               Компьютерная колеровка краски
             </h1>
@@ -156,9 +152,9 @@ const TintingPage = () => {
                   Мы используем профессиональное колеровочное оборудование последнего поколения, которое обеспечивает
                   максимальную точность и скорость работы.
                 </p>
-                <div className="bg-muted/50 rounded-lg p-3 italic text-xs">
-                  💡 Точность смешивания до 0.01 грамма пигмента
-                </div>
+                <p className="text-sm font-medium text-foreground">
+                  Точность смешивания до 0,01 грамма пигмента
+                </p>
               </CardContent>
             </Card>
 
@@ -180,7 +176,7 @@ const TintingPage = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-primary/5 to-purple-500/5">
+            <Card>
               <CardHeader>
                 <CardTitle className="text-lg">Как это работает</CardTitle>
               </CardHeader>
@@ -235,22 +231,22 @@ const TintingPage = () => {
           </div>
 
           {/* CTA Section */}
-          <Card className="bg-gradient-to-r from-primary/10 via-purple-500/10 to-primary/10 border-2 border-primary/20">
+          <Card className="bg-primary text-primary-foreground border-0">
             <CardContent className="py-12 text-center">
               <h2 className="text-3xl font-bold mb-4">Готовы подобрать идеальный цвет?</h2>
-              <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
+              <p className="text-lg text-primary-foreground/85 mb-8 max-w-2xl mx-auto">
                 Приходите в наш магазин или позвоните нам для консультации. Мы поможем выбрать идеальный оттенок для
                 вашего проекта!
               </p>
               <div className="flex flex-wrap gap-4 justify-center">
                 <Link to="/contacts">
-                  <Button size="lg" className="gap-2">
+                  <Button size="lg" variant="secondary" className="gap-2">
                     <IconPalette className="w-5 h-5" stroke={1.5} />
                     Заказать колеровку
                   </Button>
                 </Link>
                 <Link to="/contacts">
-                  <Button size="lg" variant="outline" className="gap-2">
+                  <Button size="lg" variant="outline" className="gap-2 bg-transparent text-primary-foreground border-primary-foreground/40 hover:bg-primary-foreground/10 hover:text-primary-foreground">
                     <IconMessageChatbot className="w-5 h-5" stroke={1.5} />
                     Получить консультацию
                   </Button>
