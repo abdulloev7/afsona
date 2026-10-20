@@ -28,6 +28,7 @@ else if (cmd === "set") {
     { command: "start", description: "Главное меню" },
     { command: "catalog", description: "Каталог товаров" },
     { command: "address", description: "Адреса магазинов" },
+    { command: "lang", description: "Язык / Забон" },
   ] });
   await call("setMyDescription", { description:
     "Бот магазина красок «Афсона» (Душанбе, Худжанд): каталог товаров, адреса и быстрый заказ в WhatsApp." });

@@ -1,4 +1,5 @@
-// Хранилище бота: корзины, заказы и настройки в Supabase (миграция 20261020010000_telegram_bot_cart.sql).
+// Хранилище бота: корзины, заказы, настройки и язык клиента в Supabase
+// (миграции 20261020010000_telegram_bot_cart.sql и 20261020210000_bot_user_lang.sql).
 // Таблицы закрыты RLS, бот вызывает только RPC-функции с ключом, выведенным из токена бота.
 import crypto from "node:crypto";
 
@@ -31,5 +32,7 @@ export const store = {
   createOrder: (chat, customer) => rpc("bot_order_create", { p_chat: chat, p_customer: customer }),
   getSetting: (name) => rpc("bot_setting_get", { p_name: name }),
   setSetting: (name, value) => rpc("bot_setting_set", { p_name: name, p_value: value }),
+  getLang: (chat) => rpc("bot_lang_get", { p_chat: chat }),
+  setLang: (chat, lang) => rpc("bot_lang_set", { p_chat: chat, p_lang: lang }),
   takeSiteOrder: (orderId) => rpc("bot_site_order_take", { p_order_id: orderId }),
 };
