@@ -16,6 +16,7 @@ import { useToast } from '@/hooks/use-toast';
 import { ShoppingCart, Trash2, ArrowLeft } from 'lucide-react';
 import { z } from 'zod';
 import { GroupedCartItems } from '@/components/cart/GroupedCartItems';
+import { DELIVERY_TEXT } from "@/lib/facts";
 import { useSeo } from "@/hooks/useSeo";
 
 const orderSchema = z.object({
@@ -368,6 +369,9 @@ const Cart = () => {
                           placeholder="г. Худжанд, ул. ..."
                           required
                         />
+                        <p className="text-sm text-muted-foreground">
+                          {DELIVERY_TEXT}. Заказ на меньшую сумму можно забрать в магазине.
+                        </p>
                         {errors.deliveryAddress && (
                           <p className="text-sm text-destructive">{errors.deliveryAddress}</p>
                         )}
