@@ -109,7 +109,7 @@ const Header = () => {
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <Link to="/" className="flex items-center h-16">
+          <Link to="/" className="flex shrink-0 items-center h-16 mr-4 xl:mr-8">
             <img 
               src={afsona_logo_new} 
               alt={t("AFSONA - Эко материалы для ремонта")} 
@@ -117,7 +117,7 @@ const Header = () => {
             />
           </Link>
           
-          <nav className="hidden md:flex items-center gap-5 lg:gap-6">
+          <nav className="hidden xl:flex flex-1 items-center gap-4 xl:gap-6 whitespace-nowrap">
             <Link 
               to="/catalog"
               className="text-foreground hover:text-primary transition-colors"
@@ -164,16 +164,16 @@ const Header = () => {
             </Link>
           </nav>
 
-          <div className="flex items-center gap-1">
-            <LanguageSwitcher className="hidden sm:flex mr-1" />
+          <div className="flex shrink-0 items-center gap-1 ml-4">
+            <LanguageSwitcher className="hidden sm:inline-flex" />
             <a
               href={STORE_PHONE_HREF}
-              className="hidden xl:inline-flex items-center gap-1.5 px-2 font-semibold text-foreground hover:text-primary transition-colors whitespace-nowrap"
+              className="hidden 2xl:inline-flex items-center gap-1.5 px-2 font-semibold text-foreground hover:text-primary transition-colors whitespace-nowrap"
             >
               <IconPhone size={18} stroke={1.75} className="text-primary" />
               {STORE_PHONE_DISPLAY}
             </a>
-            <Button asChild variant="ghost" size="icon" className="xl:hidden hover:bg-primary/10">
+            <Button asChild variant="ghost" size="icon" className="2xl:hidden hover:bg-primary/10">
               <a href={STORE_PHONE_HREF} aria-label={t("Позвонить")}>
                 <IconPhone size={20} stroke={1.5} />
               </a>
@@ -201,21 +201,19 @@ const Header = () => {
             {user ? (
               <>
                 {isAdmin && (
-                  <Button asChild variant="ghost" size="sm" className="hover:bg-primary/10">
-                    <Link to="/admin" aria-label={t("Админ")}>
-                      <IconLayoutDashboard size={20} stroke={1.5} className="mr-1" />
-                      <span className="hidden md:inline">{t("Админ")}</span>
+                  <Button asChild variant="ghost" size="icon" className="hidden sm:inline-flex hover:bg-primary/10">
+                    <Link to="/admin" aria-label={t("Админ")} title={t("Админ")}>
+                      <IconLayoutDashboard size={20} stroke={1.5} />
                     </Link>
                   </Button>
                 )}
-                <Button asChild variant="ghost" size="sm" className="relative hidden md:inline-flex hover:bg-primary/10">
-                  <Link to="/profile?tab=orders">
-                    <IconUser size={20} stroke={1.5} className="mr-1" />
-                    {t("Профиль")}
+                <Button asChild variant="ghost" size="icon" className="relative hidden xl:inline-flex hover:bg-primary/10">
+                  <Link to="/profile?tab=orders" aria-label={t("Профиль")} title={t("Профиль")}>
+                    <IconUser size={20} stroke={1.5} />
                     {completedOrdersCount > 0 && (
                       <Badge 
                         variant="destructive" 
-                        className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
+                        className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
                       >
                         {completedOrdersCount}
                       </Badge>
@@ -224,7 +222,7 @@ const Header = () => {
                 </Button>
               </>
             ) : (
-              <Button asChild variant="ghost" size="icon" className="hidden md:inline-flex hover:bg-primary/10">
+              <Button asChild variant="ghost" size="icon" className="hidden xl:inline-flex hover:bg-primary/10">
                 <Link to="/auth" aria-label={t("Войти")} title={t("Войти")}>
                   <IconUser size={20} stroke={1.5} />
                 </Link>
@@ -234,7 +232,7 @@ const Header = () => {
             {/* Mobile burger */}
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="md:hidden" aria-label={t("Открыть меню")}>
+                <Button variant="ghost" size="icon" className="xl:hidden" aria-label={t("Открыть меню")}>
                   <IconMenu2 size={24} stroke={1.5} />
                 </Button>
               </SheetTrigger>
@@ -250,6 +248,7 @@ const Header = () => {
                     ...(isAdmin ? [{ to: "/portfolio", label: t("Портфолио") }] : []),
                     { to: "/about", label: t("О нас") },
                     { to: "/contacts", label: t("Контакты") },
+                    ...(isAdmin ? [{ to: "/admin", label: t("Админ") }] : []),
                   ].map((item) => (
                     <Link
                       key={item.to}
