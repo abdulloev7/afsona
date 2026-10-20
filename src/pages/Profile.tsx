@@ -12,6 +12,7 @@ import Footer from '@/components/Footer';
 import { useToast } from '@/hooks/use-toast';
 import { Package, User, ShoppingBag } from 'lucide-react';
 import { useSeo } from "@/hooks/useSeo";
+import { getOrderStatusLabel } from "@/lib/orderStatus";
 
 interface Profile {
   display_name?: string;
@@ -156,17 +157,6 @@ const Profile = () => {
     }
   };
 
-  const getStatusLabel = (status: string) => {
-    const statusMap: { [key: string]: string } = {
-      pending: 'В обработке',
-      processing: 'Обрабатывается',
-      shipped: 'Отправлен',
-      delivered: 'Доставлен',
-      cancelled: 'Отменен'
-    };
-    return statusMap[status] || status;
-  };
-
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('ru-RU', {
       year: 'numeric',
@@ -296,7 +286,7 @@ const Profile = () => {
                                   {order.total_amount.toLocaleString('ru-RU')} сом.
                                 </div>
                                 <div className="text-sm text-muted-foreground">
-                                  {getStatusLabel(order.status)}
+                                  {getOrderStatusLabel(order.status)}
                                 </div>
                               </div>
                             </div>

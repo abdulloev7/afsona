@@ -24,6 +24,7 @@ import PortfolioManagement from '@/components/admin/PortfolioManagement';
 import { useToast } from '@/hooks/use-toast';
 import { Package, Clock, CheckCircle, XCircle, Bell, ArrowLeft } from 'lucide-react';
 import { useSeo } from "@/hooks/useSeo";
+import { ORDER_STATUS_LABELS, getOrderStatusLabel } from "@/lib/orderStatus";
 
 interface Order {
   id: string;
@@ -182,7 +183,7 @@ const Admin = () => {
 
       toast({
         title: "Статус обновлен",
-        description: `Статус заказа изменен на "${getStatusLabel(newStatus)}"`,
+        description: `Статус заказа изменен на "${getOrderStatusLabel(newStatus)}"`,
       });
 
       fetchOrders();
@@ -200,6 +201,8 @@ const Admin = () => {
     const variants: Record<string, { variant: "default" | "secondary" | "destructive" | "outline"; icon: any }> = {
       pending: { variant: "outline", icon: Clock },
       processing: { variant: "default", icon: Package },
+      shipped: { variant: "default", icon: Package },
+      delivered: { variant: "secondary", icon: CheckCircle },
       completed: { variant: "secondary", icon: CheckCircle },
       cancelled: { variant: "destructive", icon: XCircle },
     };
@@ -210,19 +213,9 @@ const Admin = () => {
     return (
       <Badge variant={config.variant} className="gap-1">
         <Icon className="h-3 w-3" />
-        {getStatusLabel(status)}
+        {getOrderStatusLabel(status)}
       </Badge>
     );
-  };
-
-  const getStatusLabel = (status: string) => {
-    const labels: Record<string, string> = {
-      pending: 'Ожидает',
-      processing: 'В обработке',
-      completed: 'Завершен',
-      cancelled: 'Отменен',
-    };
-    return labels[status] || status;
   };
 
   const clearNewOrdersCount = () => {
@@ -320,10 +313,9 @@ const Admin = () => {
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="pending">Ожидает</SelectItem>
-                              <SelectItem value="processing">В обработке</SelectItem>
-                              <SelectItem value="completed">Завершен</SelectItem>
-                              <SelectItem value="cancelled">Отменен</SelectItem>
+                              {Object.entries(ORDER_STATUS_LABELS).map(([value, label]) => (
+                                <SelectItem key={value} value={value}>{label}</SelectItem>
+                              ))}
                             </SelectContent>
                           </Select>
                         </div>

@@ -10,7 +10,7 @@ const SOCIALS = [
   { href: "https://t.me/afsona_build", label: "Telegram", Icon: FaTelegram },
   { href: STORE_WHATSAPP_URL, label: "WhatsApp", Icon: FaWhatsapp },
   { href: "https://www.instagram.com/afsona.build/", label: "Instagram", Icon: FaInstagram },
-  { href: "mailto:info@afsona.com.tj", label: "Email", Icon: Mail },
+  { href: "mailto:info@afsona.com.tj", label: "Почта", Icon: Mail },
 ];
 
 // Address, phones, hours and a map for one store at a time, with a switch

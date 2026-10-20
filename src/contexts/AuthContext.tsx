@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { errorMessage } from "@/lib/errorMessage";
 
 interface AuthContextType {
   user: User | null;
@@ -62,7 +63,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (error) {
       toast({
         title: "Ошибка регистрации",
-        description: error.message,
+        description: errorMessage(error),
         variant: "destructive",
       });
     } else {
@@ -84,7 +85,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (error) {
       toast({
         title: "Ошибка входа",
-        description: error.message,
+        description: errorMessage(error),
         variant: "destructive",
       });
     } else {
@@ -102,7 +103,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (error) {
       toast({
         title: "Ошибка выхода",
-        description: error.message,
+        description: errorMessage(error),
         variant: "destructive",
       });
     } else {

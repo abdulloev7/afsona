@@ -40,6 +40,7 @@ import { z } from "zod";
 import RichTextEditor from "./RichTextEditor";
 import MediaUploader from "./MediaUploader";
 import NewsPreview from "./NewsPreview";
+import { errorMessage } from "@/lib/errorMessage";
 
 interface MediaItem {
   type: 'image' | 'video';
@@ -240,7 +241,7 @@ const NewsManagement = () => {
       } else {
         toast({
           title: "Ошибка",
-          description: error.message,
+          description: errorMessage(error),
           variant: "destructive",
         });
       }

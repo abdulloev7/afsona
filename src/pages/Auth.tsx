@@ -105,7 +105,7 @@ const Auth = () => {
                 <CardContent>
                   <form onSubmit={handleSignIn} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="signin-email">Email</Label>
+                      <Label htmlFor="signin-email">Эл. почта</Label>
                       <Input
                         id="signin-email"
                         type="email"
@@ -149,7 +149,7 @@ const Auth = () => {
                 <CardContent>
                   <form onSubmit={handleSignUp} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="signup-email">Email</Label>
+                      <Label htmlFor="signup-email">Эл. почта</Label>
                       <Input
                         id="signup-email"
                         type="email"

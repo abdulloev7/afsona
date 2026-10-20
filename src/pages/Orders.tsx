@@ -10,6 +10,7 @@ import Footer from '@/components/Footer';
 import { useToast } from '@/hooks/use-toast';
 import { Package, Clock, CheckCircle, XCircle, ArrowLeft } from 'lucide-react';
 import { useSeo } from "@/hooks/useSeo";
+import { getOrderStatusLabel } from "@/lib/orderStatus";
 
 interface Order {
   id: string;
@@ -94,11 +95,13 @@ const Orders = () => {
   };
 
   const getStatusBadge = (status: string) => {
-    const variants: Record<string, { variant: "default" | "secondary" | "destructive" | "outline"; icon: any; label: string }> = {
-      pending: { variant: "outline", icon: Clock, label: "Ожидает" },
-      processing: { variant: "default", icon: Package, label: "В обработке" },
-      completed: { variant: "secondary", icon: CheckCircle, label: "Завершен" },
-      cancelled: { variant: "destructive", icon: XCircle, label: "Отменен" },
+    const variants: Record<string, { variant: "default" | "secondary" | "destructive" | "outline"; icon: any }> = {
+      pending: { variant: "outline", icon: Clock },
+      processing: { variant: "default", icon: Package },
+      shipped: { variant: "default", icon: Package },
+      delivered: { variant: "secondary", icon: CheckCircle },
+      completed: { variant: "secondary", icon: CheckCircle },
+      cancelled: { variant: "destructive", icon: XCircle },
     };
 
     const config = variants[status] || variants.pending;
@@ -107,7 +110,7 @@ const Orders = () => {
     return (
       <Badge variant={config.variant} className="gap-1">
         <Icon className="h-3 w-3" />
-        {config.label}
+        {getOrderStatusLabel(status)}
       </Badge>
     );
   };
