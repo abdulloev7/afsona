@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -46,7 +46,9 @@ const groupByCategory = (results: SearchResult[]): GroupedResults => {
   }, {} as GroupedResults);
 };
 
-export function SearchDialog() {
+// The trigger looks like a search field: people look for a box to type in,
+// not for a magnifier icon. Typing happens in the dialog.
+export function SearchDialog({ className }: { className?: string }) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -163,9 +165,20 @@ export function SearchDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label={t("Поиск по товарам")}>
-          <Search className="h-5 w-5" />
-        </Button>
+        <button
+          type="button"
+          aria-label={t("Поиск по товарам")}
+          className={cn(
+            "flex h-11 min-w-0 items-center gap-2.5 rounded-md border border-input bg-card px-3.5 text-left text-[15px] text-muted-foreground transition-colors hover:border-primary/60",
+            className,
+          )}
+        >
+          <Search size={20} strokeWidth={1.75} className="shrink-0 text-foreground" aria-hidden="true" />
+          <span className="truncate">{t("Краска, грунтовка или бренд")}</span>
+          <kbd className="ml-auto hidden shrink-0 rounded border border-border px-1.5 py-0.5 font-sans text-xs text-muted-foreground lg:inline">
+            Ctrl K
+          </kbd>
+        </button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl p-0">
         <Command shouldFilter={false}>

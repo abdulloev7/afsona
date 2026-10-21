@@ -20,7 +20,7 @@ const Index = () => {
   return (
     <div className="relative z-10 w-full">
       <Header />
-      <main className="pt-16">
+      <main className="pt-[var(--header-h)]">
         <Hero />
         <StoreIntro />
         <div>

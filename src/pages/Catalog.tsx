@@ -94,7 +94,7 @@ const Catalog = () => {
     return (
       <div className="min-h-screen bg-background">
         <Header />
-        <main className="pt-24 pb-16">
+        <main className="pt-[calc(var(--header-h)+2rem)] pb-16">
           <div className="container mx-auto px-4">
             <Skeleton className="h-10 w-48 mb-3" />
             <Skeleton className="h-5 w-72 mb-10" />
@@ -113,7 +113,7 @@ const Catalog = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main className="pt-24 pb-16">
+      <main className="pt-[calc(var(--header-h)+2rem)] pb-16">
         <div className="container mx-auto px-4">
           <div className="mb-8">
             <h1 className="text-3xl md:text-4xl font-semibold text-foreground mb-2">{t("Каталог")}</h1>

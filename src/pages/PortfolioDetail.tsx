@@ -122,7 +122,7 @@ const PortfolioDetail = () => {
     return (
       <div className="min-h-screen bg-background flex flex-col">
         <Header />
-        <main className="flex-1 pt-24 pb-12">
+        <main className="flex-1 pt-[calc(var(--header-h)+2rem)] pb-12">
           <div className="container mx-auto px-4 max-w-4xl">
             <Skeleton className="h-8 w-64 mb-4" />
             <Skeleton className="h-[400px] w-full mb-6" />
@@ -143,7 +143,7 @@ const PortfolioDetail = () => {
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
       
-      <main className="flex-1 pt-24 pb-12">
+      <main className="flex-1 pt-[calc(var(--header-h)+2rem)] pb-12">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             {/* Breadcrumbs */}

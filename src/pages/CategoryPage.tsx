@@ -222,7 +222,7 @@ const CategoryPage = () => {
     return (
       <div className="min-h-screen bg-background">
         <Header />
-        <main className="pt-24 pb-16">
+        <main className="pt-[calc(var(--header-h)+2rem)] pb-16">
           <div className="container mx-auto px-4">
             <Skeleton className="h-8 w-48 mb-6" />
             <Skeleton className="h-10 w-64 mb-2" />
@@ -243,7 +243,7 @@ const CategoryPage = () => {
     return (
       <div className="min-h-screen bg-background">
         <Header />
-        <main className="pt-24 pb-16">
+        <main className="pt-[calc(var(--header-h)+2rem)] pb-16">
           <div className="container mx-auto px-4 text-center py-16">
             <h1 className="text-2xl font-bold mb-4">{t("Категория не найдена")}</h1>
             <Button onClick={() => navigate('/catalog')}>{t("Вернуться в каталог")}</Button>
@@ -257,7 +257,7 @@ const CategoryPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main className="pt-24 pb-16">
+      <main className="pt-[calc(var(--header-h)+2rem)] pb-16">
         <div className="container mx-auto px-4">
           {/* Header */}
           <div className="mb-6">

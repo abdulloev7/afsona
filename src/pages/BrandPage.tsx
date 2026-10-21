@@ -113,7 +113,7 @@ const BrandPage = () => {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
-        <main className="flex-grow">
+        <main className="flex-grow pt-[var(--header-h)]">
           <div className="max-w-7xl mx-auto px-4 py-12">
             <Skeleton className="h-64 w-full mb-8" />
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -135,7 +135,7 @@ const BrandPage = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-grow bg-background/95">
+      <main className="flex-grow pt-[var(--header-h)] bg-background/95">
         {/* Brand Hero Section */}
         <section className="py-12 px-4 border-b">
           <div className="max-w-7xl mx-auto">

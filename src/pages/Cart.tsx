@@ -225,7 +225,7 @@ const Cart = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main className="flex-1 py-16">
+      <main className="flex-1 pt-[calc(var(--header-h)+2rem)] pb-16">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-8">
             <Button variant="ghost" className="-ml-4" onClick={() => navigate('/')}>

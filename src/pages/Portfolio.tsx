@@ -101,7 +101,7 @@ const Portfolio = () => {
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
       
-      <main className="flex-1 pt-24 pb-12">
+      <main className="flex-1 pt-[calc(var(--header-h)+2rem)] pb-12">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">

@@ -56,7 +56,7 @@ const News = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-1 container mx-auto px-4 pt-24 pb-12">
+      <main className="flex-1 container mx-auto px-4 pt-[calc(var(--header-h)+2rem)] pb-12">
         <h1 className="text-4xl font-bold mb-8">{t("Новости")}</h1>
 
         {loading ? (
