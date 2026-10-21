@@ -8,6 +8,8 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
+    /* Height of the fixed header; Header.tsx keeps it exact at runtime. */
+    --header-h: 115px;
     --background: 50 100% 95%;
     --foreground: 155 45% 18%;
 
@@ -181,4 +183,11 @@ All colors MUST be HSL.
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+@media (min-width: 640px) {
+  :root { --header-h: 73px; }
+}
+@media (min-width: 1280px) {
+  :root { --header-h: 116px; }
 }

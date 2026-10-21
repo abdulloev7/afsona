@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { IconShoppingBag, IconUser, IconLogin, IconLayoutDashboard, IconMenu2, IconPhone, IconBrandWhatsapp } from "@tabler/icons-react";
+import { LayoutDashboard, LayoutGrid, LogIn, Menu, Phone, ShoppingBag, Truck, UserRound } from "lucide-react";
+import { FaWhatsapp } from "react-icons/fa";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -9,10 +10,38 @@ import { SearchDialog } from "@/components/SearchDialog";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import afsona_logo_new from "@/assets/afsona-logo-new.jpg";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { STORE_PHONE_DISPLAY, STORE_PHONE_HREF, STORE_WHATSAPP_URL } from "@/lib/contacts";
-import { t } from "@/i18n";
+import { DELIVERY_MIN_ORDER } from "@/lib/facts";
+import { NUMBER_LOCALE, t } from "@/i18n";
+import { cn } from "@/lib/utils";
+
+// Header actions are an icon with a visible label under it: a lone glyph makes
+// people guess, a label doesn't. One icon set (lucide), one stroke width.
+const ICON = { size: 22, strokeWidth: 1.75, "aria-hidden": true } as const;
+const actionClass =
+  "relative inline-flex h-[52px] min-w-[52px] shrink-0 flex-col items-center justify-center gap-1 rounded-md px-1.5 text-foreground transition-colors hover:bg-primary/10 hover:text-primary sm:min-w-[56px]";
+const ActionLabel = ({ children }: { children: React.ReactNode }) => (
+  <span className="text-xs font-medium leading-none whitespace-nowrap">{children}</span>
+);
+const CountBadge = ({ count }: { count: number }) => (
+  <span
+    aria-hidden="true"
+    className="absolute -right-2.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-xs font-bold leading-none text-primary-foreground tabular-nums ring-2 ring-background"
+  >
+    {count}
+  </span>
+);
+
+const NAV_LINKS = [
+  { to: "/brands", label: "Бренды" },
+  { to: "/tinting", label: "Колеровка" },
+  { to: "/news", label: "Новости" },
+  { to: "/portfolio", label: "Портфолио", adminOnly: true },
+  { to: "/about", label: "О нас" },
+  { to: "/contacts", label: "Контакты" },
+];
 
 const Header = () => {
   const { user } = useAuth();
@@ -105,201 +134,202 @@ const Header = () => {
     };
   }, [user]);
 
+  const headerRef = useRef<HTMLElement>(null);
+
+  // Pages pad their top by --header-h; the header changes height with the
+  // breakpoint (two rows on phones and wide screens, one in between).
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el) return;
+    const update = () => document.documentElement.style.setProperty("--header-h", `${el.offsetHeight}px`);
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const isActive = (to: string) => location.pathname === to || location.pathname.startsWith(`${to}/`);
+
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          <Link to="/" className="flex shrink-0 items-center h-16 mr-4 xl:mr-8">
-            <img 
-              src={afsona_logo_new} 
-              alt={t("AFSONA - Эко материалы для ремонта")} 
-              className="h-16 w-auto object-contain"
+    <header ref={headerRef} className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
+      <div className="container mx-auto px-3 sm:px-4">
+        <div className="flex flex-wrap items-center gap-x-1 sm:flex-nowrap sm:gap-x-3 xl:gap-x-4 min-h-[60px] sm:h-[72px]">
+          <Link to="/" className="flex shrink-0 items-center mr-auto sm:mr-1">
+            <img
+              src={afsona_logo_new}
+              alt={t("AFSONA - Эко материалы для ремонта")}
+              className="h-[52px] sm:h-16 w-auto object-contain"
             />
           </Link>
-          
-          <nav className="hidden xl:flex flex-1 items-center gap-4 xl:gap-6 whitespace-nowrap">
-            <Link 
-              to="/catalog"
-              className="text-foreground hover:text-primary transition-colors"
-            >
+
+          <Button asChild size="lg" className="hidden xl:inline-flex h-11 shrink-0 gap-2 px-5 text-[15px] font-semibold">
+            <Link to="/catalog">
+              <LayoutGrid size={20} strokeWidth={2} aria-hidden="true" />
               {t("Каталог")}
             </Link>
-            <Link 
-              to="/brands"
-              className="text-foreground hover:text-primary transition-colors"
-            >
-              {t("Бренды")}
-            </Link>
-            <Link 
-              to="/tinting"
-              className="text-foreground hover:text-primary transition-colors"
-            >
-              {t("Колеровка")}
-            </Link>
-            <Link 
-              to="/news"
-              className="text-foreground hover:text-primary transition-colors"
-            >
-              {t("Новости")}
-            </Link>
-            {isAdmin && (
-              <Link 
-                to="/portfolio"
-                className="text-foreground hover:text-primary transition-colors"
-              >
-                {t("Портфолио")}
-              </Link>
-            )}
-            <Link 
-              to="/about"
-              className="text-foreground hover:text-primary transition-colors"
-            >
-              {t("О нас")}
-            </Link>
-            <Link 
-              to="/contacts"
-              className="text-foreground hover:text-primary transition-colors"
-            >
-              {t("Контакты")}
-            </Link>
-          </nav>
+          </Button>
 
-          <div className="flex shrink-0 items-center gap-1 ml-4">
-            <LanguageSwitcher className="hidden sm:inline-flex" />
+          {/* On phones the search field wraps onto its own full-width row. */}
+          <SearchDialog className="order-last mb-2.5 basis-full sm:order-none sm:mb-0 sm:basis-auto sm:flex-1" />
+
+          <div className="hidden md:flex shrink-0 flex-col gap-0.5 px-1">
             <a
               href={STORE_PHONE_HREF}
-              className="hidden 2xl:inline-flex items-center gap-1.5 px-2 font-semibold text-foreground hover:text-primary transition-colors whitespace-nowrap"
+              className="inline-flex items-center gap-1.5 text-base font-semibold tabular-nums whitespace-nowrap text-foreground hover:text-primary transition-colors"
             >
-              <IconPhone size={18} stroke={1.75} className="text-primary" />
+              <Phone size={18} strokeWidth={2} className="text-primary" aria-hidden="true" />
               {STORE_PHONE_DISPLAY}
             </a>
-            <Button asChild variant="ghost" size="icon" className="2xl:hidden hover:bg-primary/10">
-              <a href={STORE_PHONE_HREF} aria-label={t("Позвонить")}>
-                <IconPhone size={20} stroke={1.5} />
-              </a>
-            </Button>
-            <Button asChild variant="ghost" size="icon" className="hidden sm:inline-flex hover:bg-primary/10">
-              <a href={STORE_WHATSAPP_URL} target="_blank" rel="noopener noreferrer" aria-label={t("Написать в WhatsApp")}>
-                <IconBrandWhatsapp size={20} stroke={1.5} />
-              </a>
-            </Button>
-            <SearchDialog />
-            <Button asChild variant="ghost" size="icon" className="relative hover:bg-primary/10">
-              <Link to="/cart" aria-label={cartCount > 0 ? t("Корзина, товаров: {count}", { count: cartCount }) : t("Корзина")}>
-                <IconShoppingBag size={20} stroke={1.5} />
-                {cartCount > 0 && (
-                  <Badge 
-                    variant="destructive" 
-                    className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
-                    aria-hidden="true"
-                  >
-                    {cartCount}
-                  </Badge>
-                )}
-              </Link>
-            </Button>
-            {user ? (
-              <>
-                {isAdmin && (
-                  <Button asChild variant="ghost" size="icon" className="hidden sm:inline-flex hover:bg-primary/10">
-                    <Link to="/admin" aria-label={t("Админ")} title={t("Админ")}>
-                      <IconLayoutDashboard size={20} stroke={1.5} />
-                    </Link>
-                  </Button>
-                )}
-                <Button asChild variant="ghost" size="icon" className="relative hidden xl:inline-flex hover:bg-primary/10">
-                  <Link to="/profile?tab=orders" aria-label={t("Профиль")} title={t("Профиль")}>
-                    <IconUser size={20} stroke={1.5} />
-                    {completedOrdersCount > 0 && (
-                      <Badge 
-                        variant="destructive" 
-                        className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
-                      >
-                        {completedOrdersCount}
-                      </Badge>
-                    )}
-                  </Link>
-                </Button>
-              </>
-            ) : (
-              <Button asChild variant="ghost" size="icon" className="hidden xl:inline-flex hover:bg-primary/10">
-                <Link to="/auth" aria-label={t("Войти")} title={t("Войти")}>
-                  <IconUser size={20} stroke={1.5} />
-                </Link>
-              </Button>
-            )}
-
-            {/* Mobile burger */}
-            <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="xl:hidden" aria-label={t("Открыть меню")}>
-                  <IconMenu2 size={24} stroke={1.5} />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-72 p-0">
-                <SheetTitle className="sr-only">{t("Меню навигации")}</SheetTitle>
-                <nav className="flex flex-col py-6">
-                  {[
-                    { to: "/", label: t("Главная") },
-                    { to: "/catalog", label: t("Каталог") },
-                    { to: "/brands", label: t("Бренды") },
-                    { to: "/tinting", label: t("Колеровка") },
-                    { to: "/news", label: t("Новости") },
-                    ...(isAdmin ? [{ to: "/portfolio", label: t("Портфолио") }] : []),
-                    { to: "/about", label: t("О нас") },
-                    { to: "/contacts", label: t("Контакты") },
-                    ...(isAdmin ? [{ to: "/admin", label: t("Админ") }] : []),
-                  ].map((item) => (
-                    <Link
-                      key={item.to}
-                      to={item.to}
-                      className={`px-6 py-3 text-base transition-colors hover:bg-accent ${
-                        location.pathname === item.to ? "text-primary font-semibold bg-accent/50" : "text-foreground"
-                      }`}
-                    >
-                      {item.label}
-                    </Link>
-                  ))}
-
-                  <div className="border-t border-border mt-4 pt-4 px-6 flex flex-col gap-2">
-                    <LanguageSwitcher variant="full" className="mb-2" />
-                    <Button asChild className="w-full">
-                      <a href={STORE_PHONE_HREF}>
-                        <IconPhone size={18} stroke={1.5} className="mr-2" />
-                        {STORE_PHONE_DISPLAY}
-                      </a>
-                    </Button>
-                    <Button asChild variant="outline" className="w-full">
-                      <a href={STORE_WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
-                        <IconBrandWhatsapp size={18} stroke={1.5} className="mr-2" />
-                        {t("Написать в WhatsApp")}
-                      </a>
-                    </Button>
-                    {user ? (
-                      <Link to="/profile?tab=orders">
-                        <Button variant="outline" className="w-full justify-start relative">
-                          <IconUser size={18} stroke={1.5} className="mr-2" />
-                          {t("Профиль")}
-                          {completedOrdersCount > 0 && (
-                            <Badge variant="destructive" className="ml-auto h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs">
-                              {completedOrdersCount}
-                            </Badge>
-                          )}
-                        </Button>
-                      </Link>
-                    ) : (
-                      <Link to="/auth">
-                        <Button variant="ghost" className="w-full">
-                          <IconLogin size={18} stroke={1.5} className="mr-2" />
-                          {t("Войти")}
-                        </Button>
-                      </Link>
-                    )}
-                  </div>
-                </nav>
-              </SheetContent>
-            </Sheet>
+            <span className="pl-6 text-xs text-muted-foreground whitespace-nowrap">
+              {t("Пн–Сб 08:00–18:00")}
+              <span className="hidden xl:inline">
+                {" · "}
+                <a
+                  href={STORE_WHATSAPP_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary underline underline-offset-2 hover:text-foreground"
+                >
+                  WhatsApp
+                </a>
+              </span>
+            </span>
           </div>
+
+          <a href={STORE_PHONE_HREF} className={cn(actionClass, "md:hidden")}>
+            <Phone {...ICON} />
+            <ActionLabel>{t("Звонок")}</ActionLabel>
+          </a>
+
+          {user && isAdmin && (
+            <Link to="/admin" className={cn(actionClass, "hidden xl:inline-flex")}>
+              <LayoutDashboard {...ICON} />
+              <ActionLabel>{t("Админ")}</ActionLabel>
+            </Link>
+          )}
+          {user ? (
+            <Link to="/profile?tab=orders" className={cn(actionClass, "hidden xl:inline-flex")}>
+              <span className="relative inline-flex">
+                <UserRound {...ICON} />
+                {completedOrdersCount > 0 && <CountBadge count={completedOrdersCount} />}
+              </span>
+              <ActionLabel>{t("Профиль")}</ActionLabel>
+            </Link>
+          ) : (
+            <Link to="/auth" className={cn(actionClass, "hidden xl:inline-flex")}>
+              <UserRound {...ICON} />
+              <ActionLabel>{t("Войти")}</ActionLabel>
+            </Link>
+          )}
+
+          <Link
+            to="/cart"
+            className={actionClass}
+            aria-label={cartCount > 0 ? t("Корзина, товаров: {count}", { count: cartCount }) : undefined}
+          >
+            <span className="relative inline-flex">
+              <ShoppingBag {...ICON} />
+              {cartCount > 0 && <CountBadge count={cartCount} />}
+            </span>
+            <ActionLabel>{t("Корзина")}</ActionLabel>
+          </Link>
+
+          {/* Mobile burger */}
+          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+            <SheetTrigger asChild>
+              <button type="button" className={cn(actionClass, "xl:hidden")} aria-label={t("Открыть меню")}>
+                <Menu {...ICON} />
+                <ActionLabel>{t("Меню")}</ActionLabel>
+              </button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-72 p-0">
+              <SheetTitle className="sr-only">{t("Меню навигации")}</SheetTitle>
+              <nav className="flex flex-col py-6">
+                {[
+                  { to: "/", label: t("Главная") },
+                  { to: "/catalog", label: t("Каталог") },
+                  { to: "/brands", label: t("Бренды") },
+                  { to: "/tinting", label: t("Колеровка") },
+                  { to: "/news", label: t("Новости") },
+                  ...(isAdmin ? [{ to: "/portfolio", label: t("Портфолио") }] : []),
+                  { to: "/about", label: t("О нас") },
+                  { to: "/contacts", label: t("Контакты") },
+                  ...(isAdmin ? [{ to: "/admin", label: t("Админ") }] : []),
+                ].map((item) => (
+                  <Link
+                    key={item.to}
+                    to={item.to}
+                    className={`px-6 py-3 text-base transition-colors hover:bg-accent ${
+                      location.pathname === item.to ? "text-primary font-semibold bg-accent/50" : "text-foreground"
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+
+                <div className="border-t border-border mt-4 pt-4 px-6 flex flex-col gap-2">
+                  <LanguageSwitcher variant="full" className="mb-2" />
+                  <Button asChild className="w-full">
+                    <a href={STORE_PHONE_HREF}>
+                      <Phone size={18} strokeWidth={1.75} className="mr-2" aria-hidden="true" />
+                      {STORE_PHONE_DISPLAY}
+                    </a>
+                  </Button>
+                  <Button asChild variant="outline" className="w-full">
+                    <a href={STORE_WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
+                      <FaWhatsapp size={18} className="mr-2" aria-hidden="true" />
+                      {t("Написать в WhatsApp")}
+                    </a>
+                  </Button>
+                  {user ? (
+                    <Button asChild variant="outline" className="w-full justify-start relative">
+                      <Link to="/profile?tab=orders">
+                        <UserRound size={18} strokeWidth={1.75} className="mr-2" aria-hidden="true" />
+                        {t("Профиль")}
+                        {completedOrdersCount > 0 && (
+                          <Badge className="ml-auto h-5 min-w-5 rounded-full px-1 flex items-center justify-center text-xs">
+                            {completedOrdersCount}
+                          </Badge>
+                        )}
+                      </Link>
+                    </Button>
+                  ) : (
+                    <Button asChild variant="ghost" className="w-full">
+                      <Link to="/auth">
+                        <LogIn size={18} strokeWidth={1.75} className="mr-2" aria-hidden="true" />
+                        {t("Войти")}
+                      </Link>
+                    </Button>
+                  )}
+                </div>
+              </nav>
+            </SheetContent>
+          </Sheet>
+        </div>
+
+        <div className="hidden xl:flex h-[42px] items-stretch gap-6 border-t border-border/60">
+          <nav className="flex flex-1 items-stretch gap-6 whitespace-nowrap text-[15px]">
+            {NAV_LINKS.filter((item) => !item.adminOnly || isAdmin).map((item) => (
+              <Link
+                key={item.to}
+                to={item.to}
+                aria-current={isActive(item.to) ? "page" : undefined}
+                className={cn(
+                  "flex items-center border-b-2 transition-colors",
+                  isActive(item.to)
+                    ? "border-primary font-semibold text-primary"
+                    : "border-transparent text-foreground hover:text-primary",
+                )}
+              >
+                {t(item.label)}
+              </Link>
+            ))}
+          </nav>
+          <span className="flex items-center gap-2 text-sm text-muted-foreground whitespace-nowrap">
+            <Truck size={18} strokeWidth={1.75} className="text-primary" aria-hidden="true" />
+            {t("Доставка по городу от {amount} сом", { amount: DELIVERY_MIN_ORDER.toLocaleString(NUMBER_LOCALE) })}
+          </span>
+          <LanguageSwitcher className="self-center" />
         </div>
       </div>
     </header>

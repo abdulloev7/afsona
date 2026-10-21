@@ -168,7 +168,7 @@ const Profile = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main className="flex-1 py-16">
+      <main className="flex-1 pt-[calc(var(--header-h)+2rem)] pb-16">
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="flex items-center justify-between mb-8">
             <h1 className="text-3xl font-bold flex items-center gap-2">

@@ -125,7 +125,7 @@ const Orders = () => {
     <div className="min-h-screen bg-background">
       <Header />
       
-      <main className="flex-1 py-8 mt-16">
+      <main className="flex-1 py-8 mt-[var(--header-h)]">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="flex items-center gap-4 mb-8">
             <Button variant="ghost" onClick={() => navigate('/')}>

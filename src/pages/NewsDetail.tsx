@@ -84,7 +84,7 @@ const NewsDetail = () => {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
-        <main className="flex-1 container mx-auto px-4 py-12 max-w-4xl">
+        <main className="flex-1 container mx-auto px-4 pt-[calc(var(--header-h)+2rem)] pb-12 max-w-4xl">
           <Skeleton className="h-8 w-64 mb-8" />
           <Skeleton className="h-12 w-full mb-4" />
           <Skeleton className="h-6 w-48 mb-8" />
@@ -102,7 +102,7 @@ const NewsDetail = () => {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
-        <main className="flex-1 container mx-auto px-4 py-12 max-w-4xl">
+        <main className="flex-1 container mx-auto px-4 pt-[calc(var(--header-h)+2rem)] pb-12 max-w-4xl">
           <div className="text-center py-12">
             <h1 className="text-4xl font-bold mb-4">{t("Новость не найдена")}</h1>
             <p className="text-muted-foreground mb-8">
@@ -124,7 +124,7 @@ const NewsDetail = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-1 container mx-auto px-4 py-12 max-w-4xl">
+      <main className="flex-1 container mx-auto px-4 pt-[calc(var(--header-h)+2rem)] pb-12 max-w-4xl">
         {/* Breadcrumbs */}
         <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-8">
           <Link to="/" className="hover:text-foreground transition-colors">

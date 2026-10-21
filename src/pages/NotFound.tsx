@@ -17,7 +17,7 @@ const NotFound = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main className="pt-24 pb-16">
+      <main className="pt-[calc(var(--header-h)+2rem)] pb-16">
         <div className="container mx-auto px-4 text-center py-16">
           <p className="text-6xl font-bold text-primary mb-4">404</p>
           <h1 className="text-2xl md:text-3xl font-bold mb-4">{t("Страница не найдена")}</h1>

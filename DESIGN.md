@@ -39,7 +39,15 @@ Social and messenger icons use the brand green, not each network's own colors.
 - Cards: white, 1px border, small radius from `--radius`. Never a card inside a card.
 - No eyebrow badges above headings ("Профессиональный сервис" and the like). The heading carries itself.
 - No gradients on backgrounds, badges or text. No purple anywhere.
-- No emoji as icons. Use lucide-react (or the existing tabler/react-icons) in the brand green.
+- No emoji as icons. Interface icons come from lucide-react only, stroke 1.75 (2 next to semibold text). Brand logos (WhatsApp, Telegram, Instagram) come from react-icons/fa. Don't add tabler or another icon set.
+
+## Header
+
+- Fixed, two rows on phones (logo + actions, then a full-width search field) and on screens from 1280 px (logo, "Каталог" button, search field, phone as text with hours, Войти, Корзина; then the section links, the delivery condition and the language switcher). One row in between.
+- Header actions are an icon with a visible 12 px label under it. A lone icon is fine only inside a field (the magnifier).
+- Search is a field, not an icon: people look for a box to type in.
+- Counts on the cart and profile use the primary green, not red.
+- Pages offset their content by `var(--header-h)`, which Header.tsx keeps equal to the header's real height. Use `pt-[calc(var(--header-h)+2rem)]`, never a fixed `pt-24`.
 - Colored left borders (`border-l-4`) are not used for callouts or quotes.
 - Figures on the site must be true: counts come from the catalog, hours from the real schedule. No "100%", "24/7" or "1000+" tiles unless they are facts.
 

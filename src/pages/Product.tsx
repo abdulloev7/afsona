@@ -227,7 +227,7 @@ export default function Product() {
     return (
       <div className="min-h-screen bg-background">
         <Header />
-        <div className="container mx-auto px-4 pt-24 pb-8">
+        <div className="container mx-auto px-4 pt-[calc(var(--header-h)+2rem)] pb-8">
           <div className="text-center">{t("Загрузка...")}</div>
         </div>
         <Footer />
@@ -254,7 +254,7 @@ export default function Product() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main className="container mx-auto px-4 pt-24 pb-16">
+      <main className="container mx-auto px-4 pt-[calc(var(--header-h)+2rem)] pb-16">
         <nav aria-label={t("Навигация")} className="mb-6">
           <ol className="flex flex-wrap items-center gap-1 text-sm text-muted-foreground">
             <li>
@@ -276,7 +276,7 @@ export default function Product() {
         </nav>
 
         <div className="grid md:grid-cols-2 gap-8 lg:gap-12 [&>*]:min-w-0">
-          <div className="md:sticky md:top-24 self-start">
+          <div className="md:sticky md:top-[calc(var(--header-h)+1rem)] self-start">
             <ProductMediaCarousel media={media} productName={product.name} />
           </div>
 

@@ -87,7 +87,7 @@ const Auth = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main className="flex-1 py-16">
+      <main className="flex-1 pt-[calc(var(--header-h)+2rem)] pb-16">
         <div className="container mx-auto px-4 max-w-md">
           <Tabs defaultValue="signin" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
