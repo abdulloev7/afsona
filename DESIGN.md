@@ -44,7 +44,7 @@ Social and messenger icons use the brand green, not each network's own colors.
 ## Header
 
 - Fixed, two rows on phones (logo + actions, then a full-width search field) and on screens from 1280 px (logo, "Каталог" button, search field, phone as text with hours, Войти, Корзина; then the section links, the delivery condition and the language switcher). One row in between.
-- The header logo is the green emblem and the AFSONA wordmark straight on the cream background (`src/assets/afsona-emblem.svg`, `afsona-wordmark.svg`, traced from the brand logo, color #1C6A50). No green box behind it, and no tagline: at header size it is too small to read.
+- The header logo is the green emblem and the AFSONA wordmark straight on the cream background (`src/assets/afsona-emblem.svg`, `afsona-wordmark.svg`, traced from the brand logo, color #1C6A50). No green box behind it, and no tagline: at header size it is too small to read. The footer uses the same files plus the tagline as live text (translated on /tg).
 - Header actions are an icon with a visible 12 px label under it. A lone icon is fine only inside a field (the magnifier).
 - Search is a field, not an icon: people look for a box to type in.
 - Counts on the cart and profile use the primary green, not red.
