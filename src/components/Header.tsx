@@ -9,7 +9,8 @@ import { useUserRole } from "@/hooks/useUserRole";
 import { SearchDialog } from "@/components/SearchDialog";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
-import afsona_logo_new from "@/assets/afsona-logo-new.jpg";
+import afsonaEmblem from "@/assets/afsona-emblem.svg";
+import afsonaWordmark from "@/assets/afsona-wordmark.svg";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { STORE_PHONE_DISPLAY, STORE_PHONE_HREF, STORE_WHATSAPP_URL } from "@/lib/contacts";
@@ -154,12 +155,9 @@ const Header = () => {
     <header ref={headerRef} className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
       <div className="container mx-auto px-3 sm:px-4">
         <div className="flex flex-wrap items-center gap-x-1 sm:flex-nowrap sm:gap-x-3 xl:gap-x-4 min-h-[60px] sm:h-[72px]">
-          <Link to="/" className="flex shrink-0 items-center mr-auto sm:mr-1">
-            <img
-              src={afsona_logo_new}
-              alt={t("AFSONA - Эко материалы для ремонта")}
-              className="h-[52px] sm:h-16 w-auto object-contain"
-            />
+          <Link to="/" aria-label={t("AFSONA - Эко материалы для ремонта")} className="flex shrink-0 items-center mr-auto sm:mr-1">
+            <img src={afsonaEmblem} alt="" className="h-11 sm:h-[52px] w-auto" />
+            <img src={afsonaWordmark} alt="" className="ml-2 sm:ml-2.5 h-[22px] sm:h-[28px] w-auto" />
           </Link>
 
           <Button asChild size="lg" className="hidden xl:inline-flex h-11 shrink-0 gap-2 px-5 text-[15px] font-semibold">
