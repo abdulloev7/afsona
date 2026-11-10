@@ -13,6 +13,9 @@ const TG_CHANNEL = "https://t.me/afsona_build";
 const PER_PAGE = 8;
 const OWNER_ID = 550505252; // владелец: только он может назначить чат для заказов (/orders_here)
 const MAX_QTY = 999;
+// Рабочая СММ-группа «СММ - Афсона»: бот её админ, все сообщения сохраняются в bot_group_messages,
+// чтобы СММ-ассистент читал вопросы и ответы команды. Бот в этой группе ничего не отвечает.
+const SMM_GROUP_ID = -1003467096369;
 
 // Язык клиента: "ru" или "tg". Выбирается при первом /start, хранится в bot_users.
 // Перевод в _bot-tg.js, ключ — русский текст; заказы продавцам всегда по-русски.
@@ -259,6 +262,11 @@ async function show(msg, text, kb) {
 const getLang = (chat) => store.getLang(chat).catch(() => "ru");
 
 async function onMessage(m) {
+  if (m.chat.id === SMM_GROUP_ID) {
+    // Ошибка базы не должна ломать webhook: Telegram получит 200 в любом случае.
+    await store.saveGroupMessage(m).catch((e) => console.error("smm group log", e));
+    return;
+  }
   const t = (m.text || "").trim().toLowerCase();
   // Владелец пишет /orders_here в группе продавцов (или в личке), и заказы начинают приходить туда.
   if (t.startsWith("/orders_here") && m.from?.id === OWNER_ID) {

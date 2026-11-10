@@ -35,4 +35,5 @@ export const store = {
   getLang: (chat) => rpc("bot_lang_get", { p_chat: chat }),
   setLang: (chat, lang) => rpc("bot_lang_set", { p_chat: chat, p_lang: lang }),
   takeSiteOrder: (orderId) => rpc("bot_site_order_take", { p_order_id: orderId }),
+  saveGroupMessage: (msg) => rpc("bot_group_message_save", { p_msg: msg }),
 };
