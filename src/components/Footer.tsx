@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import afsona_logo_full from "@/assets/afsona-logo-full.jpg";
+import afsonaEmblem from "@/assets/afsona-emblem.svg";
+import afsonaWordmark from "@/assets/afsona-wordmark.svg";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
 import { STORES } from "@/lib/contacts";
 import { FaTelegram, FaWhatsapp, FaInstagram } from "react-icons/fa";
@@ -11,8 +12,15 @@ const Footer = () => {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
-            <div className="mb-4">
-              <img src={afsona_logo_full} alt={t("AFSONA - Эко материалы для ремонта")} className="h-16 w-auto" />
+            {/* Same vector logo as the header; the tagline is live text so /tg gets it in Tajik. */}
+            <div className="mb-4 flex items-center gap-3" role="img" aria-label={t("AFSONA - Эко материалы для ремонта")}>
+              <img src={afsonaEmblem} alt="" className="h-16 w-auto" />
+              <div className="flex flex-col gap-1.5">
+                <img src={afsonaWordmark} alt="" className="h-[34px] w-auto self-start" />
+                <span className="text-[11px] font-medium uppercase leading-none tracking-[0.06em] text-[#1C6A50]">
+                  {t("Эко материалы для ремонта")}
+                </span>
+              </div>
             </div>
             <p className="text-sm opacity-80 leading-relaxed">
               {t("Качественные краски и материалы для профессионального и домашнего ремонта. Экологично, надежно, красиво.")}
